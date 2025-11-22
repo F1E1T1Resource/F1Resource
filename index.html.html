@@ -5,53 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>F1 Resource</title>
 <style>
-:root{
-  --primary:#002b5c;
-  --accent:#0b5fff;
-  --muted:#6b7280;
-  --card:#ffffff;
-}
-body {margin:0;font-family:Inter,sans-serif;background:#eef2f5;color:#0f1724;}
-.centerBox {max-width:460px;margin:64px auto;padding:26px;background:var(--card);border-radius:12px;box-shadow:0 6px 30px rgba(2,6,23,0.08);}
-input, select, textarea {width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #d1d5db;font-size:15px;}
-button {padding:10px 14px;background:var(--primary);border:none;color:white;font-size:15px;border-radius:8px;cursor:pointer;}
-button.ghost{background:transparent;color:var(--primary);border:1px solid #d1d5db;}
-button.small{padding:6px 10px;font-size:13px;}
-#layout {display:flex;height:100vh;}
-#sidebar {width:260px;background:var(--primary);color:white;padding:18px;transition:0.25s;overflow-y:auto;}
-#sidebar.hidden {width:0;padding:0;overflow:hidden;}
-#sidebar h2 {margin:0 0 12px;font-size:18px;}
-#sidebar a {display:block;color:white;padding:10px 0;cursor:pointer;font-size:15px;text-decoration:none;}
-#sidebar a:hover{text-decoration:underline;}
-#content {flex:1;padding:20px;overflow-y:auto;}
-#toggleMenu {position:fixed;top:12px;left:12px;background:var(--primary);color:white;border:none;padding:10px;border-radius:8px;font-size:18px;z-index:50;}
-.sectionCard {background:var(--card);padding:18px;border-radius:10px;margin-bottom:18px;box-shadow:0 6px 20px rgba(2,6,23,0.06);}
-.listItem{padding:10px;border-radius:8px;border:1px solid #eef2ff;margin-top:8px;background:#fff;display:flex;justify-content:space-between;align-items:center;}
-.muted{color:var(--muted);font-size:13px;}
-textarea {width:100%;min-height:100px;padding:10px;border-radius:8px;border:1px solid #d1d5db;}
-@media (max-width:900px){#layout{flex-direction:column}#sidebar{width:100%;position:fixed;left:0;top:0;transform:translateY(-150%)}#sidebar.show{transform:translateY(0)}#toggleMenu{position:fixed;left:8px;top:8px}}
+:root { --primary:#002b5c; --accent:#0b5fff; --muted:#6b7280; --card:#ffffff }
+body { margin:0; font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial; background:#eef2f5; color:#0f1724; }
+#loginScreen, #app { display:none; }
+.centerBox { max-width:460px; margin:64px auto; padding:26px; background:var(--card); border-radius:12px; box-shadow:0 6px 30px rgba(2,6,23,0.08); }
+input, select { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #d1d5db; font-size:15px; }
+button { padding:10px 14px; background:var(--primary); border:none; color:white; font-size:15px; border-radius:8px; cursor:pointer; }
+button.ghost{background:transparent;color:var(--primary);border:1px solid #d1d5db}
+button.small{padding:6px 10px;font-size:13px}
+#layout { display:flex; height:100vh; }
+#sidebar { width:260px; background:var(--primary); color:white; padding:18px; transition:0.25s; overflow-y:auto; }
+#sidebar.hidden { width:0; padding:0; overflow:hidden; }
+#sidebar h2 { margin:0 0 12px;font-size:18px }
+#sidebar a { display:block; color:white; padding:10px 0; cursor:pointer; font-size:15px; text-decoration:none }
+#sidebar a:hover { text-decoration:underline }
+#content { flex:1; padding:20px; overflow-y:auto; }
+#toggleMenu { position:fixed; top:12px; left:12px; background:var(--primary); color:white; border:none; padding:10px; border-radius:8px; font-size:18px; z-index:50 }
+.sectionCard { background:var(--card); padding:18px; border-radius:10px; margin-bottom:18px; box-shadow:0 6px 20px rgba(2,6,23,0.06); }
+.listItem{padding:10px;border-radius:8px;border:1px solid #eef2ff;margin-top:8px;background:#fff;display:flex;justify-content:space-between;align-items:center}
+.muted{color:var(--muted);font-size:13px}
+textarea { width:100%; min-height:100px; padding:10px; border-radius:8px; border:1px solid #d1d5db }
+@media (max-width:900px){ #layout{flex-direction:column} #sidebar{width:100%;position:fixed;left:0;top:0;transform:translateY(-150%)} #sidebar.show{transform:translateY(0)} #toggleMenu{position:fixed;left:8px;top:8px} }
 </style>
 </head>
 <body>
 
-<!-- Login Screen -->
+<!-- LOGIN -->
 <div id="loginScreen" class="centerBox">
-  <h2 style="margin:0 0 8px">F1 Resource Login</h2>
-  <div class="muted" style="margin-bottom:10px">Restricted to authorized fire department members</div>
-  <input id="username" placeholder="Username" aria-label="username">
-  <input id="password" placeholder="Password" type="password" aria-label="password">
+  <h2>F1 Resource Login</h2>
+  <div class="muted">Authorized Fire Department Members Only</div>
+  <input id="username" placeholder="Username">
+  <input id="password" placeholder="Password" type="password">
   <div style="display:flex;gap:8px;margin-top:10px">
     <button onclick="login()">Login</button>
-    <button class="ghost" onclick="alert('Ask your admin for access')">Help</button>
+    <button class="ghost" onclick="alert('Contact county admin for access')">Help</button>
   </div>
   <div class="muted" style="margin-top:12px">Admin user: <strong>dlyboult</strong> / <strong>F1Resource</strong></div>
 </div>
 
-<!-- Main App -->
-<div id="app" style="display:none;">
+<!-- APP -->
+<div id="app" aria-hidden="true">
   <button id="toggleMenu" onclick="toggleSidebar()">☰</button>
   <div id="layout">
-    <aside id="sidebar" aria-label="Main navigation">
+    <aside id="sidebar">
       <h2>F1 Resource</h2>
       <div class="muted">Oswego County</div>
       <nav style="margin-top:16px">
@@ -64,241 +60,170 @@ textarea {width:100%;min-height:100px;padding:10px;border-radius:8px;border:1px 
         <a onclick="showPage('evSafety')">Electric Vehicle Safety</a>
         <a onclick="showPage('weather')">Weather</a>
       </nav>
-      <hr style="border:none;border-top:1px solid #0b2540;margin:14px 0">
+      <hr style="border:none;border-top:1px solid #0b2540;margin:14px 0" />
       <div id="adminControls" style="display:none">
         <div style="font-weight:700;margin-bottom:6px">Admin</div>
         <a onclick="showPage('adminUsers')">Manage Users</a>
       </div>
       <div style="margin-top:14px" class="muted">Version 1.0 — Local mode</div>
     </aside>
-
     <main id="content">
-      <!-- Home -->
       <section id="home" class="page">
         <div class="sectionCard">
           <h1>WELCOME</h1>
-          <div class="muted">This is <strong>F1 Resource</strong>, your all-inclusive application for Oswego County resources.</div>
+          <div class="muted">This is <strong>F1 Resource</strong>, your all inclusive application for Oswego County resources.</div>
         </div>
       </section>
 
-      <!-- County Resources -->
       <section id="countyResources" class="page" style="display:none">
         <div class="sectionCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>County Resources</h2>
-            <button class="small" onclick="addResource()">Add Resource</button>
-          </div>
+          <h2>County Resources</h2>
           <div id="resourceList"></div>
         </div>
       </section>
 
-      <!-- County Coordinators -->
       <section id="countyCoordinators" class="page" style="display:none">
         <div class="sectionCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>County Coordinators</h2>
-            <button class="small" onclick="addCoordinator()">Add Coordinator</button>
-          </div>
+          <h2>County Coordinators</h2>
           <div id="coordinatorList"></div>
         </div>
       </section>
 
-      <!-- Fire Agencies -->
       <section id="fireAgencies" class="page" style="display:none">
         <div class="sectionCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>Fire Agencies</h2>
-            <button class="small" onclick="addFireAgency()">Add Fire Agency</button>
-          </div>
+          <h2>Fire Agencies</h2>
           <div id="fireList"></div>
         </div>
       </section>
 
-      <!-- EMS Agencies -->
       <section id="emsAgencies" class="page" style="display:none">
         <div class="sectionCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>EMS Agencies</h2>
-            <button class="small" onclick="addEMSAgency()">Add EMS Agency</button>
-          </div>
+          <h2>EMS Agencies</h2>
           <div id="emsList"></div>
         </div>
       </section>
 
-      <!-- HazMat Search -->
       <section id="hazmatSearch" class="page" style="display:none">
         <div class="sectionCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>Hazardous Material Search</h2>
-            <button class="small" onclick="openHazmatEditor()">Add / Edit Database</button>
-          </div>
-          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-            <input id="unInput" placeholder="UN/NA number (e.g. 1203)" style="flex:1;min-width:180px">
-            <input id="placardInput" placeholder="Placard number (optional)" style="width:160px">
-            <button onclick="lookupUN()">Search</button>
-          </div>
-          <div id="unResult" style="margin-top:12px"></div>
+          <h2>Hazardous Material Search</h2>
+          <input id="unInput" placeholder="UN/NA number">
+          <button onclick="lookupUN()">Search</button>
+          <div id="unResult"></div>
         </div>
       </section>
 
-      <!-- EV Safety -->
       <section id="evSafety" class="page" style="display:none">
         <div class="sectionCard">
           <h2>Electric Vehicle Safety</h2>
-          <div class="muted" style="margin-top:8px">Search by VIN / plate or Year, Make, Model. Full manufacturer rescue info included.</div>
-          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-            <input id="plate" placeholder="License Plate (optional)" style="flex:1;min-width:160px">
-            <input id="vin" placeholder="VIN (optional)" style="flex:1;min-width:160px">
-            <input id="ymm" placeholder="Year,Make,Model" style="flex:1;min-width:160px">
-            <button onclick="evSearch()">Find Vehicle</button>
-          </div>
-          <div id="evResult" style="margin-top:12px"></div>
+          <div class="muted">Preloaded rescue info included</div>
         </div>
       </section>
 
-      <!-- Weather -->
       <section id="weather" class="page" style="display:none">
         <div class="sectionCard">
           <h2>Weather</h2>
-          <input id="weatherLocation" placeholder="Enter city or zip">
+          <input id="weatherLocation" placeholder="Enter city or ZIP">
           <button onclick="getWeather()">Get Weather</button>
-          <div id="weatherResult" style="margin-top:12px"></div>
+          <div id="weatherResult"></div>
         </div>
       </section>
 
-      <!-- Admin Users -->
       <section id="adminUsers" class="page" style="display:none">
         <div class="sectionCard">
           <h2>Manage Users & Roles</h2>
-          <div class="muted" style="margin-top:8px">Admins can add/edit/delete users and change roles.</div>
-          <button class="small" onclick="addUser()">Add User</button>
-          <div id="userList" style="margin-top:12px"></div>
+          <div id="userList"></div>
         </div>
       </section>
+
     </main>
   </div>
 </div>
 
 <script>
-// ------------------- Data -------------------
-let currentUser = null;
+/* ------------------- Local Store ------------------- */
 let store = {
-  users: { dlyboult: { password:"F1Resource", role:"ADMIN" } },
-  resources: [],
-  coordinators: [],
-  fireAgencies: [],
-  emsAgencies: [],
-  hazmatDB: {
-    "1203":{un:"1203",name:"Gasoline",hazard_class:"3 - Flammable Liquid",flammability:"Highly flammable",flash_point:"-40 °C",water_reactivity:"May float, ignition possible",extinguishing_agent:"Foam/CO2",ppe:"SCBA + turnout",health_effects:"Irritation, CNS depression",reactivity:"Reactive with oxidizers",evacuation_small:"100 m",evacuation_large:"800 m",notes:"Vapors heavier than air, consult shipping papers."},
-    "1017":{un:"1017",name:"Chlorine",hazard_class:"2.3/8 - Toxic Gas",flammability:"Non-flammable",water_reactivity:"Reacts violently with water",extinguishing_agent:"Evacuate, isolate",ppe:"Full SCBA and chem suit",health_effects:"Severe respiratory irritation",reactivity:"Reacts with hydrocarbons",evacuation_small:"25 m",evacuation_large:"800 m",notes:"Highly toxic gas."}
-  },
-  evDB: [
-    {ymm:"2023,Tesla,Model Y",link:"https://www.tesla.com/sites/default/files/model_y_safety.pdf"},
-    {ymm:"2022,Ford,Lightning",link:"https://www.ford.com/ev-safety"}
-  ]
+  users: { dlyboult:{password:'F1Resource', role:'ADMIN'} },
+  resources: [], coordinators: [], fireAgencies: [], emsAgencies: [],
+  hazmatDB: {} // preload hazardous material info here
 };
 
-// ------------------- Storage (optional) -------------------
-if(localStorage.getItem("f1_resource_data")) store = JSON.parse(localStorage.getItem("f1_resource_data"));
-function saveStore(){ localStorage.setItem("f1_resource_data",JSON.stringify(store)); }
-
-// ------------------- UI -------------------
-function toggleSidebar(){ document.getElementById("sidebar").classList.toggle("hidden"); }
-function showPage(id){ document.querySelectorAll(".page").forEach(p=>p.style.display="none"); document.getElementById(id).style.display="block"; }
-
-// ------------------- Login -------------------
+/* ------------------- Login ------------------- */
+let currentUser = null;
 function login(){
-  const u=document.getElementById("username").value.trim().toLowerCase();
-  const p=document.getElementById("password").value.trim();
-  if(!u || !p){ alert("Enter username and password"); return; }
-  if(store.users[u] && store.users[u].password === p){
-    currentUser={username:u,role:store.users[u].role};
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("app").style.display="block";
-    document.getElementById("adminControls").style.display = currentUser.role==="ADMIN"?"block":"none";
-    renderAll();
-    showPage("home");
-  } else { alert("Invalid credentials"); }
+  const u = document.getElementById('username').value.trim().toLowerCase();
+  const p = document.getElementById('password').value.trim();
+  if(!u || !p){ alert('Enter username and password'); return; }
+  const user = store.users[u];
+  if(user && user.password===p){
+    currentUser={username:u, role:user.role};
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='block';
+    if(user.role==='ADMIN') document.getElementById('adminControls').style.display='block';
+    showPage('home'); renderAll();
+  }else{ alert('Invalid credentials'); }
 }
 
-// ------------------- Users -------------------
-function isAdmin(){ return currentUser && currentUser.role==="ADMIN"; }
-function renderUsers(){
-  const target=document.getElementById("userList"); target.innerHTML="";
-  Object.keys(store.users).forEach(u=>{
-    const user=store.users[u];
-    const div=document.createElement("div"); div.className="listItem";
-    div.innerHTML=`<div><strong>${u}</strong><div class="muted">Role: ${user.role}</div></div>
-      <div style="display:flex;gap:8px">
-        <button class="small" onclick="editUser('${u}')">Edit</button>
-        ${isAdmin()?`<button class="small" onclick="deleteUser('${u}')">Delete</button>`:""}
-      </div>`;
-    target.appendChild(div);
-  });
+/* ------------------- Sidebar ------------------- */
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  sb.classList.toggle(window.innerWidth<=900?'show':'hidden');
 }
-function addUser(){ if(!isAdmin()) return alert("Admin only"); const u=prompt("New username").toLowerCase(); if(!u) return; const p=prompt("Password"); const r=prompt("Role (ADMIN/DEPARTMENT/TRIAL)","DEPARTMENT"); store.users[u]={password:p,role:r||"DEPARTMENT"}; saveStore(); renderUsers();}
-function editUser(u){ if(!isAdmin()) return alert("Admin only"); const user=store.users[u]; if(!user) return; const p=prompt("New password",user.password); const r=prompt("Role (ADMIN/DEPARTMENT/TRIAL)",user.role); if(p) user.password=p; if(r) user.role=r; saveStore(); renderUsers();}
-function deleteUser(u){ if(!isAdmin()) return alert("Admin only"); if(confirm("Delete "+u+"?")){ delete store.users[u]; saveStore(); renderUsers(); }}
-
-// ------------------- Resources, Coordinators, Fire, EMS -------------------
-function renderResources(){ const t=document.getElementById("resourceList"); t.innerHTML=""; store.resources.forEach(r=>{ const div=document.createElement("div"); div.className="listItem"; div.innerHTML=`<div><strong>${r.name}</strong></div><div><button class="small" onclick="editResource('${r.id}')">Edit</button></div>`; t.appendChild(div); }); }
-function addResource(){ if(!isAdmin()) return alert("Admin only"); const n=prompt("Resource name"); if(!n) return; const caps=prompt("Capabilities"); const id="r"+Math.random().toString(36).slice(2,9); store.resources.push({id,name:n,capabilities:caps}); saveStore(); renderResources();}
-function editResource(id){ const r=store.resources.find(x=>x.id===id); if(!r) return; r.name=prompt("Name",r.name)||r.name; r.capabilities=prompt("Capabilities",r.capabilities)||r.capabilities; saveStore(); renderResources(); }
-
-// Coordinator
-function renderCoordinators(){ const t=document.getElementById("coordinatorList"); t.innerHTML=""; store.coordinators.forEach(c=>{ const div=document.createElement("div"); div.className="listItem"; div.innerHTML=`<div><strong>${c.name}</strong></div><div><button class="small" onclick="editCoordinator('${c.id}')">Edit</button></div>`; t.appendChild(div); }); }
-function addCoordinator(){ if(!isAdmin()) return alert("Admin only"); const n=prompt("Name"); if(!n) return; const callsign=prompt("Callsign"); const id="c"+Math.random().toString(36).slice(2,9); store.coordinators.push({id,name:n,callsign}); saveStore(); renderCoordinators();}
-function editCoordinator(id){ const c=store.coordinators.find(x=>x.id===id); if(!c) return; c.name=prompt("Name",c.name)||c.name; c.callsign=prompt("Callsign",c.callsign)||c.callsign; saveStore(); renderCoordinators(); }
-
-// Fire Agencies
-function renderFire(){ const t=document.getElementById("fireList"); t.innerHTML=""; store.fireAgencies.forEach(f=>{ const div=document.createElement("div"); div.className="listItem"; div.innerHTML=`<div><strong>${f.name}</strong></div><div><button class="small" onclick="editFire('${f.id}')">Edit</button></div>`; t.appendChild(div); }); }
-function addFireAgency(){ if(!isAdmin()) return alert("Admin only"); const n=prompt("Name"); if(!n) return; const id="f"+Math.random().toString(36).slice(2,9); store.fireAgencies.push({id,name:n}); saveStore(); renderFire();}
-function editFire(id){ const f=store.fireAgencies.find(x=>x.id===id); if(!f) return; f.name=prompt("Name",f.name)||f.name; saveStore(); renderFire(); }
-
-// EMS Agencies
-function renderEMS(){ const t=document.getElementById("emsList"); t.innerHTML=""; store.emsAgencies.forEach(f=>{ const div=document.createElement("div"); div.className="listItem"; div.innerHTML=`<div><strong>${f.name}</strong></div><div><button class="small" onclick="editEMS('${f.id}')">Edit</button></div>`; t.appendChild(div); }); }
-function addEMSAgency(){ if(!isAdmin()) return alert("Admin only"); const n=prompt("Name"); if(!n) return; const id="e"+Math.random().toString(36).slice(2,9); store.emsAgencies.push({id,name:n}); saveStore(); renderEMS();}
-function editEMS(id){ const f=store.emsAgencies.find(x=>x.id===id); if(!f) return; f.name=prompt("Name",f.name)||f.name; saveStore(); renderEMS(); }
-
-// ------------------- HazMat -------------------
-function lookupUN(){
-  const un=document.getElementById("unInput").value.trim();
-  if(!un) return alert("Enter UN number");
-  const r=store.hazmatDB[un];
-  if(!r){ document.getElementById("unResult").innerHTML="No entry found"; return; }
-  document.getElementById("unResult").innerHTML=`<strong>${r.name}</strong> (${r.hazard_class})<br>
-    Flammability: ${r.flammability}<br>
-    Flash Point: ${r.flash_point}<br>
-    Water Reactivity: ${r.water_reactivity}<br>
-    Extinguishing Agent: ${r.extinguishing_agent}<br>
-    PPE: ${r.ppe}<br>
-    Health Effects: ${r.health_effects}<br>
-    Reactivity: ${r.reactivity}<br>
-    Evacuation: Small-${r.evacuation_small}, Large-${r.evacuation_large}<br>
-    Notes: ${r.notes}`;
-}
-function openHazmatEditor(){ if(!isAdmin()) return alert("Admin only"); const un=prompt("UN number"); if(!un) return; const n=prompt("Name"); const h=prompt("Hazard class"); store.hazmatDB[un]={un,name:n,hazard_class:h,flammability:"N/A",flash_point:"N/A",water_reactivity:"N/A",extinguishing_agent:"N/A",ppe:"N/A",health_effects:"N/A",reactivity:"N/A",evacuation_small:"N/A",evacuation_large:"N/A",notes:"N/A"}; saveStore(); alert("Entry added.");}
-
-// ------------------- EV Safety -------------------
-function evSearch(){
-  const q=document.getElementById("ymm").value.trim().toLowerCase();
-  if(!q) return alert("Enter Year,Make,Model");
-  const result=store.evDB.find(e=>e.ymm.toLowerCase()===q);
-  if(!result){ document.getElementById("evResult").innerHTML="No vehicle info found"; return; }
-  document.getElementById("evResult").innerHTML=`<strong>${result.ymm}</strong><br><a href="${result.link}" target="_blank">Manufacturer Rescue Sheet</a>`;
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  const el=document.getElementById(id); if(el) el.style.display='block';
 }
 
-// ------------------- Weather -------------------
-function getWeather(){ 
-  const loc=document.getElementById("weatherLocation").value.trim();
-  if(!loc) return alert("Enter location");
-  document.getElementById("weatherResult").innerHTML=`Weather info for ${loc} would appear here.`;
-}
-
-// ------------------- Render -------------------
+/* ------------------- Render Functions ------------------- */
 function renderAll(){
-  renderUsers(); renderResources(); renderCoordinators(); renderFire(); renderEMS();
+  renderResources(); renderCoordinators(); renderFire(); renderEMS(); renderUsers();
 }
+function renderResources(){ const t=document.getElementById('resourceList'); t.innerHTML=''; store.resources.forEach(r=>{
+  const div=document.createElement('div'); div.className='listItem';
+  div.innerHTML=`<strong>${r.name}</strong>`;
+  t.appendChild(div);
+});}
+function renderCoordinators(){ const t=document.getElementById('coordinatorList'); t.innerHTML=''; store.coordinators.forEach(c=>{
+  const div=document.createElement('div'); div.className='listItem';
+  div.innerHTML=`<strong>${c.name}</strong>`;
+  t.appendChild(div);
+});}
+function renderFire(){ const t=document.getElementById('fireList'); t.innerHTML=''; store.fireAgencies.forEach(f=>{
+  const div=document.createElement('div'); div.className='listItem';
+  div.innerHTML=`<strong>${f.name}</strong>`;
+  t.appendChild(div);
+});}
+function renderEMS(){ const t=document.getElementById('emsList'); t.innerHTML=''; store.emsAgencies.forEach(e=>{
+  const div=document.createElement('div'); div.className='listItem';
+  div.innerHTML=`<strong>${e.name}</strong>`;
+  t.appendChild(div);
+});}
+function renderUsers(){ const t=document.getElementById('userList'); t.innerHTML=''; Object.keys(store.users).forEach(u=>{
+  const div=document.createElement('div'); div.className='listItem';
+  div.innerHTML=`<strong>${u}</strong> (${store.users[u].role})`;
+  t.appendChild(div);
+});}
+
+/* ------------------- HazMat Search ------------------- */
+function lookupUN(){
+  const q=document.getElementById('unInput').value.trim();
+  const t=document.getElementById('unResult'); t.innerHTML='';
+  if(!q){ alert('Enter UN/NA number'); return; }
+  const entry=store.hazmatDB[q];
+  if(!entry){ t.innerHTML='Not found'; return; }
+  t.innerHTML=`<strong>${entry.name}</strong><br>${entry.hazard_class || ''}<br>${entry.flammability || ''}`;
+}
+
+/* ------------------- Weather Example ------------------- */
+function getWeather(){
+  const loc=document.getElementById('weatherLocation').value.trim();
+  const t=document.getElementById('weatherResult'); t.innerHTML='';
+  if(!loc){ alert('Enter location'); return; }
+  t.innerHTML='Weather data not yet connected — integrate API';
+}
+
+/* ------------------- Initialize ------------------- */
+document.getElementById('loginScreen').style.display='block';
 </script>
+
 </body>
 </html>
