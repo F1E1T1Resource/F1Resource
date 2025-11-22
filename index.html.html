@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>F1 Resource — Oswego County</title>
+<style>
+:root{--primary:#002b5c;--accent:#0b5fff;--muted:#6b7280;--card:#ffffff}
+body{margin:0;font-family:Inter,system-ui,Arial;background:#eef2f5;color:#0f1724}
+#loginScreen,#app{display:none}
+.centerBox{max-width:460px;margin:64px auto;padding:26px;background:var(--card);border-radius:12px;box-shadow:0 6px 30px rgba(2,6,23,0.08)}
+input,select,textarea{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #d1d5db;font-size:15px}
+button{padding:10px 14px;background:var(--primary);border:0;color:#fff;border-radius:8px;cursor:pointer}
+button.ghost{background:transparent;color:var(--primary);border:1px solid #d1d5db}
+button.small{padding:6px 10px;font-size:13px}
+#layout{display:flex;height:100vh}
+#sidebar{width:260px;background:var(--primary);color:#fff;padding:18px;transition:.25s;overflow-y:auto}
+#sidebar.hidden{width:0;padding:0}
+#sidebar h2{margin:0 0 12px;font-size:18px}
+#sidebar a{display:block;color:#fff;padding:10px 0;cursor:pointer;font-size:15px;text-decoration:none}
+#sidebar a:hover{text-decoration:underline}
+#content{flex:1;padding:20px;overflow-y:auto}
+#toggleMenu{position:fixed;top:12px;left:12px;background:var(--primary);color:#fff;border:0;padding:10px;border-radius:8px;font-size:18px;z-index:50}
+.sectionCard{background:var(--card);padding:18px;border-radius:10px;margin-bottom:18px;box-shadow:0 6px 20px rgba(2,6,23,0.06)}
+.listItem{padding:10px;border-radius:8px;border:1px solid #eef2ff;margin-top:8px;background:#fff;display:flex;justify-content:space-between;align-items:center}
+.muted{color:var(--muted);font-size:13px}
+textarea{min-height:100px}
+.subpage-card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(2,6,23,0.06);margin-bottom:12px}
+@media (max-width:900px){#layout{flex-direction:column} #sidebar{width:100%;position:fixed;left:0;top:0;transform:translateY(-150%)} #sidebar.show{transform:translateY(0)} #toggleMenu{left:8px;top:8px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="centerBox" role="dialog" aria-modal="true">
+  <h2 style="margin:0 0 8px">F1 Resource Login</h2>
+  <div class="muted" style="margin-bottom:10px">Restricted to authorized fire department members</div>
+  <input id="username" placeholder="Username" aria-label="username" />
+  <input id="password" placeholder="Password" type="password" aria-label="password" />
+  <div style="display:flex;gap:8px;margin-top:10px">
+    <button onclick="login()">Login</button>
+    <button class="ghost" onclick="showHelp()">Help</button>
+  </div>
+  <div class="muted" style="margin-top:12px">Admin user created: <strong>dlyboult</strong> / <strong>F1Resource</strong></div>
+</div>
+
+<!-- APP -->
+<div id="app" aria-hidden="true">
+  <button id="toggleMenu" onclick="toggleSidebar()">☰</button>
+  <div id="layout">
+    <aside id="sidebar" aria-label="Main navigation">
+      <h2>F1 Resource</h2>
+      <div class="muted">Oswego County</div>
+      <nav style="margin-top:16px">
+        <a onclick="navigateTo('home')">Home</a>
+        <a onclick="navigateTo('countyResources')">County Resources</a>
+        <a onclick="navigateTo('countyCoordinators')">County Coordinators</a>
+        <a onclick="navigateTo('fireAgencies')">Fire Agencies</a>
+        <a onclick="navigateTo('emsAgencies')">EMS Agencies</a>
+        <a onclick="navigateTo('hazmatSearch')">Hazardous Material Search</a>
+        <a onclick="navigateTo('weather')">Weather (GPS)</a>
+        <a onclick="navigateTo('evSafety')">Electric Vehicle Safety</a>
+      </nav>
+      <hr style="border:none;border-top:1px solid #0b2540;margin:14px 0" />
+      <div id="adminControls" style="display:none">
+        <div style="font-weight:700;margin-bottom:6px">Admin</div>
+        <a onclick="navigateTo('adminUsers')">Manage Users</a>
+        <a onclick="navigateTo('adminImport')">Import / Export Data</a>
+      </div>
+      <div style="margin-top:14px" class="muted">Version 1.0 — Local mode</div>
+      <div style="margin-top:12px"><button class="ghost" onclick="logout()">Log out</button></div>
+    </aside>
+
+    <main id="content">
+      <!-- pages -->
+      <section id="home" class="page">
+        <div class="sectionCard">
+          <h1 style="margin:0 0 6px">WELCOME</h1>
+          <div class="muted">This is <strong>F1 Resource</strong>, your all inclusive application for the resources in Oswego County.</div>
+        </div>
+      </section>
+
+      <section id="countyResources" class="page" style="display:none">
+        <div class="sectionCard">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2 style="margin:0">County Resources</h2>
+            <div><button class="small" onclick="addResource()">Add Resource</button></div>
+          </div>
+          <div id="resourceList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <section id="countyCoordinators" class="page" style="display:none">
+        <div class="sectionCard">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2 style="margin:0">County Coordinators</h2>
+            <div><button class="small" onclick="addCoordinator()">Add Coordinator</button></div>
+          </div>
+          <div id="coordinatorList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <section id="fireAgencies" class="page" style="display:none">
+        <div class="sectionCard">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2 style="margin:0">Fire Agencies</h2>
+            <div><button class="small" onclick="addFireAgency()">Add Fire Agency</button></div>
+          </div>
+          <div id="fireList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <section id="emsAgencies" class="page" style="display:none">
+        <div class="sectionCard">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2 style="margin:0">EMS Agencies</h2>
+            <div><button class="small" onclick="addEMSAgency()">Add EMS Agency</button></div>
+          </div>
+          <div id="emsList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <section id="hazmatSearch" class="page" style="display:none">
+        <div class="sectionCard">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2 style="margin:0">Hazardous Material Search</h2>
+            <div><button class="small" onclick="openHazmatEditor()">Add / Edit Database</button></div>
+          </div>
+
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <input id="unInput" placeholder="UN/NA number (e.g. 1203)" style="flex:1;min-width:180px" />
+            <input id="placardInput" placeholder="Placard number (if different)" style="width:160px" />
+            <button onclick="lookupUN()">Search</button>
+          </div>
+
+          <div id="unResult" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <section id="weather" class="page" style="display:none">
+        <div class="sectionCard">
+          <h2 style="margin:0">Current Weather (GPS)</h2>
+          <div class="muted" style="margin-top:8px">Tap "Use My Location" and allow your browser to share location.</div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button onclick="getWeatherByGeolocation()">Use My Location</button>
+            <input id="weatherLat" placeholder="Latitude (fallback)" style="flex:1;min-width:160px" />
+            <input id="weatherLon" placeholder="Longitude (fallback)" style="flex:1;min-width:160px" />
+            <button class="ghost" onclick="getWeatherFallback()">Get Weather (manual)</button>
+          </div>
+          <div id="weatherResult" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <section id="evSafety" class="page" style="display:none">
+        <div class="sectionCard">
+          <h2 style="margin:0">Electric Vehicle Safety</h2>
+          <div class="muted" style="margin-top:8px">Search by VIN / plate or Year, Make, Model. Add manufacturer rescue links in Admin.</div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <input id="plate" placeholder="License Plate (optional)" style="flex:1;min-width:160px" />
+            <input id="vin" placeholder="VIN (optional)" style="flex:1;min-width:160px" />
+            <input id="ymm" placeholder="Year,Make,Model" style="flex:1;min-width:160px" />
+            <button onclick="evSearch()">Find Vehicle</button>
+          </div>
+          <div id="evResult" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <section id="adminUsers" class="page" style="display:none">
+        <div class="sectionCard">
+          <h2 style="margin:0">Manage Users & Roles</h2>
+          <div class="muted" style="margin-top:8px">Admins can add/edit/delete users and change roles (ADMIN / DEPARTMENT / TRIAL). For DEPARTMENT users, supply the agency ID they may edit.</div>
+          <div style="margin-top:12px"><button class="small" onclick="addUser()">Add User</button></div>
+          <div id="userList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <section id="adminImport" class="page" style="display:none">
+        <div class="sectionCard">
+          <h2 style="margin:0">Import / Export Data</h2>
+          <div class="muted" style="margin-top:8px">Export your entire app data as JSON for backup, or paste JSON to import (overwrites local data).</div>
+          <div style="margin-top:12px;display:flex;gap:8px"><button onclick="exportData()">Export Data</button><button class="ghost" onclick="importData()">Import Data</button></div>
+        </div>
+      </section>
+
+      <!-- Container for generated subpages (dynamic) -->
+      <div id="subpageContainer"></div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+/* ---------------- Persistent store ---------------- */
+const STORAGE_KEY = 'f1_resource_data_v1';
+let store = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+if(!store){
+  store = {
+    users: { 'dlyboult': { password:'F1Resource', role:'ADMIN', agencyId:null } },
+    resources: [],
+    coordinators: [],
+    fireAgencies: [],
+    emsAgencies: [],
+    hazmatDB: {
+      "1203": { un:'1203', name:'Gasoline', proper_shipping_name:'Gasoline', hazard_class:'3 - Flammable liquid',
+        flammability:'Extremely flammable; low flash point', flash_point:'Varies (-40 to 0 °C)',
+        water_reactivity:'May float and spread on water; ignition possible', water_reactive:false,
+        extinguishing_agent:'Foam; alcohol-resistant foam preferred; dry chemical for small fires',
+        health_effects:'Irritation; CNS depression at high concentrations; aspiration hazard',
+        ppe:'Full turnout, SCBA; vapor protection if confined',
+        reactivity:'Reactive with strong oxidizers',
+        evacuation_small:'100 m', evacuation_large:'800 m',
+        notes:'Consult shipping papers; vapors heavier than air can travel and ignite.'
+      },
+      "1017": { un:'1017', name:'Chlorine', proper_shipping_name:'Chlorine, compressed', hazard_class:'2.3/8 - Toxic/Corrosive Gas',
+        flammability:'Not flammable', water_reactivity:'Reacts with water to form acids', water_reactive:true,
+        extinguishing_agent:'Not applicable for gas release — evacuate and isolate',
+        health_effects:'Severe respiratory irritation; pulmonary edema', ppe:'Full SCBA & chemical suit',
+        reactivity:'Reacts with ammonia, hydrocarbons', evacuation_small:'25 m', evacuation_large:'800 m', notes:'Highly toxic gas'
+      }
+    }
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+}
+function saveStore(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); }
+
+/* ---- helpers ---- */
+function uid(){ return 'id_'+Math.random().toString(36).slice(2,9); }
+let currentUser = null;
+
+/* ---- auth and UI ---- */
+function login(){
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  if(!u||!p){ alert('Enter username & password'); return; }
+  const user = store.users[u];
+  if(user && user.password === p){
+    currentUser = { username:u, role:user.role, agencyId:user.agencyId || null };
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('app').setAttribute('aria-hidden','false');
+    document.getElementById('adminControls').style.display = (user.role==='ADMIN') ? 'block' : 'none';
+    // render lists and route to current page/hash
+    renderAll();
+    route(); // handle URL hash
+  } else {
+    alert('Invalid credentials');
+  }
+}
+function logout(){
+  if(confirm('Log out?')){ currentUser=null; document.getElementById('app').style.display='none'; document.getElementById('loginScreen').style.display='block'; location.hash=''; }
+}
+function showHelp(){ alert('Ask your county admin for an account. Admin user: dlyboult / F1Resource'); }
+function toggleSidebar(){ const sb=document.getElementById('sidebar'); if(window.innerWidth<=900){ sb.classList.toggle('show'); } else sb.classList.toggle('hidden'); }
+function navigateTo(page){ location.hash = '#/'+page; }
+
+/* ---- render lists ---- */
+function renderUsers(){
+  const target = document.getElementById('userList'); target.innerHTML='';
+  Object.keys(store.users).forEach(u=>{
+    const user = store.users[u];
+    const div=document.createElement('div'); div.className='listItem';
+    const label = `<div><strong>${u}</strong><div class="muted">Role: ${user.role}${user.agencyId ? ' • Agency: '+user.agencyId : ''}</div></div>`;
+    const actions = `<div style="display:flex;gap:8px"><button class="small" onclick="editUser('${u}')">Edit</button><button class="small" onclick="deleteUser('${u}')">Delete</button></div>`;
+    div.innerHTML = label + actions;
+    target.appendChild(div);
+  });
+}
+function renderFire(){
+  const target=document.getElementById('fireList'); target.innerHTML='';
+  store.fireAgencies.forEach(a=>{
+    const div=document.createElement('div'); div.className='listItem';
+    // link to subpage (hidden from nav)
+    const link = `<a href="#/fire/${a.id}" style="text-decoration:none;color:inherit"><strong>${a.name}</strong></a>`;
+    const meta = `<div class='muted'>Battalion: ${a.battalion||'-'} • Stations: ${(a.stations||[]).join('; ')}</div>`;
+    const actions = `<div style="display:flex;gap:8px">${canEditAgency(a.id)?`<button class="small" onclick="openEditFire('${a.id}')">Edit</button>`:''}<button class="small" onclick="deleteFire('${a.id}')">Delete</button></div>`;
+    div.innerHTML = `<div>${link}<div class="muted">${meta}</div></div>${actions}`;
+    target.appendChild(div);
+  });
+}
+function renderEMS(){
+  const target=document.getElementById('emsList'); target.innerHTML='';
+  store.emsAgencies.forEach(a=>{
+    const div=document.createElement('div'); div.className='listItem';
+    const link = `<a href="#/ems/${a.id}" style="text-decoration:none;color:inherit"><strong>${a.name}</strong></a>`;
+    const meta = `<div class='muted'>${(a.stations||[]).join('; ')}</div>`;
+    const actions = `<div style="display:flex;gap:8px">${canEditAgency(a.id)?`<button class="small" onclick="openEditEms('${a.id}')">Edit</button>`:''}<button class="small" onclick="deleteEms('${a.id}')">Delete</button></div>`;
+    div.innerHTML = `<div>${link}<div class="muted">${meta}</div></div>${actions}`;
+    target.appendChild(div);
+  });
+}
+function renderResources(){
+  const target=document.getElementById('resourceList'); target.innerHTML='';
+  store.resources.forEach(r=>{
+    const div=document.createElement('div'); div.className='listItem';
+    const link = `<a href="#/resource/${r.id}" style="text-decoration:none;color:inherit"><strong>${r.name}</strong></a>`;
+    const meta = `<div class='muted'>${r.capabilities||r.details||''}</div>`;
+    const actions = `<div style="display:flex;gap:8px">${canEditAny()?`<button class="small" onclick="openEditResource('${r.id}')">Edit</button>`:''}<button class="small" onclick="deleteResource('${r.id}')">Delete</button></div>`;
+    div.innerHTML = `<div>${link}<div class="muted">${meta}</div></div>${actions}`;
+    target.appendChild(div);
+  });
+}
+function renderCoordinators(){
+  const target=document.getElementById('coordinatorList'); target.innerHTML='';
+  store.coordinators.forEach(c=>{
+    const div=document.createElement('div'); div.className='listItem';
+    const link = `<a href="#/coord/${c.id}" style="text-decoration:none;color:inherit"><strong>${c.name}</strong></a>`;
+    const meta = `<div class='muted'>Callsign: ${c.callsign||''}</div>`;
+    const actions = `<div style="display:flex;gap:8px">${canEditAny()?`<button class="small" onclick="openEditCoordinator('${c.id}')">Edit</button>`:''}<button class="small" onclick="deleteCoordinator('${c.id}')">Delete</button></div>`;
+    div.innerHTML = `<div>${link}<div class="muted">${meta}</div></div>${actions}`;
+    target.appendChild(div);
+  });
+}
+
+function renderAll(){ renderUsers(); renderFire(); renderEMS(); renderResources(); renderCoordinators(); }
+
+/* ---- permissions helpers ---- */
+function isAdmin(){ if(!currentUser){ alert('Please log in'); return false; } return currentUser.role === 'ADMIN'; }
+function canEditAny(){ return currentUser && (currentUser.role==='ADMIN'); }
+function canEditAgency(agencyId){
+  if(!currentUser) return false;
+  if(currentUser.role === 'ADMIN') return true;
+  if(currentUser.role === 'DEPARTMENT' && currentUser.agencyId && currentUser.agencyId === agencyId) return true;
+  return false;
+}
+
+/* ---- CRUD user actions ---- */
+function addUser(){
+  if(!isAdmin()) return;
+  const username = prompt('New username (no spaces):');
+  if(!username) return;
+  if(store.users[username]){ alert('User exists'); return; }
+  const pass = prompt('Password for '+username+':') || 'changeme';
+  const role = prompt('Role (ADMIN / DEPARTMENT / TRIAL):','DEPARTMENT') || 'DEPARTMENT';
+  const user = { password: pass, role: role };
+  if(role === 'DEPARTMENT'){
+    // offer agency selection
+    const list = (store.fireAgencies.concat(store.emsAgencies)).map(a => `${a.id} : ${a.name}`).join('\\n');
+    const aid = prompt('Enter agency id this user belongs to (choose from list)\\n'+list);
+    if(aid) user.agencyId = aid;
+  }
+  store.users[username] = user;
+  saveStore(); renderUsers(); alert('User added: '+username);
+}
+function editUser(u){
+  if(!isAdmin()) return;
+  const user = store.users[u];
+  if(!user) return;
+  const pass = prompt('New password (leave blank to keep)', user.password) || user.password;
+  const role = prompt('Role (ADMIN/DEPARTMENT/TRIAL):', user.role) || user.role;
+  user.password = pass;
+  user.role = role;
+  if(role === 'DEPARTMENT'){
+    const list = (store.fireAgencies.concat(store.emsAgencies)).map(a => `${a.id} : ${a.name}`).join('\\n');
+    const aid = prompt('Enter agency id this user belongs to (choose from list)\\n'+list, user.agencyId || '');
+    user.agencyId = aid || null;
+  } else {
+    delete user.agencyId;
+  }
+  saveStore(); renderUsers();
+}
+function deleteUser(u){
+  if(!isAdmin()) return;
+  if(!confirm('Delete user '+u+'?')) return;
+  delete store.users[u];
+  saveStore(); renderUsers();
+}
+
+/* ---- Fire agency CRUD & subpage editing ---- */
+function addFireAgency(){
+  if(!isAdmin()) return;
+  const name = prompt('Agency name:');
+  if(!name) return;
+  const battalion = prompt('Battalion number (optional):') || '';
+  const stations = prompt('Stations (separate by | )') || '';
+  const apparatus = prompt('Apparatus (separate by | )') || '';
+  const id = uid();
+  store.fireAgencies.push({ id, name, battalion, stations: stations ? stations.split('|').map(s=>s.trim()) : [], apparatus: apparatus ? apparatus.split('|').map(s=>s.trim()) : [], contact:'', notes:'' });
+  saveStore(); renderFire(); alert('Fire agency added. Click its name to open full subpage.');
+}
+function openEditFire(id){
+  if(!canEditAgency(id)){ alert('No permission'); return; }
+  const a = store.fireAgencies.find(x=>x.id===id);
+  if(!a) return;
+  a.name = prompt('Agency name', a.name) || a.name;
+  a.battalion = prompt('Battalion', a.battalion) || a.battalion;
+  const st = prompt('Stations (separate by | )', (a.stations||[]).join('|')) || '';
+  a.stations = st ? st.split('|').map(s=>s.trim()) : [];
+  const ap = prompt('Apparatus (separate by | )', (a.apparatus||[]).join('|')) || '';
+  a.apparatus = ap ? ap.split('|').map(s=>s.trim()) : [];
+  a.contact = prompt('Contact info (phone/email)', a.contact || '') || a.contact;
+  a.notes = prompt('Notes', a.notes || '') || a.notes;
+  saveStore(); renderFire();
+}
+function deleteFire(id){ if(!isAdmin()) return; if(!confirm('Delete agency?')) return; store.fireAgencies = store.fireAgencies.filter(x=>x.id!==id); saveStore(); renderFire(); }
+
+/* ---- EMS CRUD ---- */
+function addEMSAgency(){
+  if(!isAdmin()) return;
+  const name = prompt('EMS agency name:');
+  if(!name) return;
+  const stations = prompt('Stations (separate by | )') || '';
+  const id = uid();
+  store.emsAgencies.push({ id, name, stations: stations ? stations.split('|').map(s=>s.trim()) : [], contact:'', notes:'' });
+  saveStore(); renderEMS(); alert('EMS added. Click its name to open full subpage.');
+}
+function openEditEms(id){
+  if(!canEditAgency(id)){ alert('No permission'); return; }
+  const a = store.emsAgencies.find(x=>x.id===id); if(!a) return;
+  a.name = prompt('Agency name', a.name) || a.name;
+  const st = prompt('Stations (separate by | )', (a.stations||[]).join('|')) || '';
+  a.stations = st ? st.split('|').map(s=>s.trim()) : [];
+  a.contact = prompt('Contact', a.contact || '') || a.contact;
+  a.notes = prompt('Notes', a.notes || '') || a.notes;
+  saveStore(); renderEMS();
+}
+function deleteEms(id){ if(!isAdmin()) return; if(!confirm('Delete EMS agency?')) return; store.emsAgencies = store.emsAgencies.filter(x=>x.id!==id); saveStore(); renderEMS(); }
+
+/* ---- Resources CRUD ---- */
+function addResource(){
+  if(!canEditAny()){ alert('Admin or Department required'); return; }
+  const name = prompt('Resource name:'); if(!name) return;
+  const capabilities = prompt('Capabilities (comma separated)') || '';
+  const details = prompt('Detailed notes') || '';
+  const id = uid();
+  store.resources.push({ id, name, capabilities, details });
+  saveStore(); renderResources(); alert('Resource added. Click name to open subpage.');
+}
+function openEditResource(id){
+  if(!canEditAny()){ alert('Admin only'); return; }
+  const r = store.resources.find(x=>x.id===id); if(!r) return;
+  r.name = prompt('Resource name', r.name) || r.name;
+  r.capabilities = prompt('Capabilities', r.capabilities) || r.capabilities;
+  r.details = prompt('Detailed notes', r.details) || r.details;
+  saveStore(); renderResources();
+}
+function deleteResource(id){ if(!isAdmin()) return; if(!confirm('Delete resource?')) return; store.resources = store.resources.filter(x=>x.id!==id); saveStore(); renderResources(); }
+
+/* ---- Coordinators CRUD ---- */
+function addCoordinator(){
+  if(!isAdmin()) return;
+  const name = prompt('Coordinator name'); if(!name) return;
+  const callsign = prompt('Callsign') || '';
+  const notes = prompt('Notes') || '';
+  const id = uid();
+  store.coordinators.push({ id, name, callsign, notes });
+  saveStore(); renderCoordinators(); alert('Coordinator added. Click name to open subpage.');
+}
+function openEditCoordinator(id){
+  if(!isAdmin()) return;
+  const c = store.coordinators.find(x=>x.id===id); if(!c) return;
+  c.name = prompt('Name', c.name) || c.name;
+  c.callsign = prompt('Callsign', c.callsign) || c.callsign;
+  c.notes = prompt('Notes', c.notes) || c.notes;
+  saveStore(); renderCoordinators();
+}
+function deleteCoordinator(id){ if(!isAdmin()) return; if(!confirm('Delete coordinator?')) return; store.coordinators = store.coordinators.filter(x=>x.id!==id); saveStore(); renderCoordinators(); }
+
+/* ---- HazMat search/editor (detailed) ---- */
+function lookupUN(){
+  const q = document.getElementById('unInput').value.trim();
+  if(!q){ alert('Enter a UN/NA number'); return; }
+  const db = store.hazmatDB || {};
+  const entry = db[q];
+  const target = document.getElementById('unResult');
+  if(!entry){
+    target.innerHTML = `<div class="sectionCard"><strong>Not found</strong><div class="muted">No record for UN ${q}. Admins can add entries to the HazMat DB (Add / Edit Database).</div></div>`;
+    return;
+  }
+  // render rich details
+  target.innerHTML = `
+    <div class="sectionCard">
+      <div style="display:flex;justify-content:space-between">
+        <div>
+          <h3 style="margin:0">${entry.name} — UN ${entry.un}</h3>
+          <div class="muted">${entry.proper_shipping_name || ''} • ${entry.hazard_class || ''}</div>
+        </div>
+        <div style="text-align:right">
+          ${(canEditAny()?`<button class="small" onclick="openHazmatEditor('${entry.un}')">Edit</button>`:'')}
+        </div>
+      </div>
+      <hr/>
+      <div style="display:grid;grid-template-columns:1fr;gap:8px">
+        <div><strong>Flammability / Fire Hazards:</strong> ${entry.flammability || '—'}</div>
+        <div><strong>Flash point:</strong> ${entry.flash_point || '—'}</div>
+        <div><strong>Water reactivity / behavior:</strong> ${entry.water_reactivity || '—'}</div>
+        <div><strong>Water reactive:</strong> ${entry.water_reactive ? 'Yes' : 'No'}</div>
+        <div><strong>Recommended extinguishing agent:</strong> ${entry.extinguishing_agent || '—'}</div>
+        <div><strong>PPE:</strong> ${entry.ppe || '—'}</div>
+        <div><strong>Health effects:</strong> ${entry.health_effects || '—'}</div>
+        <div><strong>Known reactive / incompatible materials:</strong> ${entry.reactivity || '—'}</div>
+        <div><strong>Initial isolation distance (small):</strong> ${entry.evacuation_small || '—'}</div>
+        <div><strong>Initial isolation distance (large):</strong> ${entry.evacuation_large || '—'}</div>
+        <div><strong>Notes / Response tips:</strong> ${entry.notes || '—'}</div>
+      </div>
+    </div>
+  `;
+}
+
+function openHazmatEditor(un){
+  if(!isAdmin()){ alert('Admin only'); return; }
+  let entry = un && store.hazmatDB && store.hazmatDB[un] ? store.hazmatDB[un] : null;
+  if(!confirm(un ? `Edit HazMat entry UN ${un}?` : 'Create new HazMat entry?')) return;
+  const newUn = prompt('UN number', entry ? entry.un : '');
+  if(!newUn) return;
+  const obj = {};
+  obj.un = newUn;
+  obj.name = prompt('Common name', entry ? entry.name : '') || '';
+  obj.proper_shipping_name = prompt('Proper shipping name', entry ? entry.proper_shipping_name : '') || obj.name;
+  obj.hazard_class = prompt('Hazard class', entry ? entry.hazard_class : '') || '';
+  obj.flammability = prompt('Flammability / fire hazards', entry ? entry.flammability : '') || '';
+  obj.flash_point = prompt('Flash point (if known)', entry ? entry.flash_point : '') || '';
+  obj.water_reactivity = prompt('Water reactivity / behavior', entry ? entry.water_reactivity : '') || '';
+  obj.water_reactive = (prompt('Water reactive? (true/false)', entry ? (entry.water_reactive?'true':'false') : 'false')||'false') === 'true';
+  obj.extinguishing_agent = prompt('Recommended extinguishing agent', entry ? entry.extinguishing_agent : '') || '';
+  obj.ppe = prompt('PPE recommendation', entry ? entry.ppe : '') || '';
+  obj.health_effects = prompt('Health effects / exposure', entry ? entry.health_effects : '') || '';
+  obj.reactivity = prompt('Reactive / incompatible materials (comma separated)', entry ? entry.reactivity : '') || '';
+  obj.evacuation_small = prompt('Initial isolation distance (small)', entry ? entry.evacuation_small : '') || '';
+  obj.evacuation_large = prompt('Initial isolation distance (large)', entry ? entry.evacuation_large : '') || '';
+  obj.notes = prompt('Additional notes / response tips', entry ? entry.notes : '') || '';
+  store.hazmatDB = store.hazmatDB || {};
+  store.hazmatDB[newUn] = obj;
+  saveStore(); alert('Saved HazMat entry UN '+newUn);
+}
+
+/* ---- Subpage routing & rendering ---- */
+window.addEventListener('hashchange', route);
+function route(){
+  const hash = location.hash || '#/home';
+  // if hash pattern matches our subpage formats
+  // patterns: #/fire/<id>, #/ems/<id>, #/resource/<id>, #/coord/<id>, #/<page>
+  const subpageContainer = document.getElementById('subpageContainer');
+  subpageContainer.innerHTML = ''; // clear any existing subpage
+  const parts = hash.replace(/^#\//,'').split('/');
+  if(parts[0] === 'fire' && parts[1]){
+    const id = parts[1];
+    showOnly('subpage'); renderFireSubpage(id);
+    return;
+  }
+  if(parts[0] === 'ems' && parts[1]){
+    const id = parts[1];
+    showOnly('subpage'); renderEmsSubpage(id);
+    return;
+  }
+  if(parts[0] === 'resource' && parts[1]){
+    const id = parts[1];
+    showOnly('subpage'); renderResourceSubpage(id);
+    return;
+  }
+  if(parts[0] === 'coord' && parts[1]){
+    const id = parts[1];
+    showOnly('subpage'); renderCoordinatorSubpage(id);
+    return;
+  }
+  // standard named pages (home, fireAgencies, etc.)
+  if(parts[0] === 'home') showOnly('home');
+  else if(parts[0] === 'countyResources') showOnly('countyResources');
+  else if(parts[0] === 'countyCoordinators') showOnly('countyCoordinators');
+  else if(parts[0] === 'fireAgencies') showOnly('fireAgencies');
+  else if(parts[0] === 'emsAgencies') showOnly('emsAgencies');
+  else if(parts[0] === 'hazmatSearch') showOnly('hazmatSearch');
+  else if(parts[0] === 'evSafety') showOnly('evSafety');
+  else if(parts[0] === 'adminUsers') showOnly('adminUsers');
+  else if(parts[0] === 'adminImport') showOnly('adminImport');
+  else if(parts[0] === 'weather') showOnly('weather');
+  else showOnly('home');
+}
+
+function showOnly(pageId){
+  // hide all pages and subpage container, then show target page or keep subpage visible
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.getElementById('subpageContainer').style.display = (pageId === 'subpage') ? 'block' : 'none';
+  if(pageId !== 'subpage'){
+    const el = document.getElementById(pageId);
+    if(el) el.style.display = 'block';
+    document.getElementById('subpageContainer').innerHTML = '';
+  } else {
+    // keep no main page visible; subpage container will be filled by renderer
+    document.getElementById('subpageContainer').style.display = 'block';
+  }
+}
+
+/* --- Subpage renderers --- */
+function renderFireSubpage(id){
+  const item = store.fireAgencies.find(x=>x.id===id);
+  if(!item){ document.getElementById('subpageContainer').innerHTML = `<div class="sectionCard"><strong>Not found</strong></div>`; return; }
+  const canEdit = canEditAgency(id);
+  const html = document.createElement('div');
+  html.className = 'subpage-card';
+  html.innerHTML = `
+    <div style="display:flex;justify-content:space-between">
+      <div>
+        <h2 style="margin:0">${item.name}</h2>
+        <div class="muted">Battalion: ${item.battalion||'-'}</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        ${canEdit ? `<button class="small" onclick="openEditFire('${item.id}')">Edit</button>` : ''}
+        <button class="small" onclick="copyLink(location.origin + location.pathname + '#/fire/${item.id}')">Copy Link</button>
+      </div>
+    </div>
+    <hr/>
+    <div style="margin-top:8px">
+      <div><strong>Stations:</strong><div class="muted">${(item.stations||[]).join('<br/>')||'—'}</div></div>
+      <div style="margin-top:8px"><strong>Apparatus:</strong><div class="muted">${(item.apparatus||[]).join('<br/>')||'—'}</div></div>
+      <div style="margin-top:8px"><strong>Contact:</strong><div class="muted">${item.contact||'—'}</div></div>
+      <div style="margin-top:8px"><strong>Notes:</strong><div class="muted">${item.notes||'—'}</div></div>
+    </div>
+  `;
+  const container = document.getElementById('subpageContainer'); container.innerHTML=''; container.appendChild(html);
+}
+
+function renderEmsSubpage(id){
+  const item = store.emsAgencies.find(x=>x.id===id);
+  if(!item){ document.getElementById('subpageContainer').innerHTML = `<div class="sectionCard"><strong>Not found</strong></div>`; return; }
+  const canEdit = canEditAgency(id);
+  const html = document.createElement('div'); html.className='subpage-card';
+  html.innerHTML = `
+    <div style="display:flex;justify-content:space-between">
+      <div><h2 style="margin:0">${item.name}</h2><div class="muted"></div></div>
+      <div style="display:flex;gap:8px">${canEdit?`<button class="small" onclick="openEditEms('${item.id}')">Edit</button>`:''}<button class="small" onclick="copyLink(location.origin + location.pathname + '#/ems/${item.id}')">Copy Link</button></div>
+    </div>
+    <hr/>
+    <div>
+      <div><strong>Stations:</strong><div class="muted">${(item.stations||[]).join('<br/>')||'—'}</div></div>
+      <div style="margin-top:8px"><strong>Contact:</strong><div class="muted">${item.contact||'—'}</div></div>
+      <div style="margin-top:8px"><strong>Notes:</strong><div class="muted">${item.notes||'—'}</div></div>
+    </div>
+  `;
+  const container=document.getElementById('subpageContainer'); container.innerHTML=''; container.appendChild(html);
+}
+
+function renderResourceSubpage(id){
+  const item = store.resources.find(x=>x.id===id);
+  if(!item){ document.getElementById('subpageContainer').innerHTML=`<div class="sectionCard"><strong>Not found</strong></div>`; return; }
+  const canEdit = canEditAny();
+  const html = document.createElement('div'); html.className='subpage-card';
+  html.innerHTML = `
+    <div style="display:flex;justify-content:space-between">
+      <div><h2 style="margin:0">${item.name}</h2><div class="muted">${item.capabilities||''}</div></div>
+      <div>${canEdit?`<button class="small" onclick="openEditResource('${item.id}')">Edit</button>`:''}<button class="small" onclick="copyLink(location.origin + location.pathname + '#/resource/${item.id}')">Copy Link</button></div>
+    </div>
+    <hr/>
+    <div><strong>Details:</strong><div class="muted" style="margin-top:6px">${item.details||'—'}</div></div>
+  `;
+  const container=document.getElementById('subpageContainer'); container.innerHTML=''; container.appendChild(html);
+}
+
+function renderCoordinatorSubpage(id){
+  const item = store.coordinators.find(x=>x.id===id);
+  if(!item){ document.getElementById('subpageContainer').innerHTML=`<div class="sectionCard"><strong>Not found</strong></div>`; return; }
+  const canEdit = canEditAny();
+  const html=document.createElement('div'); html.className='subpage-card';
+  html.innerHTML = `
+    <div style="display:flex;justify-content:space-between">
+      <div><h2 style="margin:0">${item.name}</h2><div class="muted">Callsign: ${item.callsign||''}</div></div>
+      <div>${canEdit?`<button class="small" onclick="openEditCoordinator('${item.id}')">Edit</button>`:''}<button class="small" onclick="copyLink(location.origin + location.pathname + '#/coord/${item.id}')">Copy Link</button></div>
+    </div>
+    <hr/>
+    <div><strong>Notes:</strong><div class="muted" style="margin-top:6px">${item.notes||'—'}</div></div>
+  `;
+  const container=document.getElementById('subpageContainer'); container.innerHTML=''; container.appendChild(html);
+}
+
+/* copy link helper */
+function copyLink(text){
+  if(!navigator.clipboard){ prompt('Copy link:', text); return; }
+  navigator.clipboard.writeText(text).then(()=>alert('Link copied to clipboard'));
+}
+
+/* ---- Weather (Geolocation + Open-Meteo) ---- */
+async function getWeatherByGeolocation(){
+  const target = document.getElementById('weatherResult');
+  if(!navigator.geolocation){ target.innerHTML = '<div class="muted">Geolocation not supported by your browser.</div>'; return; }
+  target.innerHTML = '<div class="muted">Requesting location — allow the browser to share your position.</div>';
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const lat = pos.coords.latitude; const lon = pos.coords.longitude;
+    document.getElementById('weatherLat').value = lat; document.getElementById('weatherLon').value = lon;
+    await fetchWeatherAndRender(lat, lon);
+  }, err => {
+    target.innerHTML = `<div class="muted">Location denied or unavailable: ${err.message}</div>`;
+  }, { enableHighAccuracy: true, timeout: 10000 });
+}
+async function getWeatherFallback(){
+  const lat = document.getElementById('weatherLat').value.trim();
+  const lon = document.getElementById('weatherLon').value.trim();
+  if(!lat || !lon){ alert('Enter latitude and longitude or use My Location'); return; }
+  await fetchWeatherAndRender(lat, lon);
+}
+async function fetchWeatherAndRender(lat, lon){
+  const target = document.getElementById('weatherResult');
+  target.innerHTML = '<div class="muted">Loading weather...</div>';
+  try{
+    // Open-Meteo free API (no key) for current weather + hourly
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&hourly=temperature_2m,precipitation,winddirection_10m,windspeed_10m&current_weather=true&timezone=auto&past_days=0&forecast_days=2`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Weather fetch failed');
+    const data = await res.json();
+    const cur = data.current_weather || {};
+    const hourly = data.hourly || {};
+    const nowStr = cur.temperature !== undefined ? `Temperature: ${cur.temperature}°C` : '';
+    let html = `<div><strong>Current</strong> — ${nowStr} • Wind: ${cur.windspeed||'—'} m/s • Direction: ${cur.winddirection||'—'}°</div>`;
+    // quick 24h forecast summary (min/max temperature)
+    if(hourly.temperature_2m && hourly.time){
+      const temps = hourly.temperature_2m.slice(0,24).map(Number);
+      const tmin = Math.min(...temps); const tmax = Math.max(...temps);
+      html += `<div style="margin-top:8px"><strong>24h forecast</strong> — Min: ${tmin}°C • Max: ${tmax}°C</div>`;
+    }
+    html += `<div class="muted" style="margin-top:8px">Source: Open-Meteo (no API key required)</div>`;
+    target.innerHTML = html;
+  } catch(e){
+    target.innerHTML = `<div class="muted">Unable to load weather: ${e.message}</div>`;
+  }
+}
+
+/* ---- EV placeholder ---- */
+function evSearch(){ document.getElementById('evResult').innerHTML = '<div class="muted">Vehicle lookup not connected. Admin may add manufacturer rescue links later.</div>' }
+
+/* ---- Import / Export ---- */
+function exportData(){
+  const raw = JSON.stringify(store, null, 2);
+  // show in prompt for copy (simpler cross-browser)
+  prompt('Copy this JSON to backup/export:', raw);
+}
+function importData(){
+  if(!isAdmin()) return;
+  const raw = prompt('Paste JSON to import (this will overwrite local data):');
+  if(!raw) return;
+  try{
+    const parsed = JSON.parse(raw);
+    if(!confirm('Importing will overwrite your local data. Continue?')) return;
+    store = parsed; saveStore(); renderAll(); alert('Imported data.');
+  } catch(e){
+    alert('Invalid JSON');
+  }
+}
+
+/* ---- helpers for edit permissions used earlier ---- */
+function canEditAny(){ return currentUser && currentUser.role === 'ADMIN'; }
+
+/* ---- initial render & route on load ---- */
+function renderOnLoad(){
+  // show login if not logged in
+  document.getElementById('loginScreen').style.display = 'block';
+  // hook up hash routing even before login, but route() will show login until successful
+  window.addEventListener('hashchange', ()=>{ if(currentUser) route(); });
+}
+renderOnLoad();
+document.addEventListener('DOMContentLoaded', ()=>{ renderAll(); route(); });
+
+</script>
+</body>
+</html>
