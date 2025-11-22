@@ -33,13 +33,13 @@
       <h3>F1 Resource</h3>
       <nav>
         <a onclick="showPage('home')">Home</a>
-        <a onclick="showPage('admin')">Admin</a>
+        <a id="adminLink" onclick="showPage('admin')">Admin</a>
       </nav>
     </aside>
     <main id="content">
       <section id="home" class="page">
         <h1>Welcome</h1>
-        <p>This is F1 Resource, your all inclusive app for Oswego County resources.</p>
+        <p>This is F1 Resource, your all-inclusive app for Oswego County resources.</p>
       </section>
       <section id="admin" class="page" style="display:none;">
         <h2>Admin Panel</h2>
@@ -50,58 +50,39 @@
   </div>
 </div>
 
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
-    authDomain: "f1resource-8fedc.firebaseapp.com",
-    databaseURL: "https://f1resource-8fedc-default-rtdb.firebaseio.com",
-    projectId: "f1resource-8fedc",
-    storageBucket: "f1resource-8fedc.firebasestorage.app",
-    messagingSenderId: "182745701982",
-    appId: "1:182745701982:web:9f4f3836b41b450987decf"
+<script>
+  // ---- Local login system ----
+  const users = {
+    'dlyboult': { password: 'F1Resource', role: 'ADMIN' },
+    'dept1': { password: 'password', role: 'DEPARTMENT' }
   };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase();
 
   let currentUser = null;
 
-  // Default flat database
-  const defaultDB = {
-    users: { dlyboult: { password: "F1Resource", role: "ADMIN" } },
-    departments: {}
-  };
-
-  // Preload database if empty
-  const rootRef = ref(db, '/');
-  onValue(rootRef, (snapshot) => {
-    if (!snapshot.exists()) {
-      set(rootRef, defaultDB);
-    } else {
-      renderUsers(snapshot.val().users);
-    }
-  });
+  document.getElementById('loginScreen').style.display = 'block';
 
   function login() {
     const u = document.getElementById('username').value.trim();
     const p = document.getElementById('password').value.trim();
-    const usersRef = ref(db, '/users/' + u);
-    onValue(usersRef, (snap) => {
-      const user = snap.val();
-      if (user && user.password === p) {
-        currentUser = { username: u, role: user.role };
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        if (currentUser.role !== 'ADMIN') document.querySelector("#admin").style.display = 'none';
-        showPage('home');
+    if (!u || !p) { alert('Enter username and password'); return; }
+
+    if (users[u] && users[u].password === p) {
+      currentUser = { username: u, role: users[u].role };
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+
+      // Show admin panel only for ADMIN
+      if (currentUser.role === 'ADMIN') {
+        document.getElementById('adminLink').style.display = 'block';
+        renderUsers();
       } else {
-        alert('Invalid credentials');
+        document.getElementById('adminLink').style.display = 'none';
       }
-    }, { onlyOnce: true });
+
+      showPage('home');
+    } else {
+      alert('Invalid credentials');
+    }
   }
 
   function showPage(id) {
@@ -110,26 +91,27 @@
     if (el) el.style.display = 'block';
   }
 
-  function renderUsers(users) {
+  // ---- Admin panel ----
+  function renderUsers() {
     const target = document.getElementById('userList');
-    if (!target) return;
     target.innerHTML = '';
     for (const u in users) {
-      const user = users[u];
       const div = document.createElement('div');
-      div.textContent = `${u} - ${user.role}`;
+      div.textContent = `${u} - ${users[u].role}`;
       target.appendChild(div);
     }
   }
 
   function addUser() {
     const newUser = prompt("New username:");
+    if (!newUser) return;
     const pass = prompt("Password:");
     const role = prompt("Role (ADMIN/DEPARTMENT/TRIAL):", "DEPARTMENT");
-    if (!newUser) return;
-    set(ref(db, '/users/' + newUser), { password: pass, role: role });
+    users[newUser] = { password: pass, role: role };
+    renderUsers();
+    alert('User added: ' + newUser);
   }
-
 </script>
+
 </body>
 </html>
