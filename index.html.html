@@ -5,274 +5,346 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>F1 Resource</title>
 <style>
-:root{--primary:#002b5c;--accent:#0b5fff;--muted:#6b7280;--card:#ffffff}
-body { margin:0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; background:#eef2f5; color:#0f1724 }
-#loginScreen, #app { display:none; }
-.centerBox { max-width:460px; margin:64px auto; padding:26px; background:var(--card); border-radius:12px; box-shadow:0 6px 30px rgba(2,6,23,0.08); }
-input, select { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #d1d5db; font-size:15px; }
-button { padding:10px 14px; background:var(--primary); border:none; color:white; font-size:15px; border-radius:8px; cursor:pointer; }
-button.ghost{background:transparent;color:var(--primary);border:1px solid #d1d5db}
-button.small{padding:6px 10px;font-size:13px}
-#layout { display:flex; height:100vh; }
-#sidebar { width:260px; background:var(--primary); color:white; padding:18px; transition:0.25s; overflow-y:auto; }
-#sidebar.hidden { width:0; padding:0; overflow:hidden; }
-#sidebar h2 { margin:0 0 12px;font-size:18px }
-#sidebar a { display:block; color:white; padding:10px 0; cursor:pointer; font-size:15px; text-decoration:none }
-#sidebar a:hover { text-decoration:underline }
-#content { flex:1; padding:20px; overflow-y:auto; }
-#toggleMenu { position:fixed; top:12px; left:12px; background:var(--primary); color:white; border:none; padding:10px; border-radius:8px; font-size:18px; z-index:50 }
-.sectionCard { background:var(--card); padding:18px; border-radius:10px; margin-bottom:18px; box-shadow:0 6px 20px rgba(2,6,23,0.06); }
-.listItem{padding:10px;border-radius:8px;border:1px solid #eef2ff;margin-top:8px;background:#fff;display:flex;justify-content:space-between;align-items:center}
-.muted{color:var(--muted);font-size:13px}
-textarea { width:100%; min-height:100px; padding:10px; border-radius:8px; border:1px solid #d1d5db }
-@media (max-width:900px){ #layout{flex-direction:column} #sidebar{width:100%;position:fixed;left:0;top:0;transform:translateY(-150%)} #sidebar.show{transform:translateY(0)} #toggleMenu{position:fixed;left:8px;top:8px} }
+  /* --- Variables --- */
+  :root {
+    --primary: #002b5c;
+    --accent: #0b5fff;
+    --muted: #6b7280;
+    --card: #ffffff;
+    --danger: #dc2626;
+    --success: #16a34a;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+    background: #f1f5f9;
+    color: #0f1724;
+  }
+
+  button {
+    cursor: pointer;
+    border-radius: 8px;
+    border: none;
+    padding: 10px 14px;
+    font-size: 15px;
+    background: var(--primary);
+    color: #fff;
+  }
+
+  button.ghost {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+  }
+
+  button.small {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 15px;
+  }
+
+  .centerBox {
+    max-width: 480px;
+    margin: 64px auto;
+    padding: 26px;
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 6px 30px rgba(2,6,23,0.08);
+  }
+
+  #layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #sidebar {
+    width: 260px;
+    background: var(--primary);
+    color: #fff;
+    padding: 18px;
+    transition: 0.25s;
+    overflow-y: auto;
+  }
+
+  #sidebar.hidden {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #sidebar h2 { margin:0 0 12px; font-size:18px; }
+  #sidebar a { display:block; color:#fff; padding:10px 0; font-size:15px; text-decoration:none; cursor:pointer; }
+  #sidebar a:hover { text-decoration: underline; }
+
+  #content { flex:1; padding:20px; overflow-y:auto; }
+
+  #toggleMenu {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 18px;
+    z-index: 50;
+  }
+
+  .sectionCard {
+    background: var(--card);
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 20px rgba(2,6,23,0.06);
+  }
+
+  .listItem {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #eef2f5;
+    margin-top: 8px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .muted { color: var(--muted); font-size: 13px; }
+
+  @media (max-width: 900px){
+    #layout { flex-direction: column; }
+    #sidebar { width: 100%; position: fixed; left: 0; top: 0; transform: translateY(-150%); }
+    #sidebar.show { transform: translateY(0); }
+    #toggleMenu { position: fixed; left: 8px; top: 8px; }
+  }
 </style>
 </head>
 <body>
 
+<!-- Login Screen -->
 <div id="loginScreen" class="centerBox" role="dialog" aria-modal="true">
-<h2 style="margin:0 0 8px">F1 Resource Login</h2>
-<div class="muted" style="margin-bottom:10px">Restricted to authorized fire department members</div>
-<input id="username" placeholder="Username" aria-label="username" />
-<input id="password" placeholder="Password" type="password" aria-label="password" />
-<div style="display:flex;gap:8px;margin-top:10px">
-<button onclick="login()">Login</button>
-<button class="ghost" onclick="showHelp()">Help</button>
-</div>
-<div class="muted" style="margin-top:12px">Admin user: <strong>dlyboult</strong> / <strong>F1Resource</strong></div>
-</div>
-
-<div id="app" aria-hidden="true">
-<button id="toggleMenu" onclick="toggleSidebar()">☰</button>
-<div id="layout">
-
-<aside id="sidebar" aria-label="Main navigation">
-<h2>F1 Resource</h2>
-<div class="muted">Oswego County</div>
-<nav style="margin-top:16px">
-<a onclick="showPage('home')">Home</a>
-<a onclick="showPage('countyResources')">County Resources</a>
-<a onclick="showPage('countyCoordinators')">County Coordinators</a>
-<a onclick="showPage('fireAgencies')">Fire Agencies</a>
-<a onclick="showPage('emsAgencies')">EMS Agencies</a>
-<a onclick="showPage('hazmatSearch')">Hazardous Material Search</a>
-<a onclick="showPage('evSafety')">Electric Vehicle Safety</a>
-</nav>
-<hr style="border:none;border-top:1px solid #0b2540;margin:14px 0" />
-<div id="adminControls" style="display:none">
-<div style="font-weight:700;margin-bottom:6px">Admin</div>
-<a onclick="showPage('adminUsers')">Manage Users</a>
-</div>
-<div style="margin-top:14px" class="muted">Version 1.0 — Firebase mode</div>
-</aside>
-
-<main id="content">
-
-<section id="home" class="page">
-<div class="sectionCard">
-<h1 style="margin:0 0 6px">WELCOME</h1>
-<div class="muted">This is <strong>F1 Resource</strong>, your all-inclusive application for Oswego County resources.</div>
-</div>
-</section>
-
-<section id="countyResources" class="page" style="display:none">
-<div class="sectionCard">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<h2 style="margin:0">County Resources</h2>
-<div><button class="small" onclick="addResource()">Add Resource</button></div>
-</div>
-<div id="resourceList" style="margin-top:12px"></div>
-</div>
-</section>
-
-<section id="countyCoordinators" class="page" style="display:none">
-<div class="sectionCard">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<h2 style="margin:0">County Coordinators</h2>
-<div><button class="small" onclick="addCoordinator()">Add Coordinator</button></div>
-</div>
-<div id="coordinatorList" style="margin-top:12px"></div>
-</div>
-</section>
-
-<section id="fireAgencies" class="page" style="display:none">
-<div class="sectionCard">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<h2 style="margin:0">Fire Agencies</h2>
-<div><button class="small" onclick="addFireAgency()">Add Fire Agency</button></div>
-</div>
-<div id="fireList" style="margin-top:12px"></div>
-</div>
-</section>
-
-<section id="emsAgencies" class="page" style="display:none">
-<div class="sectionCard">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<h2 style="margin:0">EMS Agencies</h2>
-<div><button class="small" onclick="addEMSAgency()">Add EMS Agency</button></div>
-</div>
-<div id="emsList" style="margin-top:12px"></div>
-</div>
-</section>
-
-<section id="hazmatSearch" class="page" style="display:none">
-<div class="sectionCard">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<h2 style="margin:0">Hazardous Material Search</h2>
-<div><button class="small" onclick="openHazmatEditor()">Add / Edit Database</button></div>
-</div>
-<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-<input id="unInput" placeholder="UN/NA number (e.g. 1203)" style="flex:1;min-width:180px" />
-<input id="placardInput" placeholder="Placard number (if different)" style="width:160px" />
-<button onclick="lookupUN()">Search</button>
-</div>
-<div id="unResult" style="margin-top:12px"></div>
-</div>
-</section>
-
-<section id="evSafety" class="page" style="display:none">
-<div class="sectionCard">
-<h2 style="margin:0">Electric Vehicle Safety</h2>
-<div class="muted" style="margin-top:8px">Search by VIN / plate or Year, Make, Model. Admin preloaded EV safety data.</div>
-<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-<input id="plate" placeholder="License Plate (optional)" style="flex:1;min-width:160px" />
-<input id="vin" placeholder="VIN (optional)" style="flex:1;min-width:160px" />
-<input id="ymm" placeholder="Year,Make,Model" style="flex:1;min-width:160px" />
-<button onclick="evSearch()">Find Vehicle</button>
-</div>
-<div id="evResult" style="margin-top:12px"></div>
-</div>
-</section>
-
-<section id="adminUsers" class="page" style="display:none">
-<div class="sectionCard">
-<h2 style="margin:0">Manage Users & Roles</h2>
-<div class="muted" style="margin-top:8px">Admins can add/edit/delete users and change roles (ADMIN / DEPARTMENT / TRIAL).</div>
-<div style="margin-top:12px"><button class="small" onclick="addUser()">Add User</button></div>
-<div id="userList" style="margin-top:12px"></div>
-</div>
-</section>
-
-</main>
-</div>
+  <h2>F1 Resource Login</h2>
+  <div class="muted">Restricted to authorized fire department members</div>
+  <input id="username" placeholder="Username" aria-label="Username">
+  <input id="password" type="password" placeholder="Password" aria-label="Password">
+  <div style="display:flex;gap:8px;margin-top:10px">
+    <button onclick="login()">Login</button>
+    <button class="ghost" onclick="showHelp()">Help</button>
+  </div>
+  <div class="muted" style="margin-top:12px">
+    Admin: <strong>dlyboult</strong> / <strong>F1Resource</strong>
+  </div>
 </div>
 
+<!-- App Layout -->
+<div id="app" style="display:none">
+  <button id="toggleMenu" onclick="toggleSidebar()">☰</button>
+  <div id="layout">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" aria-label="Main navigation">
+      <h2>F1 Resource</h2>
+      <div class="muted">Oswego County</div>
+      <nav style="margin-top:16px">
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('fireAgencies')">Fire Agencies</a>
+        <a onclick="showPage('emsAgencies')">EMS Agencies</a>
+        <a onclick="showPage('countyResources')">County Resources</a>
+        <a onclick="showPage('countyCoordinators')">County Coordinators</a>
+        <a onclick="showPage('hazmatSearch')">Hazardous Materials</a>
+        <a onclick="showPage('evSafety')">EV Safety</a>
+      </nav>
+      <hr style="border:none;border-top:1px solid #0b2540;margin:14px 0" />
+      <div id="adminControls" style="display:none">
+        <div style="font-weight:700;margin-bottom:6px">Admin</div>
+        <a onclick="showPage('manageUsers')">Manage Users</a>
+      </div>
+      <div style="margin-top:14px" class="muted">Version 1.0 — Online</div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="content">
+
+      <!-- Home -->
+      <section id="home" class="page">
+        <div class="sectionCard">
+          <h1>WELCOME</h1>
+          <div class="muted">This is <strong>F1 Resource</strong>, your all-inclusive app for Oswego County Fire Service resources.</div>
+        </div>
+      </section>
+
+      <!-- Fire Agencies -->
+      <section id="fireAgencies" class="page" style="display:none">
+        <div class="sectionCard">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>Fire Agencies</h2>
+            <div><button class="small" onclick="addFireAgency()">Add Fire Agency</button></div>
+          </div>
+          <div id="fireList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <!-- EMS Agencies -->
+      <section id="emsAgencies" class="page" style="display:none">
+        <div class="sectionCard">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>EMS Agencies</h2>
+            <div><button class="small" onclick="addEMSAgency()">Add EMS Agency</button></div>
+          </div>
+          <div id="emsList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <!-- County Resources -->
+      <section id="countyResources" class="page" style="display:none">
+        <div class="sectionCard">
+          <h2>County Resources</h2>
+          <div><button class="small" onclick="addResource()">Add Resource</button></div>
+          <div id="resourceList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <!-- County Coordinators -->
+      <section id="countyCoordinators" class="page" style="display:none">
+        <div class="sectionCard">
+          <h2>County Coordinators</h2>
+          <div><button class="small" onclick="addCoordinator()">Add Coordinator</button></div>
+          <div id="coordinatorList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <!-- HazMat -->
+      <section id="hazmatSearch" class="page" style="display:none">
+        <div class="sectionCard">
+          <h2>Hazardous Material Search</h2>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+            <input id="unInput" placeholder="UN/NA number">
+            <button onclick="lookupUN()">Search</button>
+          </div>
+          <div id="unResult" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <!-- EV Safety -->
+      <section id="evSafety" class="page" style="display:none">
+        <div class="sectionCard">
+          <h2>Electric Vehicle Safety</h2>
+          <div class="muted">Preloaded manufacturer rescue info. Admin can update links.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+            <input id="evVIN" placeholder="VIN">
+            <input id="evPlate" placeholder="License Plate">
+            <input id="evYMM" placeholder="Year,Make,Model">
+            <button onclick="evSearch()">Search</button>
+          </div>
+          <div id="evResult" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+      <!-- Manage Users -->
+      <section id="manageUsers" class="page" style="display:none">
+        <div class="sectionCard">
+          <h2>Manage Users</h2>
+          <div><button class="small" onclick="addUser()">Add User</button></div>
+          <div id="userList" style="margin-top:12px"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+import { getDatabase, ref, set, get, child, onValue, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
-authDomain: "f1resource-8fedc.firebaseapp.com",
-databaseURL: "https://f1resource-8fedc-default-rtdb.firebaseio.com",
-projectId: "f1resource-8fedc",
-storageBucket: "f1resource-8fedc.firebasestorage.app",
-messagingSenderId: "182745701982",
-appId: "1:182745701982:web:9f4f3836b41b450987decf"
+  apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
+  authDomain: "f1resource-8fedc.firebaseapp.com",
+  databaseURL: "https://f1resource-8fedc-default-rtdb.firebaseio.com",
+  projectId: "f1resource-8fedc",
+  storageBucket: "f1resource-8fedc.firebasestorage.app",
+  messagingSenderId: "182745701982",
+  appId: "1:182745701982:web:9f4f3836b41b450987decf"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const storeRef = ref(db,'store');
-let store = {};
+
+/* --- Local login --- */
 let currentUser = null;
+const users = { dlyboult: {password:'F1Resource', role:'ADMIN'} };
 
-/* ---- Load initial data from Firebase ---- */
-onValue(storeRef,(snapshot)=>{
-  if(snapshot.exists()){ store = snapshot.val(); }
-  else{
-    store = { users:{'dlyboult':{password:'F1Resource',role:'ADMIN'}}, fireAgencies:[], emsAgencies:[], resources:[], coordinators:[], hazmatDB:{} };
-    set(storeRef,store);
-  }
-  renderAll();
-  document.getElementById('loginScreen').style.display='block';
-});
-
-/* ---- Save function ---- */
-function save(){ set(storeRef,store); }
-
-/* ---- Login ---- */
 function login(){
-  const u=document.getElementById('username').value.trim();
-  const p=document.getElementById('password').value.trim();
-  if(!u||!p){ alert('Enter username and password'); return; }
-  const user = store.users[u];
-  if(user && user.password===p){
-    currentUser={username:u,role:user.role};
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  if(!u || !p) { alert('Enter username/password'); return; }
+  if(users[u] && users[u].password===p){
+    currentUser = {username:u, role: users[u].role};
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('app').style.display='block';
-    document.getElementById('app').setAttribute('aria-hidden','false');
-    document.getElementById('adminControls').style.display=(user.role==='ADMIN')?'block':'none';
-    showPage('home'); renderAll();
-  } else{ alert('Invalid credentials'); }
+    document.getElementById('adminControls').style.display=(currentUser.role==='ADMIN')?'block':'none';
+    showPage('home');
+    loadAllData();
+  } else { alert('Invalid credentials'); }
 }
 
-function showHelp(){ alert('If you do not have an account ask your county admin. Admin user: dlyboult / F1Resource'); }
-function toggleSidebar(){ const sb=document.getElementById('sidebar'); if(window.innerWidth<=900){ sb.classList.toggle('show'); } else { sb.classList.toggle('hidden'); } }
-function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.style.display='none'); const el=document.getElementById(id); if(el) el.style.display='block'; }
+function showHelp(){ alert('Admin user: dlyboult / F1Resource'); }
+function toggleSidebar(){ const sb = document.getElementById('sidebar'); sb.classList.toggle('hidden'); }
+function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.style.display='none'); document.getElementById(id).style.display='block'; }
 
-/* ---- Admin check ---- */
-function isAdmin(){ return currentUser && currentUser.role==='ADMIN'; }
-
-/* ---- Render all lists ---- */
-function renderAll(){
-  renderUsers(); renderFire(); renderEMS(); renderResources(); renderCoordinators();
+/* --- Data Handling --- */
+function loadAllData(){
+  const dbRef = ref(db, 'f1Resource');
+  onValue(dbRef, (snapshot)=>{
+    const data = snapshot.val() || {};
+    renderFire(data.fireAgencies||[]);
+    renderEMS(data.emsAgencies||[]);
+    renderResources(data.resources||[]);
+    renderCoordinators(data.coordinators||[]);
+  });
 }
 
-/* ---- Users ---- */
-function renderUsers(){
-  const target=document.getElementById('userList'); target.innerHTML='';
-  Object.keys(store.users).forEach(u=>{
-    const user=store.users[u];
-    const div=document.createElement('div'); div.className='listItem';
-    div.innerHTML=`<div><strong>${u}</strong><div class="muted">Role: ${user.role}</div></div>
-      <div style="display:flex;gap:8px">
-        <button class="small" onclick="editUser('${u}')">Edit</button>
-        <button class="small" onclick="deleteUser('${u}')">Delete</button>
+function saveData(path, value){ set(ref(db, path), value); }
+
+/* --- Render Functions (example for fire) --- */
+function renderFire(list){
+  const target = document.getElementById('fireList');
+  target.innerHTML='';
+  list.forEach(a=>{
+    const div = document.createElement('div');
+    div.className='listItem';
+    div.innerHTML = `<div><strong>${a.name}</strong><div class='muted'>Battalion: ${a.battalion||'-'} • Stations: ${(a.stations||[]).join('; ')}</div></div>
+      <div style="display:flex;gap:6px">
+        <button class='small' onclick="editFire('${a.id}')">Edit</button>
+        <button class='small' onclick="deleteFire('${a.id}')">Delete</button>
       </div>`;
     target.appendChild(div);
   });
 }
 
-function addUser(){ if(!isAdmin()) return; const username=prompt('New username:'); if(!username)return; const pass=prompt('Password:'); const role=prompt('Role (ADMIN/DEPARTMENT/TRIAL)','DEPARTMENT'); store.users[username]={password:pass||'changeme',role:role||'DEPARTMENT'}; save(); renderUsers();}
-function editUser(u){ if(!isAdmin()) return; const user=store.users[u]; if(!user) return; const pass=prompt('New password',user.password); const role=prompt('Role',user.role); if(pass) user.password=pass; if(role) user.role=role; save(); renderUsers();}
-function deleteUser(u){ if(!isAdmin()) return; if(confirm('Delete user '+u+'?')){ delete store.users[u]; save(); renderUsers(); }}
+function addFireAgency(){ alert('Add Fire Agency - To be implemented with nested apparatus'); }
+function editFire(id){ alert('Edit Fire Agency - To be implemented'); }
+function deleteFire(id){ alert('Delete Fire Agency - To be implemented'); }
 
-/* ---- Fire Agencies ---- */
-function renderFire(){ const target=document.getElementById('fireList'); target.innerHTML=''; store.fireAgencies.forEach(a=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${a.name}</strong><div class="muted">${a.battalion||''} • ${a.address||''}</div></div><div style="display:flex;gap:8px"><button class="small" onclick="editFire('${a.id}')">Edit</button><button class="small" onclick="deleteFire('${a.id}')">Delete</button></div>`; target.appendChild(div); });}
-function addFireAgency(){ if(!isAdmin()) return; const name=prompt('Agency name'); if(!name) return; const battalion=prompt('Battalion'); const address=prompt('Address'); const id=Date.now().toString(); store.fireAgencies.push({id,name,battalion,address,apparatus:[]}); save(); renderFire(); }
-function editFire(id){ const a=store.fireAgencies.find(x=>x.id===id); if(!a) return; a.name=prompt('Agency name',a.name)||a.name; a.battalion=prompt('Battalion',a.battalion)||a.battalion; a.address=prompt('Address',a.address)||a.address; save(); renderFire();}
-function deleteFire(id){ if(confirm('Delete agency?')){ store.fireAgencies=store.fireAgencies.filter(x=>x.id!==id); save(); renderFire(); }}
-
-/* ---- EMS Agencies ---- */
-function renderEMS(){ const target=document.getElementById('emsList'); target.innerHTML=''; store.emsAgencies.forEach(a=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${a.name}</strong><div class='muted'>${a.stations?.join('; ')||''}</div></div><div style='display:flex;gap:8px'><button class='small' onclick="editEms('${a.id}')">Edit</button><button class='small' onclick="deleteEms('${a.id}')">Delete</button></div>`; target.appendChild(div); });}
-function addEMSAgency(){ if(!isAdmin()) return; const name=prompt('EMS Agency name'); if(!name) return; const stations=prompt('Stations (separate by |)')?.split('|').map(s=>s.trim()); const id=Date.now().toString(); store.emsAgencies.push({id,name,stations}); save(); renderEMS();}
-function editEms(id){ const a=store.emsAgencies.find(x=>x.id===id); if(!a) return; a.name=prompt('Name',a.name)||a.name; a.stations=prompt('Stations',(a.stations||[]).join('|'))?.split('|').map(s=>s.trim()); save(); renderEMS();}
-function deleteEms(id){ if(confirm('Delete EMS?')){ store.emsAgencies=store.emsAgencies.filter(x=>x.id!==id); save(); renderEMS();}
-
-/* ---- Resources & Coordinators ---- */
-function renderResources(){ const target=document.getElementById('resourceList'); target.innerHTML=''; store.resources.forEach(r=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div>${r.name}</div>`; target.appendChild(div); });}
-function addResource(){ const name=prompt('Resource name'); if(!name)return; store.resources.push({name}); save(); renderResources();}
-function renderCoordinators(){ const target=document.getElementById('coordinatorList'); target.innerHTML=''; store.coordinators.forEach(c=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div>${c.name}</div>`; target.appendChild(div); });}
-function addCoordinator(){ const name=prompt('Coordinator name'); if(!name)return; store.coordinators.push({name}); save(); renderCoordinators();}
-
-/* ---- HazMat ---- */
-function lookupUN(){ const n=document.getElementById('unInput').value.trim(); const placard=document.getElementById('placardInput').value.trim(); const data=store.hazmatDB[n]||store.hazmatDB[placard]; document.getElementById('unResult').innerHTML=data?`<pre>${JSON.stringify(data,null,2)}</pre>`:'Not found';}
-function openHazmatEditor(){ if(!isAdmin()) return; const un=prompt('UN/NA number'); if(!un) return; const info=prompt('HazMat JSON info'); if(!info) return; store.hazmatDB[un]=JSON.parse(info); save();}
-
-/* ---- EV Safety ---- */
-function evSearch(){ const val=document.getElementById('vin').value||document.getElementById('plate').value||document.getElementById('ymm').value; document.getElementById('evResult').innerHTML=`<pre>Search result for "${val}" (preloaded data here)</pre>`;}
-
-// Expose functions to global scope for HTML onclick
-window.login=login; window.showHelp=showHelp; window.toggleSidebar=toggleSidebar; window.showPage=showPage;
-window.addUser=addUser; window.editUser=editUser; window.deleteUser=deleteUser;
-window.addFireAgency=addFireAgency; window.editFire=editFire; window.deleteFire=deleteFire;
-window.addEMSAgency=addEMSAgency; window.editEms=editEms; window.deleteEms=deleteEms;
-window.addResource=addResource; window.addCoordinator=addCoordinator;
-window.lookupUN=lookupUN; window.openHazmatEditor=openHazmatEditor;
-window.evSearch=evSearch;
-
+function renderEMS(list){ console.log('Render EMS'); }
+function renderResources(list){ console.log('Render Resources'); }
+function renderCoordinators(list){ console.log('Render Coordinators'); }
+function addUser(){ alert('Add User - Admin only'); }
+function lookupUN(){ alert('HazMat Search - preloaded data'); }
+function evSearch(){ alert('EV Search - preloaded data'); }
 </script>
-
 </body>
 </html>
