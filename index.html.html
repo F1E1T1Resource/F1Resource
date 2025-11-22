@@ -1,318 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F1 Resource - Full CRUD</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>F1 Resource</title>
 <style>
-:root { --primary:#002b5c; --accent:#0b5fff; --muted:#6b7280; --card:#ffffff; }
-body { margin:0; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; background:#eef2f5; color:#0f1724; }
-#loginScreen, #app { display:none; }
-.centerBox { max-width:460px; margin:64px auto; padding:26px; background:var(--card); border-radius:12px; box-shadow:0 6px 30px rgba(2,6,23,0.08); }
-input, select { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #d1d5db; font-size:15px; }
-button { padding:10px 14px; background:var(--primary); border:none; color:white; font-size:15px; border-radius:8px; cursor:pointer; }
-button.ghost{background:transparent;color:var(--primary);border:1px solid #d1d5db;}
-button.small{padding:6px 10px;font-size:13px;}
-#layout { display:flex; height:100vh; }
-#sidebar { width:260px; background:var(--primary); color:white; padding:18px; transition:0.25s; overflow-y:auto; }
-#sidebar.hidden { width:0; padding:0; overflow:hidden; }
-#sidebar h2 { margin:0 0 12px;font-size:18px; }
-#sidebar a { display:block; color:white; padding:10px 0; cursor:pointer; font-size:15px; text-decoration:none; }
-#sidebar a:hover { text-decoration:underline; }
-#content { flex:1; padding:20px; overflow-y:auto; }
-#toggleMenu { position:fixed; top:12px; left:12px; background:var(--primary); color:white; border:none; padding:10px; border-radius:8px; font-size:18px; z-index:50; }
-.sectionCard { background:var(--card); padding:18px; border-radius:10px; margin-bottom:18px; box-shadow:0 6px 20px rgba(2,6,23,0.06); }
-.listItem{padding:10px;border-radius:8px;border:1px solid #eef2ff;margin-top:8px;background:#fff;display:flex;justify-content:space-between;align-items:center;}
-.muted{color:var(--muted);font-size:13px;}
-textarea { width:100%; min-height:100px; padding:10px; border-radius:8px; border:1px solid #d1d5db; }
-@media (max-width:900px){ #layout{flex-direction:column} #sidebar{width:100%;position:fixed;left:0;top:0;transform:translateY(-150%)} #sidebar.show{transform:translateY(0)} #toggleMenu{position:fixed;left:8px;top:8px} }
+  body { margin:0; font-family: Arial, sans-serif; background:#eef2f5; color:#0f1724; }
+  #loginScreen, #app { display:none; }
+  .centerBox { max-width:400px; margin:100px auto; padding:20px; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+  input { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #ccc; }
+  button { padding:10px 14px; background:#002b5c; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+  #layout { display:flex; height:100vh; }
+  #sidebar { width:220px; background:#002b5c; color:white; padding:15px; }
+  #sidebar a { display:block; color:white; padding:8px 0; cursor:pointer; text-decoration:none; }
+  #sidebar a:hover { text-decoration:underline; }
+  #content { flex:1; padding:20px; overflow-y:auto; }
 </style>
 </head>
 <body>
 
-<div id="loginScreen" class="centerBox" role="dialog" aria-modal="true">
+<div id="loginScreen" class="centerBox">
   <h2>F1 Resource Login</h2>
-  <div class="muted">Restricted to authorized fire department members</div>
-  <input id="username" placeholder="Username" aria-label="username">
-  <input id="password" placeholder="Password" type="password" aria-label="password">
-  <div style="display:flex;gap:8px;margin-top:10px">
-    <button onclick="login()">Login</button>
-  </div>
-  <div class="muted" style="margin-top:12px">Default Admin: <strong>dlyboult</strong> / <strong>F1Resource</strong></div>
+  <input id="username" placeholder="Username" />
+  <input id="password" type="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <p style="margin-top:10px; font-size:12px; color:#666;">Admin user: <strong>dlyboult</strong> / <strong>F1Resource</strong></p>
 </div>
 
-<div id="app" aria-hidden="true">
-  <button id="toggleMenu" onclick="toggleSidebar()">☰</button>
+<div id="app">
   <div id="layout">
-    <aside id="sidebar" aria-label="Main navigation">
-      <h2>F1 Resource</h2>
-      <div class="muted">Oswego County</div>
-      <nav style="margin-top:16px">
+    <aside id="sidebar">
+      <h3>F1 Resource</h3>
+      <nav>
         <a onclick="showPage('home')">Home</a>
-        <a onclick="showPage('countyResources')">County Resources</a>
-        <a onclick="showPage('countyCoordinators')">County Coordinators</a>
-        <a onclick="showPage('fireAgencies')">Fire Agencies</a>
-        <a onclick="showPage('emsAgencies')">EMS Agencies</a>
-        <a onclick="showPage('hazmatSearch')">Hazardous Material Search</a>
-        <a onclick="showPage('evSafety')">Electric Vehicle Safety</a>
+        <a onclick="showPage('admin')">Admin</a>
       </nav>
-      <hr style="border:none;border-top:1px solid #0b2540;margin:14px 0">
-      <div id="adminControls" style="display:none">
-        <div style="font-weight:700;margin-bottom:6px">Admin</div>
-        <a onclick="showPage('adminUsers')">Manage Users</a>
-      </div>
-      <div style="margin-top:14px" class="muted">Version 1.0 — Firebase</div>
     </aside>
     <main id="content">
-      <!-- HOME -->
       <section id="home" class="page">
-        <div class="sectionCard">
-          <h1>WELCOME</h1>
-          <div class="muted">This is <strong>F1 Resource</strong>, your all-inclusive application for Oswego County resources.</div>
-        </div>
+        <h1>Welcome</h1>
+        <p>This is F1 Resource, your all inclusive app for Oswego County resources.</p>
       </section>
-
-      <!-- COUNTY RESOURCES -->
-      <section id="countyResources" class="page" style="display:none">
-        <div class="sectionCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>County Resources</h2>
-            <button class="small" onclick="addResource()">Add Resource</button>
-          </div>
-          <div id="resourceList" style="margin-top:12px"></div>
-        </div>
-      </section>
-
-      <!-- COUNTY COORDINATORS -->
-      <section id="countyCoordinators" class="page" style="display:none">
-        <div class="sectionCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>County Coordinators</h2>
-            <button class="small" onclick="addCoordinator()">Add Coordinator</button>
-          </div>
-          <div id="coordinatorList" style="margin-top:12px"></div>
-        </div>
-      </section>
-
-      <!-- FIRE AGENCIES -->
-      <section id="fireAgencies" class="page" style="display:none">
-        <div class="sectionCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>Fire Agencies</h2>
-            <button class="small" onclick="addFireAgency()">Add Fire Agency</button>
-          </div>
-          <div id="fireList" style="margin-top:12px"></div>
-        </div>
-      </section>
-
-      <!-- EMS AGENCIES -->
-      <section id="emsAgencies" class="page" style="display:none">
-        <div class="sectionCard">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>EMS Agencies</h2>
-            <button class="small" onclick="addEMSAgency()">Add EMS Agency</button>
-          </div>
-          <div id="emsList" style="margin-top:12px"></div>
-        </div>
-      </section>
-
-      <!-- HAZMAT SEARCH -->
-      <section id="hazmatSearch" class="page" style="display:none">
-        <div class="sectionCard">
-          <h2>Hazardous Material Search</h2>
-          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-            <input id="unInput" placeholder="UN/NA number">
-            <button onclick="lookupUN()">Search</button>
-            <button class="small" onclick="openHazmatEditor()">Add/Edit HazMat</button>
-          </div>
-          <div id="unResult" style="margin-top:12px"></div>
-        </div>
-      </section>
-
-      <!-- EV SAFETY -->
-      <section id="evSafety" class="page" style="display:none">
-        <div class="sectionCard">
-          <h2>Electric Vehicle Safety</h2>
-          <div class="muted" style="margin-top:8px">Search by VIN / plate or Year, Make, Model. Admin can add links.</div>
-          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-            <input id="plate" placeholder="License Plate">
-            <input id="vin" placeholder="VIN">
-            <input id="ymm" placeholder="Year,Make,Model">
-            <button onclick="evSearch()">Find Vehicle</button>
-            <button class="small" onclick="evEditor()">Add/Edit EV</button>
-          </div>
-          <div id="evResult" style="margin-top:12px"></div>
-        </div>
-      </section>
-
-      <!-- ADMIN USERS -->
-      <section id="adminUsers" class="page" style="display:none">
-        <div class="sectionCard">
-          <h2>Manage Users & Roles</h2>
-          <div class="muted">Admins can add/edit/delete users and change roles.</div>
-          <button class="small" onclick="addUser()">Add User</button>
-          <div id="userList" style="margin-top:12px"></div>
-        </div>
+      <section id="admin" class="page" style="display:none;">
+        <h2>Admin Panel</h2>
+        <div id="userList"></div>
+        <button onclick="addUser()">Add User</button>
       </section>
     </main>
   </div>
 </div>
 
-<!-- FIREBASE SDK -->
+<!-- Firebase -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
-  authDomain: "f1resource-8fedc.firebaseapp.com",
-  databaseURL: "https://f1resource-8fedc-default-rtdb.firebaseio.com",
-  projectId: "f1resource-8fedc",
-  storageBucket: "f1resource-8fedc.firebasestorage.app",
-  messagingSenderId: "182745701982",
-  appId: "1:182745701982:web:9f4f3836b41b450987decf"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
+    authDomain: "f1resource-8fedc.firebaseapp.com",
+    databaseURL: "https://f1resource-8fedc-default-rtdb.firebaseio.com",
+    projectId: "f1resource-8fedc",
+    storageBucket: "f1resource-8fedc.firebasestorage.app",
+    messagingSenderId: "182745701982",
+    appId: "1:182745701982:web:9f4f3836b41b450987decf"
+  };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-let currentUser = null, store = null;
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase();
 
-function uid(){ return 'id_'+Math.random().toString(36).slice(2,9); }
-function toggleSidebar(){ const sb=document.getElementById('sidebar'); if(window.innerWidth<=900){ sb.classList.toggle('show'); } else { sb.classList.toggle('hidden'); } }
-function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.style.display='none'); document.getElementById(id).style.display='block'; }
+  let currentUser = null;
 
-function login(){
-  const u = document.getElementById('username').value.trim();
-  const p = document.getElementById('password').value.trim();
-  if(!u || !p){ alert('Enter username and password'); return; }
-  get(ref(db,'users/'+u)).then(snapshot=>{
-    const user = snapshot.val();
-    if(user && user.password===p){
-      currentUser = {username:u, role:user.role};
-      document.getElementById('loginScreen').style.display='none';
-      document.getElementById('app').style.display='block';
-      document.getElementById('adminControls').style.display = user.role==='ADMIN'?'block':'none';
-      preloadData();
-      showPage('home');
-    } else { alert('Invalid credentials'); }
-  });
-}
+  // Default flat database
+  const defaultDB = {
+    users: { dlyboult: { password: "F1Resource", role: "ADMIN" } },
+    departments: {}
+  };
 
-function preloadData(){
-  store = {};
-  ['users','fireAgencies','emsAgencies','resources','coordinators','hazmatDB','evData'].forEach(path=>{
-    const r = ref(db,path);
-    onValue(r, snapshot=>{
-      store[path] = snapshot.val() || {};
-      renderAll();
-    });
-  });
-}
-
-function isAdmin(){ return currentUser && currentUser.role==='ADMIN'; }
-function canEditDepartment(depName){ return currentUser && (isAdmin() || currentUser.username===depName); }
-
-function renderAll(){ renderUsers(); renderFire(); renderEMS(); renderResources(); renderCoordinators(); renderHazMat(); renderEV(); }
-
-function renderUsers(){
-  const list = document.getElementById('userList'); if(!list) return;
-  list.innerHTML='';
-  if(!store.users) return;
-  Object.entries(store.users).forEach(([u,info])=>{
-    const el=document.createElement('div'); el.className='listItem';
-    el.innerHTML=`<span>${u} - ${info.role}</span>`;
-    if(isAdmin()){
-      const edit=document.createElement('button'); edit.className='small'; edit.innerText='Edit';
-      edit.onclick=()=>{ const r=prompt('Role',info.role); if(r){ update(ref(db,'users/'+u),{role:r}); } };
-      const del=document.createElement('button'); del.className='small'; del.innerText='Delete';
-      del.onclick=()=>{ if(confirm('Delete user?')) remove(ref(db,'users/'+u)); };
-      el.appendChild(edit); el.appendChild(del);
+  // Preload database if empty
+  const rootRef = ref(db, '/');
+  onValue(rootRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      set(rootRef, defaultDB);
+    } else {
+      renderUsers(snapshot.val().users);
     }
-    list.appendChild(el);
   });
-}
 
-// -- Fire Agencies
-function renderFire(){
-  const list = document.getElementById('fireList'); if(!list) return;
-  list.innerHTML='';
-  if(!store.fireAgencies) return;
-  Object.entries(store.fireAgencies).forEach(([id,a])=>{
-    const el=document.createElement('div'); el.className='listItem';
-    el.innerHTML=`<span>${a.name} - ${a.battalion}</span>`;
-    if(canEditDepartment(a.name)){
-      const edit=document.createElement('button'); edit.className='small'; edit.innerText='Edit';
-      edit.onclick=()=>{
-        const b = prompt('Battalion',a.battalion); const s = prompt('Stations',a.stations.join('|'));
-        if(b && s) update(ref(db,'fireAgencies/'+id),{...a,battalion:b,stations:s.split('|').map(x=>x.trim())});
-      };
-      const del=document.createElement('button'); del.className='small'; del.innerText='Delete';
-      del.onclick=()=>{ if(confirm('Delete agency?')) remove(ref(db,'fireAgencies/'+id)); };
-      el.appendChild(edit); el.appendChild(del);
+  function login() {
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value.trim();
+    const usersRef = ref(db, '/users/' + u);
+    onValue(usersRef, (snap) => {
+      const user = snap.val();
+      if (user && user.password === p) {
+        currentUser = { username: u, role: user.role };
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        if (currentUser.role !== 'ADMIN') document.querySelector("#admin").style.display = 'none';
+        showPage('home');
+      } else {
+        alert('Invalid credentials');
+      }
+    }, { onlyOnce: true });
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'block';
+  }
+
+  function renderUsers(users) {
+    const target = document.getElementById('userList');
+    if (!target) return;
+    target.innerHTML = '';
+    for (const u in users) {
+      const user = users[u];
+      const div = document.createElement('div');
+      div.textContent = `${u} - ${user.role}`;
+      target.appendChild(div);
     }
-    list.appendChild(el);
-  });
-}
+  }
 
-function addFireAgency(){
-  if(!isAdmin()){ alert('Admin only'); return; }
-  const name=prompt('Agency name'); if(!name) return;
-  const battalion=prompt('Battalion'); const stations=(prompt('Stations (separate |)')||'').split('|').map(s=>s.trim());
-  set(ref(db,'fireAgencies/'+uid()),{name,battalion,stations});
-}
-
-// --- EMS Agencies
-function renderEMS(){
-  const list=document.getElementById('emsList'); if(!list) return;
-  list.innerHTML='';
-  if(!store.emsAgencies) return;
-  Object.entries(store.emsAgencies).forEach(([id,a])=>{
-    const el=document.createElement('div'); el.className='listItem';
-    el.innerHTML=`<span>${a.name}</span>`;
-    if(canEditDepartment(a.name)){
-      const edit=document.createElement('button'); edit.className='small'; edit.innerText='Edit';
-      edit.onclick=()=>{
-        const n=prompt('Name',a.name); if(n) update(ref(db,'emsAgencies/'+id),{name:n}); 
-      };
-      const del=document.createElement('button'); del.className='small'; del.innerText='Delete';
-      del.onclick=()=>{ if(confirm('Delete EMS?')) remove(ref(db,'emsAgencies/'+id)); };
-      el.appendChild(edit); el.appendChild(del);
-    }
-    list.appendChild(el);
-  });
-}
-
-function addEMSAgency(){ if(!isAdmin()){ alert('Admin only'); return; } const n=prompt('Name'); if(n) set(ref(db,'emsAgencies/'+uid()),{name:n}); }
-
-// --- County Resources
-function renderResources(){ /* similar logic */ }
-function addResource(){ alert('Add Resource not yet implemented.'); }
-
-// --- Coordinators
-function renderCoordinators(){ /* similar logic */ }
-function addCoordinator(){ alert('Add Coordinator not yet implemented.'); }
-
-// --- HazMat
-function renderHazMat(){ /* optional: render list of all UNs */ }
-function lookupUN(){
-  const un=document.getElementById('unInput').value.trim(); if(!un) return;
-  const target=document.getElementById('unResult');
-  if(!store.hazmatDB || !store.hazmatDB[un]){ target.innerHTML='<div class="sectionCard"><strong>Not found</strong></div>'; return; }
-  const e=store.hazmatDB[un];
-  target.innerHTML=`<div class="sectionCard"><strong>${e.name} (UN ${e.un})</strong><div>${e.hazard_class||''}</div></div>`;
-}
-function openHazmatEditor(){ if(!isAdmin()){ alert('Admin only'); return; }
-  const un=prompt('UN number'); if(!un) return;
-  const name=prompt('Name'); set(ref(db,'hazmatDB/'+un),{un,name});
-}
-
-// --- EV
-function evSearch(){ document.getElementById('evResult').innerHTML='<div class="muted">Lookup not yet implemented.</div>'; }
-function evEditor(){ if(!isAdmin()){ alert('Admin only'); return; } const v=prompt('VIN'); if(!v) return; const p=prompt('Plate'); const y=prompt('YMM'); set(ref(db,'evData/'+v),{vin:v,plate:p,ymm:y}); }
-
-document.addEventListener('DOMContentLoaded', ()=>{ document.getElementById('loginScreen').style.display='block'; });
+  function addUser() {
+    const newUser = prompt("New username:");
+    const pass = prompt("Password:");
+    const role = prompt("Role (ADMIN/DEPARTMENT/TRIAL):", "DEPARTMENT");
+    if (!newUser) return;
+    set(ref(db, '/users/' + newUser), { password: pass, role: role });
+  }
 
 </script>
 </body>
 </html>
-
