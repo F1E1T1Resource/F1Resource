@@ -207,6 +207,13 @@ function evSearch(){const v=document.getElementById('vin').value.trim();const p=
 
 document.addEventListener('DOMContentLoaded',()=>{document.getElementById('loginScreen').style.display='block';});
 </script>
-
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Show login screen on page load
+  document.getElementById('loginScreen').style.display = 'block';
+  document.getElementById('app').style.display = 'none';
+});
+</script>
 </body>
 </html>
+
