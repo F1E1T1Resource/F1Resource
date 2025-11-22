@@ -10,11 +10,6 @@
   .centerBox { max-width:400px; margin:100px auto; padding:20px; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
   input { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #ccc; }
   button { padding:10px 14px; background:#002b5c; color:#fff; border:none; border-radius:6px; cursor:pointer; }
-  #layout { display:flex; height:100vh; }
-  #sidebar { width:220px; background:#002b5c; color:white; padding:15px; }
-  #sidebar a { display:block; color:white; padding:8px 0; cursor:pointer; text-decoration:none; }
-  #sidebar a:hover { text-decoration:underline; }
-  #content { flex:1; padding:20px; overflow-y:auto; }
 </style>
 </head>
 <body>
@@ -28,89 +23,35 @@
 </div>
 
 <div id="app">
-  <div id="layout">
-    <aside id="sidebar">
-      <h3>F1 Resource</h3>
-      <nav>
-        <a onclick="showPage('home')">Home</a>
-        <a id="adminLink" onclick="showPage('admin')">Admin</a>
-      </nav>
-    </aside>
-    <main id="content">
-      <section id="home" class="page">
-        <h1>Welcome</h1>
-        <p>This is F1 Resource, your all-inclusive app for Oswego County resources.</p>
-      </section>
-      <section id="admin" class="page" style="display:none;">
-        <h2>Admin Panel</h2>
-        <div id="userList"></div>
-        <button onclick="addUser()">Add User</button>
-      </section>
-    </main>
-  </div>
+  <h1>Welcome to F1 Resource</h1>
+  <p id="welcomeMsg"></p>
 </div>
 
 <script>
-  // ---- Local login system ----
-  const users = {
-    'dlyboult': { password: 'F1Resource', role: 'ADMIN' },
-    'dept1': { password: 'password', role: 'DEPARTMENT' }
-  };
+const users = {
+  'dlyboult': { password: 'F1Resource', role: 'ADMIN' },
+  'dept1': { password: 'password', role: 'DEPARTMENT' }
+};
 
-  let currentUser = null;
+let currentUser = null;
 
-  document.getElementById('loginScreen').style.display = 'block';
+// Show login screen on load
+document.getElementById('loginScreen').style.display = 'block';
 
-  function login() {
-    const u = document.getElementById('username').value.trim();
-    const p = document.getElementById('password').value.trim();
-    if (!u || !p) { alert('Enter username and password'); return; }
+function login() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  if (!u || !p) { alert('Enter username and password'); return; }
 
-    if (users[u] && users[u].password === p) {
-      currentUser = { username: u, role: users[u].role };
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-
-      // Show admin panel only for ADMIN
-      if (currentUser.role === 'ADMIN') {
-        document.getElementById('adminLink').style.display = 'block';
-        renderUsers();
-      } else {
-        document.getElementById('adminLink').style.display = 'none';
-      }
-
-      showPage('home');
-    } else {
-      alert('Invalid credentials');
-    }
+  if (users[u] && users[u].password === p) {
+    currentUser = { username: u, role: users[u].role };
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('welcomeMsg').textContent = `Logged in as ${u} (${users[u].role})`;
+  } else {
+    alert('Invalid credentials');
   }
-
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'block';
-  }
-
-  // ---- Admin panel ----
-  function renderUsers() {
-    const target = document.getElementById('userList');
-    target.innerHTML = '';
-    for (const u in users) {
-      const div = document.createElement('div');
-      div.textContent = `${u} - ${users[u].role}`;
-      target.appendChild(div);
-    }
-  }
-
-  function addUser() {
-    const newUser = prompt("New username:");
-    if (!newUser) return;
-    const pass = prompt("Password:");
-    const role = prompt("Role (ADMIN/DEPARTMENT/TRIAL):", "DEPARTMENT");
-    users[newUser] = { password: pass, role: role };
-    renderUsers();
-    alert('User added: ' + newUser);
-  }
+}
 </script>
 
 </body>
