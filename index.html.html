@@ -1,203 +1,200 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>F1 Resource — Realtime (Roles)</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>F1 Resource — Departments (Option B)</title>
 <link rel="icon" href="data:," />
 <style>
-  :root{
-    --bg:#f5f8fc; --card:#ffffff; --primary:#0b5fff; --dark:#062044; --muted:#6b7280;
-    --success:#16a34a; --danger:#ef4444;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:var(--bg);color:var(--dark);-webkit-font-smoothing:antialiased}
-  header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(180deg,#062044 0%, #0b2a56 100%);color:#fff}
-  header h1{font-size:18px;margin:0}
-  #appWrap{display:flex;height:calc(100vh - 56px);overflow:hidden}
-  nav#sidebar{width:260px;background:#062b57;color:#fff;padding:12px 14px;overflow:auto;transition:transform .24s ease, width .2s}
-  nav#sidebar.hidden{transform:translateX(-120%)}
-  nav#sidebar h2{margin:0 0 10px;font-size:18px}
-  nav#sidebar .muted{color:#9db2d3;font-size:13px;margin-bottom:12px}
-  nav#sidebar button{display:block;width:100%;text-align:left;padding:10px;border-radius:8px;border:none;background:transparent;color:#fff;margin:6px 0;cursor:pointer}
-  nav#sidebar button:hover{background:rgba(255,255,255,0.03)}
-  main#content{flex:1;overflow:auto;padding:18px}
-  .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.06);margin-bottom:18px}
-  .muted{color:var(--muted);font-size:13px}
-  input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6edf3;margin:8px 0}
-  button.primary{background:var(--primary);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
-  button.ghost{background:transparent;border:1px solid #dbeafe;color:var(--primary);padding:8px 12px;border-radius:8px}
-  .row{display:flex;gap:12px;align-items:center}
-  .listItem{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;background:#fff;border:1px solid #eef6ff;margin-top:10px;gap:8px;flex-wrap:wrap}
-  .small{padding:6px 10px;font-size:13px}
-  .status-in{color:var(--success);font-weight:600}
-  .status-out{color:var(--danger);font-weight:600}
-  .page{display:none}
-  /* responsive adjustments */
-  @media (max-width:900px){
-    nav#sidebar{position:fixed;left:0;top:56px;height:calc(100vh - 56px);z-index:60;transform:translateY(-150%);width:80%;}
-    nav#sidebar.show{transform:translateY(0)}
-    nav#sidebar.hidden{transform:translateY(-150%)}
-    main#content{padding:12px}
-  }
-  /* Login modal */
-  #loginModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:80}
-  #loginCard{width:360px;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.25)}
-  #loginCard h2{margin:0 0 8px}
-  .helper{font-size:13px;color:var(--muted)}
-  .tiny{font-size:12px;color:var(--muted)}
-  .flex-between{display:flex;justify-content:space-between;align-items:center}
-  pre { white-space: pre-wrap; word-break: break-word; }
+:root{
+  --bg:#f5f8fc; --card:#fff; --primary:#0b5fff; --accent:#0b72ff; --dark:#062044; --muted:#6b7280;
+  --success:#16a34a; --danger:#ef4444;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:var(--bg);color:var(--dark);-webkit-font-smoothing:antialiased}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(180deg,#062044 0%, #0b2a56 100%);color:#fff}
+header h1{font-size:18px;margin:0}
+#appWrap{display:flex;height:calc(100vh - 56px);overflow:hidden}
+nav#sidebar{width:260px;background:#062b57;color:#fff;padding:12px 14px;overflow:auto;transition:transform .24s ease}
+nav#sidebar.hidden{transform:translateX(-120%)}
+nav#sidebar h2{margin:0 0 10px;font-size:18px}
+nav#sidebar .muted{color:#9db2d3;font-size:13px;margin-bottom:12px}
+nav#sidebar button{display:block;width:100%;text-align:left;padding:10px;border-radius:8px;border:none;background:transparent;color:#fff;margin:6px 0;cursor:pointer}
+nav#sidebar button:hover{background:rgba(255,255,255,0.03)}
+main#content{flex:1;overflow:auto;padding:18px}
+.card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.06);margin-bottom:18px}
+.muted{color:var(--muted);font-size:13px}
+input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6edf3;margin:8px 0}
+button.primary{background:var(--primary);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+button.ghost{background:transparent;border:1px solid #dbeafe;color:var(--primary);padding:8px 12px;border-radius:8px}
+.row{display:flex;gap:12px;align-items:center}
+.listItem{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;background:#fff;border:1px solid #eef6ff;margin-top:10px;gap:8px;flex-wrap:wrap}
+.small{padding:6px 10px;font-size:13px}
+.status-in{color:var(--success);font-weight:600}
+.status-out{color:var(--danger);font-weight:600}
+.page{display:none}
+@media (max-width:900px){
+  nav#sidebar{position:fixed;left:0;top:56px;height:calc(100vh - 56px);z-index:60;transform:translateY(-150%);width:80%}
+  nav#sidebar.show{transform:translateY(0)}
+  nav#sidebar.hidden{transform:translateY(-150%)}
+  main#content{padding:12px}
+}
+/* Login modal */
+#loginModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:80}
+#loginCard{width:360px;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.25)}
+.tiny{font-size:12px;color:var(--muted)}
+pre{white-space:pre-wrap;word-break:break-word}
 </style>
 </head>
 <body>
-  <header>
-    <button id="menuBtn" aria-label="menu" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">☰</button>
-    <h1>F1 Resource</h1>
-    <div style="margin-left:auto" id="currentUserView" class="muted tiny">Not signed in</div>
-  </header>
+<header>
+  <button id="menuBtn" aria-label="menu" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">☰</button>
+  <h1>F1 Resource</h1>
+  <div style="margin-left:auto" id="currentUserView" class="tiny">Not signed in</div>
+</header>
 
-  <div id="appWrap">
-    <nav id="sidebar" class="hidden" aria-label="Main navigation">
-      <h2>F1 Resource</h2>
-      <div class="muted">Oswego County</div>
+<div id="appWrap">
+  <nav id="sidebar" class="hidden" aria-label="Main nav">
+    <h2>F1 Resource</h2>
+    <div class="muted">Oswego County</div>
 
-      <button data-page="home">Home</button>
-      <button data-page="fireAgencies">Fire Agencies</button>
-      <button data-page="emsAgencies">EMS Agencies</button>
-      <button data-page="countyResources">County Resources</button>
-      <button data-page="countyCoordinators">County Coordinators</button>
-      <button data-page="hazmat">HazMat Search</button>
-      <button data-page="evSafety">EV Safety</button>
-      <button data-page="fireRisk">Fire Risk</button>
-      <button data-page="drivingSafety">Driving Safety</button>
+    <button data-page="home">Home</button>
+    <button data-page="fireAgencies">Fire Agencies</button>
+    <button data-page="emsAgencies">EMS Agencies</button>
+    <button data-page="countyResources">County Resources</button>
+    <button data-page="countyCoordinators">County Coordinators</button>
+    <button data-page="hazmat">HazMat Search</button>
+    <button data-page="evSafety">EV Safety</button>
+    <button data-page="fireRisk">Fire Risk</button>
+    <button data-page="drivingSafety">Driving Safety</button>
 
-      <div style="margin-top:12px;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px">
-        <div class="muted" style="margin-bottom:8px">Admin</div>
-        <button id="manageUsersBtn" style="display:none" data-page="manageUsers">Manage Users</button>
-        <button id="signOutBtn" style="margin-top:8px">Sign Out</button>
+    <div style="margin-top:12px;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px">
+      <div class="muted" style="margin-bottom:8px">Admin</div>
+      <button id="manageUsersBtn" style="display:none" data-page="manageUsers">Manage Users</button>
+      <button id="signOutBtn" style="margin-top:8px">Sign Out</button>
+    </div>
+
+    <div style="margin-top:18px" class="muted tiny">Version 1.2 — Option B</div>
+  </nav>
+
+  <main id="content">
+    <section id="home" class="card page" style="display:block">
+      <h2>WELCOME</h2>
+      <p class="muted">This is <strong>F1 Resource</strong>. Use the menu to manage departments, EMS, resources and coordinators.</p>
+    </section>
+
+    <section id="fireAgencies" class="card page" style="display:none">
+      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">Fire Agencies</h3>
+        <div><button id="addFireBtn" class="small primary">Add Agency</button></div>
       </div>
+      <div id="fireList" style="margin-top:12px"></div>
+    </section>
 
-      <div style="margin-top:18px" class="muted tiny">Version 1.1 — Realtime DB</div>
-    </nav>
-
-    <main id="content">
-      <!-- HOME -->
-      <section id="home" class="card page" style="display:block">
-        <h2>WELCOME</h2>
-        <p class="muted">This is <strong>F1 Resource</strong> — an admin interface for county fire & EMS resources. Use the menu to navigate.</p>
-      </section>
-
-      <!-- Fire Agencies -->
-      <section id="fireAgencies" class="card page" style="display:none">
-        <div class="flex-between">
-          <h3 style="margin:0">Fire Agencies</h3>
-          <div><button id="addFireBtn" class="small primary">Add Agency</button></div>
-        </div>
-        <div id="fireList" style="margin-top:12px"></div>
-      </section>
-
-      <!-- EMS Agencies -->
-      <section id="emsAgencies" class="card page" style="display:none">
-        <div class="flex-between">
-          <h3 style="margin:0">EMS Agencies</h3>
-          <div><button id="addEmsBtn" class="small primary">Add EMS</button></div>
-        </div>
-        <div id="emsList" style="margin-top:12px"></div>
-      </section>
-
-      <!-- County Resources -->
-      <section id="countyResources" class="card page" style="display:none">
-        <div class="flex-between">
-          <h3 style="margin:0">County Resources</h3>
-          <div><button id="addResourceBtn" class="small primary">Add Resource</button></div>
-        </div>
-        <div id="resourceList" style="margin-top:12px"></div>
-      </section>
-
-      <!-- County Coordinators -->
-      <section id="countyCoordinators" class="card page" style="display:none">
-        <div class="flex-between">
-          <h3 style="margin:0">County Coordinators</h3>
-          <div><button id="addCoordBtn" class="small primary">Add Coordinator</button></div>
-        </div>
-        <div id="coordinatorList" style="margin-top:12px"></div>
-      </section>
-
-      <!-- HazMat -->
-      <section id="hazmat" class="card page" style="display:none">
-        <h3 style="margin:0">HazMat Search</h3>
-        <div style="margin-top:10px" class="row">
-          <input id="unInput" placeholder="UN/NA number (e.g. 1203)" />
-          <button id="searchUnBtn" class="small primary">Search</button>
-        </div>
-        <pre id="unResult" style="margin-top:12px;background:#f3fbff;padding:12px;border-radius:8px;min-height:80px"></pre>
-        <div style="margin-top:8px"><button id="editHazmatBtn" class="small ghost">Admin: Add/Edit Entry</button></div>
-      </section>
-
-      <!-- EV Safety -->
-      <section id="evSafety" class="card page" style="display:none">
-        <h3 style="margin:0">Electric Vehicle Safety</h3>
-        <div style="margin-top:10px" class="row">
-          <input id="evQuery" placeholder="VIN / Plate / Year,Make,Model" />
-          <button id="searchEvBtn" class="small primary">Search</button>
-        </div>
-        <pre id="evResult" style="margin-top:12px;background:#f3fbff;padding:12px;border-radius:8px;min-height:80px"></pre>
-      </section>
-
-      <!-- Fire Risk (empty placeholder) -->
-      <section id="fireRisk" class="card page" style="display:none">
-        <h3>Fire Risk</h3>
-        <p class="muted">Empty page — add content here.</p>
-      </section>
-
-      <!-- Driving Safety (empty placeholder) -->
-      <section id="drivingSafety" class="card page" style="display:none">
-        <h3>Driving Safety</h3>
-        <p class="muted">Empty page — add content here.</p>
-      </section>
-
-      <!-- Manage Users -->
-      <section id="manageUsers" class="card page" style="display:none">
-        <div class="flex-between">
-          <h3 style="margin:0">Manage Users</h3>
-          <div><button id="addUserBtn" class="small primary">Add User</button></div>
-        </div>
-        <div id="userList" style="margin-top:12px"></div>
-      </section>
-    </main>
-  </div>
-
-  <!-- Login modal -->
-  <div id="loginModal" style="display:flex;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:80">
-    <div id="loginCard" style="width:360px;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.25)">
-      <h2>F1 Resource Login</h2>
-      <div class="muted">Sign in with your account (stored in DB). First-time fallback: <strong>ADMIN / ADMIN</strong></div>
-      <div style="margin-top:10px">
-        <input id="loginUser" placeholder="Username" autocomplete="username" />
-        <input id="loginPass" placeholder="Password" type="password" autocomplete="current-password" />
+    <section id="emsAgencies" class="card page" style="display:none">
+      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">EMS Agencies</h3>
+        <div><button id="addEmsBtn" class="small primary">Add EMS</button></div>
       </div>
-      <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
-        <button id="loginBtn" class="primary">Sign In</button>
-        <button id="demoBtn" class="ghost">Demo (ADMIN/ADMIN)</button>
-        <div id="loginMsg" class="muted tiny" style="margin-left:auto"></div>
+      <div id="emsList" style="margin-top:12px"></div>
+    </section>
+
+    <section id="countyResources" class="card page" style="display:none">
+      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">County Resources</h3>
+        <div><button id="addResourceBtn" class="small primary">Add Resource</button></div>
       </div>
+      <div id="resourceList" style="margin-top:12px"></div>
+    </section>
+
+    <section id="countyCoordinators" class="card page" style="display:none">
+      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">County Coordinators</h3>
+        <div><button id="addCoordBtn" class="small primary">Add Coordinator</button></div>
+      </div>
+      <div id="coordinatorList" style="margin-top:12px"></div>
+    </section>
+
+    <section id="hazmat" class="card page" style="display:none">
+      <h3 style="margin:0">HazMat Search</h3>
+      <div style="margin-top:10px" class="row">
+        <input id="unInput" placeholder="UN/NA number (e.g. 1203)"/>
+        <button id="searchUnBtn" class="small primary">Search</button>
+      </div>
+      <pre id="unResult" style="margin-top:12px;background:#f3fbff;padding:12px;border-radius:8px;min-height:80px"></pre>
+      <div style="margin-top:8px"><button id="editHazmatBtn" class="small ghost">Admin: Add/Edit Entry</button></div>
+    </section>
+
+    <section id="evSafety" class="card page" style="display:none">
+      <h3 style="margin:0">Electric Vehicle Safety</h3>
+      <div style="margin-top:10px" class="row">
+        <input id="evQuery" placeholder="VIN / Plate / Year,Make,Model"/>
+        <button id="searchEvBtn" class="small primary">Search</button>
+      </div>
+      <pre id="evResult" style="margin-top:12px;background:#f3fbff;padding:12px;border-radius:8px;min-height:80px"></pre>
+      <div style="margin-top:8px"><button id="editEvBtn" class="small ghost">Admin: Add/Edit EV Entry</button></div>
+    </section>
+
+    <section id="fireRisk" class="card page" style="display:none">
+      <h3>Fire Risk</h3>
+      <p class="muted">Placeholder — add your content here.</p>
+    </section>
+
+    <section id="drivingSafety" class="card page" style="display:none">
+      <h3>Driving Safety</h3>
+      <p class="muted">Placeholder — add your content here.</p>
+    </section>
+
+    <section id="manageUsers" class="card page" style="display:none">
+      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">Manage Users</h3>
+        <div><button id="addUserBtn" class="small primary">Add User</button></div>
+      </div>
+      <div id="userList" style="margin-top:12px"></div>
+    </section>
+
+    <!-- Weather section separate (inline input) -->
+    <section id="weatherCard" class="card" style="display:block">
+      <h3 style="margin:0">Weather (quick lookup)</h3>
+      <div style="margin-top:10px" class="row">
+        <input id="weatherInput" placeholder="City or address (e.g. Oswego, NY)"/>
+        <button id="weatherBtn" class="small primary">Get Weather</button>
+      </div>
+      <pre id="weatherResult" style="margin-top:12px;background:#f3fbff;padding:12px;border-radius:8px;min-height:60px"></pre>
+    </section>
+
+  </main>
+</div>
+
+<!-- Login modal -->
+<div id="loginModal" style="display:flex;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:80">
+  <div id="loginCard" style="width:360px;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.25)">
+    <h2>F1 Resource Login</h2>
+    <div class="muted">Sign in with DB user (fallback: <strong>ADMIN/ADMIN</strong>)</div>
+    <div style="margin-top:10px">
+      <input id="loginUser" placeholder="Username" autocomplete="username"/>
+      <input id="loginPass" placeholder="Password" type="password" autocomplete="current-password"/>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+      <button id="loginBtn" class="primary">Sign In</button>
+      <button id="demoBtn" class="ghost">Demo (ADMIN/ADMIN)</button>
+      <div id="loginMsg" class="tiny" style="margin-left:auto"></div>
     </div>
   </div>
+</div>
 
 <script type="module">
-/* -------------------------
-  F1 Resource — Final build
-  - Firebase Realtime DB per your config
-  - Users keyed by username under /store/users/{username}
-  - Roles: ADMIN, DEPT_ADMIN, DEPT_USER
-  - Admin credentials fallback: ADMIN / ADMIN
-  - Pages: Fire Risk, Driving Safety added
---------------------------*/
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+/* ------------------------------
+  F1 Resource — Option B (final)
+  Departments structured as:
+  /store/departments/{deptId} => { info: {name,battalion,address}, apparatus: {...}, members: {...} }
+  Users at /store/users/{username} => { password, role, department }
+-------------------------------*/
 
-/* ---------- Firebase config (you provided) ---------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+/* ======== Firebase config (your provided config) ======== */
 const firebaseConfig = {
   apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
   authDomain: "f1resource-8fedc.firebaseapp.com",
@@ -207,37 +204,49 @@ const firebaseConfig = {
   messagingSenderId: "182745701982",
   appId: "1:182745701982:web:9f4f3836b41b450987decf"
 };
-/* ---------------------------------------------------- */
+/* ======================================================= */
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const rootRef = ref(db, 'store');
+const rootPath = 'store';
+const storeRef = ref(db, rootPath);
 
+/* small DOM helper */
 const $ = id => document.getElementById(id);
 function genId(prefix='id'){ return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,6); }
 
-// local mirror
-let store = { users: {}, fireAgencies: [], emsAgencies: [], resources: [], coordinators: [], hazmatDB: {}, evDB: {} };
+/* runtime mirror */
+let store = { users: {}, departments: {}, ems: {}, resources: {}, coordinators: {}, hazmat: {}, evDB: {} };
 let currentUser = null;
 
-/* ---------- Realtime sync ---------- */
-onValue(rootRef, snap => {
-  const val = snap.val();
+/* Real-time sync (mirror entire store) */
+onValue(storeRef, snapshot => {
+  const val = snapshot.val();
   if(val) store = val;
-  else set(rootRef, store).catch(e=>console.error('init store error', e));
-  // refresh UI
+  else {
+    // create minimal structure if none
+    set(storeRef, store).catch(e => console.error('init error', e));
+  }
+  // re-render UI after every DB change
   renderAll();
 });
 
-/* ---------- Save ---------- */
-function saveStore(){ return set(rootRef, store).catch(e=>console.error('saveStore error', e)); }
+/* targeted write helpers */
+async function writePath(path, value){
+  const fullRef = ref(db, `${rootPath}/${path}`);
+  await set(fullRef, value);
+}
+async function removePath(path){
+  const fullRef = ref(db, `${rootPath}/${path}`);
+  await set(fullRef, null);
+}
 
-/* ---------- Login flow (users keyed by username) ---------- */
+/* ---------- Authentication (DB-backed) ---------- */
 async function ensureFallbackAdmin(){
   if(!store.users || Object.keys(store.users).length === 0){
     store.users = store.users || {};
     store.users['ADMIN'] = { password:'ADMIN', role:'ADMIN', department: null };
-    await saveStore();
+    await writePath('users', store.users);
   }
 }
 
@@ -247,16 +256,16 @@ async function loginAction(){
   $('loginMsg').textContent = '';
   if(!u || !p){ $('loginMsg').textContent = 'Enter username/password'; return; }
 
-  // if DB empty, allow fallback
+  // allow fallback creation if DB empty
   if(!store.users || Object.keys(store.users).length === 0){
     if(u === 'ADMIN' && p === 'ADMIN'){
       store.users = store.users || {};
       store.users['ADMIN'] = { password:'ADMIN', role:'ADMIN', department: null };
-      await saveStore();
+      await writePath('users', store.users);
       currentUser = { username:'ADMIN', role:'ADMIN', department: null };
       afterLogin(); return;
     } else {
-      $('loginMsg').textContent = 'No users in DB yet — use ADMIN / ADMIN';
+      $('loginMsg').textContent = 'No users in DB yet — use ADMIN/ADMIN';
       return;
     }
   }
@@ -264,7 +273,6 @@ async function loginAction(){
   const dbUser = (store.users || {})[u];
   if(!dbUser){ $('loginMsg').textContent = 'Invalid username'; return; }
   if(dbUser.password !== p){ $('loginMsg').textContent = 'Invalid password'; return; }
-
   currentUser = { username: u, role: dbUser.role, department: dbUser.department || null };
   afterLogin();
 }
@@ -280,7 +288,7 @@ function afterLogin(){
 
 /* ---------- UI helpers ---------- */
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
   const el = $(id); if(el) el.style.display = 'block';
   if(window.innerWidth <= 900) $('sidebar').classList.remove('show');
 }
@@ -288,16 +296,16 @@ function showPage(id){
 /* ---------- Renderers ---------- */
 function renderAll(){
   renderUsers();
-  renderFireAgencies();
+  renderDepartments();
   renderEMS();
   renderResources();
   renderCoordinators();
+  // in-page results (hazmat/ev/weather) remain until user clears
 }
 
-/* Users list */
+/* USERS list (manage page) */
 function renderUsers(){
-  const target = $('userList');
-  if(!target) return;
+  const target = $('userList'); if(!target) return;
   target.innerHTML = '';
   const users = store.users || {};
   Object.keys(users).forEach(username => {
@@ -306,350 +314,434 @@ function renderUsers(){
     div.innerHTML = `<div style="min-width:0"><strong>${username}</strong><div class="muted">${u.role}${u.department?(' • dept:'+u.department):''}</div></div>
       <div style="display:flex;gap:8px">
         <button class="small" data-action="editUser" data-user="${username}">Edit</button>
-        <button class="small" data-action="deleteUser" data-user="${username}">Delete</button>
+        <button class="small" data-action="delUser" data-user="${username}">Delete</button>
       </div>`;
     target.appendChild(div);
   });
 }
 
-/* Fire */
-function renderFireAgencies(){
-  const t = $('fireList'); if(!t) return; t.innerHTML = '';
-  (store.fireAgencies || []).forEach(a => {
-    const div = document.createElement('div'); div.className='listItem';
-    const count = (a.apparatus||[]).length;
-    div.innerHTML = `<div style="min-width:0"><strong>${a.name||'(Unnamed)'}</strong><div class="muted">Battalion: ${a.battalion||'-'} • Address: ${a.address||'-'} • Apparatus: ${count}</div></div>
+/* DEPARTMENTS — Option B structure */
+function renderDepartments(){
+  const listEl = $('fireList'); if(!listEl) return; listEl.innerHTML = '';
+  const depts = store.departments || {};
+  Object.keys(depts).forEach(id => {
+    const d = depts[id];
+    const name = d.info?.name || '(Unnamed)';
+    const battalion = d.info?.battalion || '-';
+    const address = d.info?.address || '-';
+    const appCount = d.apparatus ? Object.keys(d.apparatus).length : 0;
+    const memberCount = d.members ? Object.keys(d.members).length : 0;
+    const div = document.createElement('div'); div.className = 'listItem';
+    div.innerHTML = `<div style="min-width:0"><strong>${name}</strong><div class="muted">Battalion: ${battalion} • Address: ${address} • Apparatus: ${appCount} • Members: ${memberCount}</div></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="small" data-action="openDept" data-id="${a.id}">Open</button>
-        <button class="small" data-action="editFire" data-id="${a.id}">Edit</button>
-        <button class="small" data-action="deleteFire" data-id="${a.id}">Delete</button>
+        <button class="small" data-action="openDept" data-id="${id}">Open</button>
+        <button class="small" data-action="editDept" data-id="${id}">Edit</button>
+        <button class="small" data-action="deleteDept" data-id="${id}">Delete</button>
       </div>`;
-    t.appendChild(div);
+    listEl.appendChild(div);
   });
 }
 
 /* EMS */
 function renderEMS(){
-  const t = $('emsList'); if(!t) return; t.innerHTML='';
-  (store.emsAgencies||[]).forEach(e=>{
+  const t = $('emsList'); if(!t) return; t.innerHTML = '';
+  const ems = store.ems || {};
+  Object.keys(ems).forEach(id => {
+    const e = ems[id];
     const div = document.createElement('div'); div.className='listItem';
     div.innerHTML = `<div><strong>${e.name||'(Unnamed)'}</strong><div class="muted">${(e.stations||[]).join('; ')}</div></div>
-      <div style="display:flex;gap:8px"><button class="small" data-action="editEms" data-id="${e.id}">Edit</button><button class="small" data-action="deleteEms" data-id="${e.id}">Delete</button></div>`;
+      <div style="display:flex;gap:8px"><button class="small" data-action="editEms" data-id="${id}">Edit</button><button class="small" data-action="delEms" data-id="${id}">Delete</button></div>`;
     t.appendChild(div);
   });
 }
 
-/* Resources */
+/* RESOURCES */
 function renderResources(){
   const t = $('resourceList'); if(!t) return; t.innerHTML='';
-  (store.resources||[]).forEach(r=>{
+  const resources = store.resources || {};
+  Object.keys(resources).forEach(id=>{
+    const r = resources[id];
     const div = document.createElement('div'); div.className='listItem';
     div.innerHTML = `<div><strong>${r.name||'(Unnamed)'}</strong><div class="muted">${r.capabilities||''}</div></div>
-      <div style="display:flex;gap:8px"><button class="small" data-action="editRes" data-id="${r.id}">Edit</button><button class="small" data-action="deleteRes" data-id="${r.id}">Delete</button></div>`;
+      <div style="display:flex;gap:8px"><button class="small" data-action="editRes" data-id="${id}">Edit</button><button class="small" data-action="delRes" data-id="${id}">Delete</button></div>`;
     t.appendChild(div);
   });
 }
 
-/* Coordinators */
+/* COORDINATORS */
 function renderCoordinators(){
   const t = $('coordinatorList'); if(!t) return; t.innerHTML='';
-  (store.coordinators||[]).forEach(c=>{
+  const coords = store.coordinators || {};
+  Object.keys(coords).forEach(id=>{
+    const c = coords[id];
     const div = document.createElement('div'); div.className='listItem';
     div.innerHTML = `<div><strong>${c.name||'(Unnamed)'}</strong><div class="muted">Callsign: ${c.callsign||''}</div></div>
-      <div style="display:flex;gap:8px"><button class="small" data-action="editCoord" data-id="${c.id}">Edit</button><button class="small" data-action="deleteCoord" data-id="${c.id}">Delete</button></div>`;
+      <div style="display:flex;gap:8px"><button class="small" data-action="editCoord" data-id="${id}">Edit</button><button class="small" data-action="delCoord" data-id="${id}">Delete</button></div>`;
     t.appendChild(div);
   });
 }
 
-/* ---------- Permissions helpers ---------- */
+/* ---------- Permission utilities ---------- */
 function isAdmin(){ return currentUser && currentUser.role === 'ADMIN'; }
 function isDeptAdmin(){ return currentUser && currentUser.role === 'DEPT_ADMIN'; }
 function isDeptUser(){ return currentUser && currentUser.role === 'DEPT_USER'; }
 
-/* ---------- CRUD actions ---------- */
-/* Users (admins & dept admins) */
+/* ---------- CRUD: Users ---------- */
 async function addUser(){
   if(!(isAdmin() || isDeptAdmin())) return alert('Admin privileges required');
-  const username = prompt('Username (no spaces):'); if(!username) return;
-  const password = prompt('Password:','changeme') || 'changeme';
-  let role = prompt('Role (ADMIN / DEPT_ADMIN / DEPT_USER):','DEPT_USER') || 'DEPT_USER'; role = role.toUpperCase();
+  const username = prompt('Username (no spaces)'); if(!username) return;
+  const password = prompt('Password','changeme') || 'changeme';
+  let role = prompt('Role (ADMIN / DEPT_ADMIN / DEPT_USER)','DEPT_USER') || 'DEPT_USER'; role = role.toUpperCase();
   let department = null;
   if(role === 'DEPT_ADMIN' || role === 'DEPT_USER'){
-    // dept admin can only create users in their department
-    if(isDeptAdmin()) department = currentUser.department;
-    else department = prompt('Department ID to assign this user to (use dept id):','') || null;
+    if(isDeptAdmin()) department = currentUser.department; else department = prompt('Department ID assign to user (deptId):','') || null;
   }
   store.users = store.users || {};
   store.users[username] = { password, role, department };
-  await saveStore(); renderUsers();
+  await writePath(`users/${username}`, store.users[username]);
+  renderUsers();
 }
 
 async function editUser(username){
   if(!(isAdmin() || isDeptAdmin())) return alert('Admin privileges required');
-  // dept admin editing limited to their department
-  if(isDeptAdmin() && currentUser.username !== username && store.users[username]?.department !== currentUser.department) return alert('You can only edit users in your department');
+  if(isDeptAdmin() && store.users[username]?.department !== currentUser.department && username !== currentUser.username) return alert('You can only edit users in your department');
   const u = store.users[username]; if(!u) return;
-  const password = prompt('Password:', u.password) || u.password;
-  let role = prompt('Role (ADMIN/DEPT_ADMIN/DEPT_USER):', u.role) || u.role; role = role.toUpperCase();
+  const password = prompt('Password', u.password) || u.password;
+  let role = prompt('Role (ADMIN / DEPT_ADMIN / DEPT_USER)', u.role) || u.role; role = role.toUpperCase();
   let department = u.department || null;
   if(role === 'DEPT_ADMIN' || role === 'DEPT_USER'){
     if(isDeptAdmin()) department = currentUser.department;
     else department = prompt('Department ID', u.department || '') || null;
-  } else { department = null; }
+  } else department = null;
   store.users[username] = { password, role, department };
-  await saveStore(); renderUsers();
+  await writePath(`users/${username}`, store.users[username]);
+  renderUsers();
 }
 
 async function deleteUser(username){
   if(!(isAdmin() || isDeptAdmin())) return alert('Admin privileges required');
   if(isDeptAdmin() && store.users[username]?.department !== currentUser.department) return alert('You can only delete users in your department');
   if(!confirm('Delete user '+username+'?')) return;
-  delete store.users[username]; await saveStore(); renderUsers();
+  await removePath(`users/${username}`);
+  delete store.users[username];
+  renderUsers();
 }
 
-/* Fire agencies */
-async function addFire(){
+/* ---------- CRUD: Departments (Option B) ---------- */
+async function addDepartment(){
   if(!isAdmin()) return alert('Admin only');
-  const name = prompt('Agency name'); if(!name) return;
+  const name = prompt('Department name'); if(!name) return;
   const battalion = prompt('Battalion (optional)','')||'';
   const address = prompt('Address (optional)','')||'';
-  const id = genId('fire');
-  store.fireAgencies = store.fireAgencies || [];
-  store.fireAgencies.push({ id, name, battalion, address, stations: [], apparatus: [] });
-  await saveStore(); renderFireAgencies();
+  const id = genId('dept');
+  const deptObj = {
+    info: { name, battalion, address },
+    apparatus: {}, // map appId => { name, type, status }
+    members: {}    // map username => true
+  };
+  store.departments = store.departments || {};
+  store.departments[id] = deptObj;
+  await writePath(`departments/${id}`, deptObj);
+  renderDepartments();
 }
 
-async function editFire(id){
-  const a = (store.fireAgencies||[]).find(x=>x.id===id); if(!a) return alert('Not found');
-  // admin or the DEPT_ADMIN assigned to this dept (department id is the agency id)
-  if(!isAdmin()){
-    if(!(isDeptAdmin() && currentUser.department === id)) return alert('No permission');
-  }
-  a.name = prompt('Agency name', a.name) || a.name;
-  a.battalion = prompt('Battalion', a.battalion) || a.battalion;
-  a.address = prompt('Address', a.address) || a.address;
-  const stations = prompt('Stations (comma separated)', (a.stations||[]).join(',')) || '';
-  a.stations = stations ? stations.split(',').map(s=>s.trim()).filter(Boolean) : [];
-  await saveStore(); renderFireAgencies();
+async function editDepartment(id){
+  const dept = store.departments?.[id];
+  if(!dept) return alert('Not found');
+  if(!(isAdmin() || (isDeptAdmin() && currentUser.department === id))) return alert('No permission');
+  const name = prompt('Department name', dept.info.name) || dept.info.name;
+  const battalion = prompt('Battalion', dept.info.battalion) || dept.info.battalion;
+  const address = prompt('Address', dept.info.address) || dept.info.address;
+  dept.info = { name, battalion, address };
+  await writePath(`departments/${id}/info`, dept.info);
+  renderDepartments();
 }
 
-async function deleteFire(id){
+async function deleteDepartment(id){
   if(!isAdmin()) return alert('Admin only');
-  if(!confirm('Delete agency?')) return;
-  store.fireAgencies = (store.fireAgencies||[]).filter(x=>x.id!==id);
-  Object.keys(store.users||{}).forEach(u => { if(store.users[u].department === id) store.users[u].department = null; });
-  await saveStore(); renderFireAgencies();
+  if(!confirm('Delete department and all nested data?')) return;
+  await removePath(`departments/${id}`);
+  delete store.departments[id];
+  // remove department association from users
+  Object.keys(store.users||{}).forEach(u => {
+    if(store.users[u].department === id){
+      store.users[u].department = null;
+      writePath(`users/${u}`, store.users[u]);
+    }
+  });
+  renderDepartments();
 }
 
-/* Department subpage */
+/* open department modal/subpage for management */
 function openDepartment(id){
-  const dept = (store.fireAgencies||[]).find(x=>x.id===id);
+  const dept = store.departments?.[id];
   if(!dept) return alert('Department not found');
-  // modal card
+  // create card panel
   const main = $('content');
   const old = $('deptPanel'); if(old) old.remove();
   const card = document.createElement('div'); card.id='deptPanel'; card.className='card';
-  card.innerHTML = `<h3 style="margin:0 0 8px">${dept.name}</h3>
-    <div class="muted">Battalion: ${dept.battalion||'-'} • Address: ${dept.address||'-'}</div>
-    <div style="margin-top:12px"><strong>Stations:</strong><div id="deptStations" class="muted">${(dept.stations||[]).join('; ')||'(none)'}</div><div style="margin-top:8px"><button id="addStationBtn" class="small primary">Add Station</button></div></div>
+  card.innerHTML = `<h3 style="margin:0 0 8px">${dept.info.name}</h3>
+    <div class="muted">Battalion: ${dept.info.battalion||'-'} • Address: ${dept.info.address||'-'}</div>
+    <div style="margin-top:12px"><strong>Stations / info</strong><div id="deptMembers" class="muted" style="margin-top:6px">${Object.keys(dept.members||{}).join('; ')||'(no members)'}</div><div style="margin-top:8px"><button id="addMemberBtn" class="small primary">Add Member (assign username)</button></div></div>
     <div style="margin-top:12px"><strong>Apparatus</strong><div id="apparatusList" style="margin-top:8px"></div><div style="margin-top:8px"><button id="addAppBtn" class="small primary">Add Apparatus</button></div></div>
     <div style="margin-top:12px"><button id="editDeptBtn" class="small">Edit Dept</button> <button id="closeDeptBtn" class="small ghost">Close</button></div>`;
   main.prepend(card);
 
   function renderApp(){
     const list = card.querySelector('#apparatusList'); list.innerHTML = '';
-    (dept.apparatus||[]).forEach((app, idx)=>{
+    const apps = dept.apparatus || {};
+    Object.keys(apps).forEach(appId => {
+      const app = apps[appId];
       const row = document.createElement('div'); row.className='listItem';
       row.innerHTML = `<div style="min-width:0"><strong>${app.name||'(unnamed)'}</strong><div class="muted">Type: ${app.type||''} • Status: <span class="${app.status==='OOS'?'status-out':'status-in'}">${app.status||'IN SERVICE'}</span></div></div>
         <div style="display:flex;gap:8px">
-          <button class="small" data-idx="${idx}" data-action="toggleApp">${app.status==='OOS'?'Mark IN':'Mark OOS'}</button>
-          <button class="small" data-idx="${idx}" data-action="editApp">Edit</button>
-          <button class="small" data-idx="${idx}" data-action="delApp">Delete</button>
+          <button class="small" data-action="toggleApp" data-id="${appId}">${app.status==='OOS'?'Mark IN':'Mark OOS'}</button>
+          <button class="small" data-action="editApp" data-id="${appId}">Edit</button>
+          <button class="small" data-action="delApp" data-id="${appId}">Delete</button>
         </div>`;
       list.appendChild(row);
     });
   }
   renderApp();
 
-  card.querySelector('#addStationBtn').onclick = async ()=>{
-    // admin or dept admin of this department
+  // add member
+  card.querySelector('#addMemberBtn').onclick = async ()=>{
     if(!(isAdmin() || (isDeptAdmin() && currentUser.department === id))) return alert('No permission');
-    const s = prompt('Station name/address'); if(!s) return;
-    dept.stations = dept.stations||[]; dept.stations.push(s);
-    await saveStore(); renderApp(); card.querySelector('#deptStations').textContent = (dept.stations||[]).join('; '); renderFireAgencies();
+    const username = prompt('Enter username to add as member (must exist):');
+    if(!username) return;
+    if(!store.users?.[username]) return alert('User not found in system');
+    dept.members = dept.members || {};
+    dept.members[username] = true;
+    // persist both department members and user's department (assign)
+    await writePath(`departments/${id}/members/${username}`, true);
+    // assign department to user if not set
+    store.users[username] = store.users[username] || {};
+    store.users[username].department = id;
+    await writePath(`users/${username}`, store.users[username]);
+    card.querySelector('#deptMembers').textContent = Object.keys(dept.members||{}).join('; ');
   };
 
+  // add apparatus
   card.querySelector('#addAppBtn').onclick = async ()=>{
     if(!(isAdmin() || (isDeptAdmin() && currentUser.department === id))) return alert('No permission');
     const name = prompt('Apparatus name (Engine 1)'); if(!name) return;
     const type = prompt('Type (Engine/Truck/Rescue/Tanker/Other)','Engine')||'Engine';
     const status = prompt('Status (IN SERVICE / OOS)','IN SERVICE')||'IN SERVICE';
-    dept.apparatus = dept.apparatus||[]; dept.apparatus.push({ id: genId('app'), name, type, status });
-    await saveStore(); renderApp(); renderFireAgencies();
+    const appId = genId('app');
+    dept.apparatus = dept.apparatus || {};
+    dept.apparatus[appId] = { id: appId, name, type, status };
+    await writePath(`departments/${id}/apparatus/${appId}`, dept.apparatus[appId]);
+    renderApp(); renderDepartments();
   };
 
   card.querySelector('#editDeptBtn').onclick = async ()=>{
     if(!(isAdmin() || (isDeptAdmin() && currentUser.department === id))) return alert('No permission');
-    dept.name = prompt('Name', dept.name)||dept.name;
-    dept.battalion = prompt('Battalion', dept.battalion)||dept.battalion;
-    dept.address = prompt('Address', dept.address)||dept.address;
-    await saveStore(); renderFireAgencies(); card.remove();
+    const name = prompt('Department name', dept.info.name) || dept.info.name;
+    const battalion = prompt('Battalion', dept.info.battalion) || dept.info.battalion;
+    const address = prompt('Address', dept.info.address) || dept.info.address;
+    dept.info = { name, battalion, address };
+    await writePath(`departments/${id}/info`, dept.info);
+    renderDepartments();
+    card.remove();
   };
 
   card.querySelector('#closeDeptBtn').onclick = ()=> card.remove();
 
+  // apparatus actions delegated
   card.addEventListener('click', async (ev)=>{
     const btn = ev.target.closest('button'); if(!btn) return;
-    const action = btn.dataset.action; const idx = parseInt(btn.dataset.idx);
-    if(action === 'toggleApp'){ const app = dept.apparatus[idx]; if(!app) return; app.status = app.status === 'OOS' ? 'IN SERVICE' : 'OOS'; await saveStore(); renderApp(); renderFireAgencies(); }
-    else if(action === 'editApp'){ const app = dept.apparatus[idx]; if(!app) return; app.name = prompt('Name', app.name)||app.name; app.type = prompt('Type', app.type)||app.type; app.status = prompt('Status', app.status)||app.status; await saveStore(); renderApp(); renderFireAgencies(); }
-    else if(action === 'delApp'){ if(!confirm('Delete apparatus?')) return; dept.apparatus.splice(idx,1); await saveStore(); renderApp(); renderFireAgencies(); }
+    const action = btn.dataset.action; const appId = btn.dataset.id;
+    if(action === 'toggleApp'){
+      const app = dept.apparatus[appId]; if(!app) return;
+      app.status = app.status === 'OOS' ? 'IN SERVICE' : 'OOS';
+      await writePath(`departments/${id}/apparatus/${appId}`, app);
+      renderApp(); renderDepartments();
+    } else if(action === 'editApp'){
+      const app = dept.apparatus[appId]; if(!app) return;
+      app.name = prompt('Name', app.name) || app.name;
+      app.type = prompt('Type', app.type) || app.type;
+      app.status = prompt('Status', app.status) || app.status;
+      await writePath(`departments/${id}/apparatus/${appId}`, app);
+      renderApp(); renderDepartments();
+    } else if(action === 'delApp'){
+      if(!confirm('Delete apparatus?')) return;
+      await removePath(`departments/${id}/apparatus/${appId}`);
+      delete dept.apparatus[appId];
+      renderApp(); renderDepartments();
+    }
   });
 }
 
-/* EMS CRUD */
-async function addEms(){ if(!isAdmin()) return alert('Admin only'); const name = prompt('EMS name'); if(!name) return; const id = genId('ems'); store.emsAgencies = store.emsAgencies||[]; store.emsAgencies.push({ id, name, stations: [] }); await saveStore(); renderEMS(); }
-async function editEms(id){ const e = (store.emsAgencies||[]).find(x=>x.id===id); if(!e) return; e.name = prompt('Name', e.name)||e.name; e.stations = (prompt('Stations (comma separated)', (e.stations||[]).join(','))||'').split(',').map(s=>s.trim()).filter(Boolean); await saveStore(); renderEMS(); }
-async function deleteEms(id){ if(!isAdmin()) return alert('Admin only'); store.emsAgencies = (store.emsAgencies||[]).filter(x=>x.id!==id); await saveStore(); renderEMS(); }
+/* ---------- EMS CRUD (kept simple) ---------- */
+async function addEms(){
+  if(!isAdmin()) return alert('Admin only');
+  const name = prompt('EMS name'); if(!name) return;
+  const id = genId('ems');
+  store.ems = store.ems || {};
+  store.ems[id] = { id, name, stations: [] };
+  await writePath(`ems/${id}`, store.ems[id]);
+  renderEMS();
+}
+async function editEms(id){
+  const e = store.ems?.[id]; if(!e) return;
+  if(!isAdmin()) return alert('Admin only');
+  e.name = prompt('Name', e.name) || e.name;
+  e.stations = (prompt('Stations (comma separated)', (e.stations||[]).join(','))||'').split(',').map(s=>s.trim()).filter(Boolean);
+  await writePath(`ems/${id}`, e);
+  renderEMS();
+}
+async function deleteEms(id){
+  if(!isAdmin()) return alert('Admin only');
+  await removePath(`ems/${id}`);
+  delete store.ems[id];
+  renderEMS();
+}
 
-/* Resources CRUD */
-async function addResource(){ if(!isAdmin()) return alert('Admin only'); const name = prompt('Resource name'); if(!name) return; store.resources = store.resources||[]; store.resources.push({ id: genId('res'), name, capabilities: '' }); await saveStore(); renderResources(); }
-async function editResource(id){ if(!isAdmin()) return alert('Admin only'); const r = (store.resources||[]).find(x=>x.id===id); r.name = prompt('Name', r.name)||r.name; r.capabilities = prompt('Capabilities', r.capabilities||'')||r.capabilities; await saveStore(); renderResources(); }
-async function deleteResource(id){ if(!isAdmin()) return alert('Admin only'); store.resources = (store.resources||[]).filter(x=>x.id!==id); await saveStore(); renderResources(); }
+/* ---------- Resources CRUD ---------- */
+async function addResource(){
+  if(!isAdmin()) return alert('Admin only');
+  const name = prompt('Resource name'); if(!name) return;
+  const id = genId('res');
+  store.resources = store.resources || {};
+  store.resources[id] = { id, name, capabilities: '' };
+  await writePath(`resources/${id}`, store.resources[id]);
+  renderResources();
+}
+async function editResource(id){
+  if(!isAdmin()) return alert('Admin only');
+  const r = store.resources?.[id]; if(!r) return;
+  r.name = prompt('Name', r.name) || r.name;
+  r.capabilities = prompt('Capabilities', r.capabilities||'') || r.capabilities;
+  await writePath(`resources/${id}`, r);
+  renderResources();
+}
+async function deleteResource(id){
+  if(!isAdmin()) return alert('Admin only');
+  await removePath(`resources/${id}`); delete store.resources[id]; renderResources();
+}
 
-/* Coordinators */
-async function addCoordinator(){ if(!isAdmin()) return alert('Admin only'); const name = prompt('Coordinator name'); if(!name) return; store.coordinators = store.coordinators||[]; store.coordinators.push({ id: genId('coord'), name, callsign: '' }); await saveStore(); renderCoordinators(); }
-async function editCoordinator(id){ if(!isAdmin()) return alert('Admin only'); const c = (store.coordinators||[]).find(x=>x.id===id); c.name = prompt('Name', c.name)||c.name; c.callsign = prompt('Callsign', c.callsign||'')||c.callsign; await saveStore(); renderCoordinators(); }
-async function deleteCoordinator(id){ if(!isAdmin()) return alert('Admin only'); store.coordinators = (store.coordinators||[]).filter(x=>x.id!==id); await saveStore(); renderCoordinators(); }
+/* ---------- Coordinators CRUD ---------- */
+async function addCoordinator(){ if(!isAdmin()) return alert('Admin only'); const name = prompt('Coordinator name'); if(!name) return; const id = genId('coord'); store.coordinators = store.coordinators||{}; store.coordinators[id] = { id, name, callsign: '' }; await writePath(`coordinators/${id}`, store.coordinators[id]); renderCoordinators(); }
+async function editCoordinator(id){ if(!isAdmin()) return alert('Admin only'); const c = store.coordinators?.[id]; if(!c) return; c.name = prompt('Name', c.name)||c.name; c.callsign = prompt('Callsign', c.callsign||'')||c.callsign; await writePath(`coordinators/${id}`, c); renderCoordinators(); }
+async function deleteCoordinator(id){ if(!isAdmin()) return alert('Admin only'); await removePath(`coordinators/${id}`); delete store.coordinators[id]; renderCoordinators(); }
 
-/* HazMat */
-function searchHazmat(){ const q = ($('unInput') ? $('unInput').value.trim() : ''); const res = (store.hazmatDB && store.hazmatDB[q]) || null; if(res) $('unResult').textContent = JSON.stringify(res, null, 2); else $('unResult').textContent = 'Not found'; }
-async function editHazmat(){ if(!isAdmin()) return alert('Admin only'); const un = prompt('UN/NA number'); if(!un) return; const json = prompt('Paste JSON for this UN (e.g. {"name":"Gasoline","hazard_class":"3"})'); try{ store.hazmatDB = store.hazmatDB||{}; store.hazmatDB[un] = JSON.parse(json); await saveStore(); alert('Saved'); }catch(e){ alert('Invalid JSON'); } }
-
-/* EV */
-function searchEv(){ const q = ($('evQuery') ? $('evQuery').value.trim() : ''); const res = (store.evDB && (store.evDB[q]||store.evDB[q.toUpperCase()])) || null; if(res) $('evResult').textContent = JSON.stringify(res, null, 2); else $('evResult').textContent = 'Not found'; }
-
-/* Weather using Open-Meteo geocoding + current weather */
-async function searchWeather(location){
-  // location param optional; otherwise prompt
-  const loc = location || prompt('Enter a place (city or address):');
-  if(!loc) return;
+/* ---------- HazMat (simple search + admin JSON editor) ---------- */
+function searchHazmat(){
+  const q = $('unInput').value.trim();
+  if(!q){ $('unResult').textContent = 'Enter UN/NA number'; return; }
+  const entry = store.hazmat?.[q];
+  if(!entry){ $('unResult').textContent = 'Not found'; return; }
+  $('unResult').textContent = JSON.stringify(entry, null, 2);
+}
+async function editHazmat(){
+  if(!isAdmin()) return alert('Admin only');
+  const un = prompt('UN/NA number to add/edit:'); if(!un) return;
+  const json = prompt('Paste JSON for this UN (example: {"name":"Gasoline","hazard_class":"3","flammability":"Extremely flammable"})');
   try{
-    $('weatherResult')?.remove?.();
-  }catch{}
-  // insert a temporary card for weather output under content
-  let container = document.getElementById('weatherResult');
-  if(!container){
-    // create a visible section if user called directly
-    alert('Open the Weather page and use the input there.');
-    return;
-  }
-  container.textContent = 'Looking up location...';
-  // geocode via Open-Meteo (no key)
+    const obj = JSON.parse(json);
+    store.hazmat = store.hazmat || {};
+    store.hazmat[un] = obj;
+    await writePath(`hazmat/${un}`, obj);
+    alert('Saved HazMat entry.');
+  }catch(e){ alert('Invalid JSON'); }
+}
+
+/* ---------- EV DB (simple) ---------- */
+function searchEv(){
+  const q = $('evQuery').value.trim();
+  if(!q){ $('evResult').textContent = 'Enter VIN/Plate or Year,Make,Model'; return; }
+  const res = store.evDB?.[q] || null;
+  if(res) $('evResult').textContent = JSON.stringify(res, null, 2);
+  else $('evResult').textContent = 'Not found';
+}
+async function editEv(){
+  if(!isAdmin()) return alert('Admin only');
+  const key = prompt('Key (VIN or YMM string)'); if(!key) return;
+  const json = prompt('Paste JSON for vehicle (rescue info)'); try{
+    const obj = JSON.parse(json); store.evDB = store.evDB || {}; store.evDB[key] = obj; await writePath(`evDB/${key}`, obj); alert('Saved'); }
+  catch(e){ alert('Invalid JSON'); }
+}
+
+/* ---------- Weather (Open-Meteo) ---------- */
+async function searchWeather(){
+  const loc = $('weatherInput').value.trim();
+  if(!loc){ $('weatherResult').textContent = 'Enter a location first'; return; }
+  $('weatherResult').textContent = 'Geocoding...';
   try{
     const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(loc)}&count=1`).then(r=>r.json());
-    if(!geo.results || geo.results.length === 0){ container.textContent = 'Location not found'; return; }
-    const place = geo.results[0];
-    const lat = place.latitude, lon = place.longitude;
-    container.textContent = 'Fetching current weather...';
-    const weather = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`).then(r=>r.json());
-    if(!weather || !weather.current_weather){ container.textContent = 'Weather not available'; return; }
+    if(!geo.results || geo.results.length === 0){ $('weatherResult').textContent = 'Location not found'; return; }
+    const p = geo.results[0];
+    $('weatherResult').textContent = 'Fetching weather...';
+    const weather = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.latitude}&longitude=${p.longitude}&current_weather=true`).then(r=>r.json());
+    if(!weather.current_weather){ $('weatherResult').textContent = 'Weather not available'; return; }
     const cw = weather.current_weather;
-    container.innerHTML = `<strong>${place.name}, ${place.country}</strong>\nTemperature: ${cw.temperature}°C\nWind: ${cw.windspeed} km/h ${cw.winddirection}°\nTime: ${cw.time}`;
-  }catch(e){
-    console.error(e); container.textContent = 'Weather lookup failed';
-  }
+    const out = {
+      location: `${p.name}, ${p.country}`,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      temperature_C: cw.temperature,
+      wind_kmh: cw.windspeed,
+      wind_deg: cw.winddirection,
+      time: cw.time
+    };
+    $('weatherResult').textContent = JSON.stringify(out, null, 2);
+  }catch(e){ console.error(e); $('weatherResult').textContent = 'Weather lookup failed'; }
 }
 
 /* ---------- Delegated click handling ---------- */
 document.addEventListener('click', async (ev)=>{
   const btn = ev.target.closest('button'); if(!btn) return;
-  if(btn.dataset.action === 'editUser') return editUser(btn.dataset.user);
-  if(btn.dataset.action === 'deleteUser') return deleteUser(btn.dataset.user);
-  if(btn.dataset.action === 'openDept') return openDepartment(btn.dataset.id);
-  if(btn.dataset.action === 'editFire') return editFire(btn.dataset.id);
-  if(btn.dataset.action === 'deleteFire') return deleteFire(btn.dataset.id);
-  if(btn.dataset.action === 'editEms') return editEms(btn.dataset.id);
-  if(btn.dataset.action === 'deleteEms') return deleteEms(btn.dataset.id);
-  if(btn.dataset.action === 'editRes') return editResource(btn.dataset.id);
-  if(btn.dataset.action === 'deleteRes') return deleteResource(btn.dataset.id);
-  if(btn.dataset.action === 'editCoord') return editCoordinator(btn.dataset.id);
-  if(btn.dataset.action === 'deleteCoord') return deleteCoordinator(btn.dataset.id);
+  const act = btn.dataset.action;
+  if(act === 'editUser') return editUser(btn.dataset.user);
+  if(act === 'delUser') return deleteUser(btn.dataset.user);
+  if(act === 'openDept') return openDepartment(btn.dataset.id);
+  if(act === 'editDept') return editDepartment(btn.dataset.id);
+  if(act === 'deleteDept') return deleteDepartment(btn.dataset.id);
+  if(act === 'editEms') return editEms(btn.dataset.id);
+  if(act === 'delEms') return deleteEms(btn.dataset.id);
+  if(act === 'editRes') return editResource(btn.dataset.id);
+  if(act === 'delRes') return deleteResource(btn.dataset.id);
+  if(act === 'editCoord') return editCoordinator(btn.dataset.id);
+  if(act === 'delCoord') return deleteCoordinator(btn.dataset.id);
 });
 
-/* ---------- Wire UI controls ---------- */
+/* ---------- UI wiring ---------- */
 $('menuBtn').addEventListener('click', ()=> {
   if(window.innerWidth <= 900) $('sidebar').classList.toggle('show'); else $('sidebar').classList.toggle('hidden');
 });
-document.querySelectorAll('#sidebar button[data-page]').forEach(b=> b.addEventListener('click', ()=> showPage(b.dataset.page)));
+document.querySelectorAll('#sidebar button[data-page]').forEach(b=>b.addEventListener('click', ()=> showPage(b.dataset.page)));
+
 $('loginBtn').addEventListener('click', loginAction);
-$('demoBtn').addEventListener('click', async ()=> { $('loginUser').value='ADMIN'; $('loginPass').value='ADMIN'; await loginAction(); });
-$('signOutBtn').addEventListener('click', ()=> { currentUser=null; $('loginModal').style.display='flex'; $('sidebar').classList.add('hidden'); $('manageUsersBtn').style.display='none'; $('currentUserView').textContent='Not signed in'; });
+$('demoBtn').addEventListener('click', async ()=>{ $('loginUser').value='ADMIN'; $('loginPass').value='ADMIN'; await loginAction(); });
+
+$('signOutBtn').addEventListener('click', ()=>{ currentUser=null; $('loginModal').style.display='flex'; $('sidebar').classList.add('hidden'); $('manageUsersBtn').style.display='none'; $('currentUserView').textContent='Not signed in'; });
+
 $('addUserBtn').addEventListener('click', addUser);
-$('addFireBtn').addEventListener('click', addFire);
+$('addFireBtn').addEventListener('click', addDepartment);
 $('addEmsBtn').addEventListener('click', addEms);
 $('addResourceBtn').addEventListener('click', addResource);
 $('addCoordBtn').addEventListener('click', addCoordinator);
+
 $('searchUnBtn').addEventListener('click', searchHazmat);
 $('editHazmatBtn').addEventListener('click', editHazmat);
 $('searchEvBtn').addEventListener('click', searchEv);
+$('editEvBtn').addEventListener('click', editEv);
+
+$('weatherBtn').addEventListener('click', searchWeather);
 $('manageUsersBtn').addEventListener('click', ()=> showPage('manageUsers'));
-
-/* wire weather input inside UI: add a small search input + button in page top when weather page is shown */
-function ensureWeatherControls(){
-  // add controls at top of EV or provide separate? We'll add a simple prompt via page show
-  // On the weather page, create an input and button if not present
-  const page = $('weatherPageControls');
-  if(page) return;
-}
-// Add a small weather input on the main nav -> We'll create it inline in the page when selected:
-const weatherSection = document.createElement('div');
-weatherSection.id = 'weatherInlineControls';
-weatherSection.style.display = 'none';
-document.body.appendChild(weatherSection);
-
-// Hook to showPage: when showing weather, show input and connect search
-const originalShowPage = showPage;
-window.showPage = function(pageId){
-  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-  const el = $(pageId); if(el) el.style.display = 'block';
-  if(pageId === 'evSafety'){
-    // keep as-is
-  }
-  if(pageId === 'hazmat'){
-    // nothing
-  }
-  if(pageId === 'fireRisk' || pageId === 'drivingSafety'){
-    // these are empty placeholders
-  }
-  if(pageId === 'home'){ /* no op */ }
-  if(pageId === 'weather'){ /* we don't have a separate weather page so just do nothing */ }
-  if(window.innerWidth <= 900) $('sidebar').classList.remove('show');
-};
-
-// Add a simple weather quick-action in header area (a compact button opens prompt)
-const headerQuick = document.createElement('div');
-headerQuick.style.marginLeft = '12px';
-headerQuick.innerHTML = `<button id="quickWeather" class="ghost" style="margin-left:12px">Weather</button>`;
-document.querySelector('header').appendChild(headerQuick);
-document.getElementById('quickWeather').addEventListener('click', ()=> {
-  const loc = prompt('Enter location (city/address) for weather:');
-  if(loc) searchWeather(loc);
-});
 
 /* ---------- Initialization ---------- */
 (async function init(){
-  // ensure DB has fallback admin if empty
   await ensureFallbackAdmin();
-  // show login modal until sign in
   $('loginModal').style.display = 'flex';
   $('sidebar').classList.add('hidden');
   renderAll();
 })();
 
-/* expose for debugging */
+/* expose quick debugging helpers */
 window._getStore = ()=> store;
-window._saveStore = saveStore;
+window._writePath = writePath;
+window._removePath = removePath;
 
 </script>
 </body>
