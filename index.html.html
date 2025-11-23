@@ -1,124 +1,552 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>F1 Resource</title>
-  <style>
-    body { margin:0; font-family:Arial, sans-serif; background:#f5f5f5; }
-    #loginBox { width:300px; margin:120px auto; padding:20px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
-    #app { display:none; height:100vh; }
-    #sidebar { width:250px; background:#1a1a1a; color:white; padding:20px; position:fixed; top:0; bottom:0; left:0; overflow-y:auto; }
-    #sidebar h2 { margin-top:0; }
-    #sidebar button { width:100%; padding:10px; margin:5px 0; border:none; background:#333; color:white; border-radius:6px; }
-    #content { margin-left:270px; padding:20px; }
-    .hidden { display:none; }
-    .page { display:none; }
-    .page.active { display:block; }
-    .card { background:white; padding:15px; border-radius:8px; margin:10px 0; box-shadow:0 0 5px rgba(0,0,0,0.1); }
-    input, select { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>F1 Resource — Realtime</title>
+<link rel="icon" href="data:," />
+<style>
+  :root{
+    --bg:#f5f8fc; --card:#ffffff; --primary:#0b5fff; --dark:#062044; --muted:#6b7280;
+    --success:#16a34a; --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:var(--bg);color:var(--dark);-webkit-font-smoothing:antialiased}
+  header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(180deg,#062044 0%, #0b2a56 100%);color:#fff}
+  header h1{font-size:18px;margin:0}
+  #appWrap{display:flex;height:calc(100vh - 56px);overflow:hidden}
+  /* Sidebar */
+  nav#sidebar{width:280px;background:#062b57;color:#fff;padding:16px;overflow:auto;transition:transform .24s ease, width .2s}
+  nav#sidebar.hidden{transform:translateX(-110%)}
+  nav#sidebar h2{margin:0 0 12px;font-size:18px}
+  nav#sidebar .muted{color:#9db2d3;font-size:13px;margin-bottom:12px}
+  nav#sidebar button{display:block;width:100%;text-align:left;padding:10px;border-radius:8px;border:none;background:transparent;color:#fff;margin:6px 0;cursor:pointer}
+  nav#sidebar button:hover{background:rgba(255,255,255,0.03)}
+  main#content{flex:1;overflow:auto;padding:18px}
+  .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 8px 30px rgba(2,6,23,0.06);margin-bottom:18px}
+  .muted{color:var(--muted);font-size:13px}
+  input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6edf3;margin:8px 0}
+  button.primary{background:var(--primary);color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid #dbeafe;color:var(--primary);padding:8px 12px;border-radius:8px}
+  .row{display:flex;gap:12px;align-items:center}
+  .listItem{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;background:#fff;border:1px solid #eef6ff;margin-top:10px;gap:8px;flex-wrap:wrap}
+  .small{padding:6px 10px;font-size:13px}
+  .status-in{color:var(--success);font-weight:600}
+  .status-out{color:var(--danger);font-weight:600}
+  .page{display:none}
+  /* responsive adjustments */
+  @media (max-width:900px){
+    nav#sidebar{position:fixed;left:0;top:56px;height:calc(100vh - 56px);z-index:60;transform:translateY(-150%)}
+    nav#sidebar.show{transform:translateY(0)}
+    nav#sidebar.hidden{transform:translateY(-150%)}
+    main#content{padding:12px}
+  }
+  /* Login modal */
+  #loginModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:80}
+  #loginCard{width:360px;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.25)}
+  #loginCard h2{margin:0 0 6px}
+  .helper{font-size:13px;color:var(--muted)}
+  .tiny{font-size:12px;color:var(--muted)}
+  .flex-between{display:flex;justify-content:space-between;align-items:center}
+</style>
 </head>
 <body>
+  <header>
+    <button id="menuBtn" aria-label="menu" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">☰</button>
+    <h1>F1 Resource</h1>
+    <div style="margin-left:auto" id="currentUserView" class="muted tiny">Not signed in</div>
+  </header>
 
-  <div id="loginBox">
-    <h2>Login</h2>
-    <input id="username" placeholder="Username" />
-    <input id="password" type="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
-    <p id="loginError" style="color:red;"></p>
-  </div>
-
-  <div id="app">
-    <div id="sidebar">
+  <div id="appWrap">
+    <nav id="sidebar" class="hidden" aria-label="Main navigation">
       <h2>F1 Resource</h2>
-      <button onclick="showPage('home')">Home</button>
-      <button onclick="showPage('departments')">Fire Departments</button>
-      <button onclick="showPage('ems')">EMS Agencies</button>
-      <button onclick="showPage('resources')">County Resources</button>
-      <button onclick="showPage('coordinators')">County Coordinators</button>
-      <button onclick="showPage('hazmat')">HazMat Search</button>
-      <button onclick="showPage('ev')">EV Safety</button>
-      <button onclick="showPage('weather')">Weather</button>
-    </div>
+      <div class="muted">Oswego County</div>
 
-    <div id="content">
-      <div id="home" class="page active">
-        <h1>WELCOME</h1>
-        <p>This is F1 Resource, your all inclusive application for the resources in Oswego County</p>
+      <button data-page="home">Home</button>
+      <button data-page="fireAgencies">Fire Agencies</button>
+      <button data-page="emsAgencies">EMS Agencies</button>
+      <button data-page="countyResources">County Resources</button>
+      <button data-page="countyCoordinators">County Coordinators</button>
+      <button data-page="hazmat">HazMat Search</button>
+      <button data-page="evSafety">EV Safety</button>
+
+      <div style="margin-top:12px;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px">
+        <div class="muted" style="margin-bottom:8px">Admin</div>
+        <button id="manageUsersBtn" style="display:none" data-page="manageUsers">Manage Users</button>
+        <button id="signOutBtn" style="margin-top:8px">Sign Out</button>
       </div>
 
-      <div id="departments" class="page"><h2>Fire Departments</h2></div>
-      <div id="ems" class="page"><h2>EMS Agencies</h2></div>
-      <div id="resources" class="page"><h2>County Resources</h2></div>
-      <div id="coordinators" class="page"><h2>County Coordinators</h2></div>
+      <div style="margin-top:18px" class="muted tiny">Version 1.0 — Realtime DB</div>
+    </nav>
 
-      <div id="hazmat" class="page">
-        <h2>HazMat Search</h2>
-        <input id="hazmatInput" placeholder="Enter UN Number" />
-        <button onclick="searchHazMat()">Search</button>
-        <div id="hazmatResult"></div>
+    <main id="content">
+      <!-- HOME -->
+      <section id="home" class="card page" style="display:block">
+        <h2>WELCOME</h2>
+        <p class="muted">This is <strong>F1 Resource</strong> — an admin interface for county fire & EMS resources. Use the menu to navigate.</p>
+      </section>
+
+      <!-- Fire Agencies -->
+      <section id="fireAgencies" class="card page" style="display:none">
+        <div class="flex-between">
+          <h3 style="margin:0">Fire Agencies</h3>
+          <div><button id="addFireBtn" class="small primary">Add Agency</button></div>
+        </div>
+        <div id="fireList" style="margin-top:12px"></div>
+      </section>
+
+      <!-- EMS Agencies -->
+      <section id="emsAgencies" class="card page" style="display:none">
+        <div class="flex-between">
+          <h3 style="margin:0">EMS Agencies</h3>
+          <div><button id="addEmsBtn" class="small primary">Add EMS</button></div>
+        </div>
+        <div id="emsList" style="margin-top:12px"></div>
+      </section>
+
+      <!-- County Resources -->
+      <section id="countyResources" class="card page" style="display:none">
+        <div class="flex-between">
+          <h3 style="margin:0">County Resources</h3>
+          <div><button id="addResourceBtn" class="small primary">Add Resource</button></div>
+        </div>
+        <div id="resourceList" style="margin-top:12px"></div>
+      </section>
+
+      <!-- County Coordinators -->
+      <section id="countyCoordinators" class="card page" style="display:none">
+        <div class="flex-between">
+          <h3 style="margin:0">County Coordinators</h3>
+          <div><button id="addCoordBtn" class="small primary">Add Coordinator</button></div>
+        </div>
+        <div id="coordinatorList" style="margin-top:12px"></div>
+      </section>
+
+      <!-- HazMat -->
+      <section id="hazmat" class="card page" style="display:none">
+        <h3 style="margin:0">HazMat Search</h3>
+        <div style="margin-top:10px" class="row">
+          <input id="unInput" placeholder="UN/NA number (e.g. 1203)" />
+          <button id="searchUnBtn" class="small primary">Search</button>
+        </div>
+        <pre id="unResult" style="margin-top:12px;background:#f3fbff;padding:12px;border-radius:8px"></pre>
+        <div style="margin-top:8px"><button id="editHazmatBtn" class="small ghost">Admin: Add/Edit Entry</button></div>
+      </section>
+
+      <!-- EV Safety -->
+      <section id="evSafety" class="card page" style="display:none">
+        <h3 style="margin:0">Electric Vehicle Safety</h3>
+        <div style="margin-top:10px" class="row">
+          <input id="evQuery" placeholder="VIN / Plate / Year,Make,Model" />
+          <button id="searchEvBtn" class="small primary">Search</button>
+        </div>
+        <pre id="evResult" style="margin-top:12px;background:#f3fbff;padding:12px;border-radius:8px"></pre>
+      </section>
+
+      <!-- Manage Users -->
+      <section id="manageUsers" class="card page" style="display:none">
+        <div class="flex-between">
+          <h3 style="margin:0">Manage Users</h3>
+          <div><button id="addUserBtn" class="small primary">Add User</button></div>
+        </div>
+        <div id="userList" style="margin-top:12px"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Login modal -->
+  <div id="loginModal" style="display:flex;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:80">
+    <div id="loginCard" style="width:360px;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.25)">
+      <h2>F1 Resource Login</h2>
+      <div class="muted">Sign in with your account (stored in DB). First-time fallback: <strong>ADMIN / ADMIN</strong></div>
+      <div style="margin-top:10px">
+        <input id="loginUser" placeholder="Username" autocomplete="username" />
+        <input id="loginPass" placeholder="Password" type="password" autocomplete="current-password" />
       </div>
-
-      <div id="ev" class="page">
-        <h2>EV Safety</h2>
-        <input id="evYM" placeholder="Year Make Model" />
-        <button onclick="searchEV()">Search</button>
-        <div id="evResult"></div>
+      <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+        <button id="loginBtn" class="primary">Sign In</button>
+        <button id="demoBtn" class="ghost">Demo (ADMIN/ADMIN)</button>
+        <div id="loginMsg" class="muted tiny" style="margin-left:auto"></div>
       </div>
-
-      <div id="weather" class="page">
-        <h2>Weather</h2>
-        <input id="weatherLoc" placeholder="Enter Location" />
-        <button onclick="searchWeather()">Get Weather</button>
-        <div id="weatherResult"></div>
-      </div>
-
     </div>
   </div>
 
-  <script>
-  window.onload = function() {
+<script type="module">
+/* ---------- Firebase setup ---------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-    const USERS = {
-      "ADMIN": { password:"ADMIN", role:"admin" }
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
+  authDomain: "f1resource-8fedc.firebaseapp.com",
+  databaseURL: "https://f1resource-8fedc-default-rtdb.firebaseio.com",
+  projectId: "f1resource-8fedc",
+  storageBucket: "f1resource-8fedc.firebasestorage.app",
+  messagingSenderId: "182745701982",
+  appId: "1:182745701982:web:9f4f3836b41b450987decf"
+};
 
-    window.login = function () {
-      const u = document.getElementById("username").value.trim();
-      const p = document.getElementById("password").value.trim();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const rootRef = ref(db, 'store');
 
-      if (USERS[u] && USERS[u].password === p) {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("app").style.display = "flex";
-        showPage("home");
-      } else {
-        document.getElementById("loginError").textContent = "Invalid login";
-      }
-    };
+/* ---------- Utility ---------- */
+const $ = id => document.getElementById(id);
+function genId(prefix='id'){ return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,6); }
 
-    window.showPage = function(id) {
-      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-    };
+/* ---------- Local runtime store mirrored from DB ---------- */
+let store = { users:{}, fireAgencies:[], emsAgencies:[], resources:[], coordinators:[], hazmatDB:{}, evDB:{} };
+let currentUser = null;
 
-    window.searchHazMat = function() {
-      const v = document.getElementById("hazmatInput").value;
-      document.getElementById("hazmatResult").innerHTML = "<p>HazMat info for " + v + "</p>";
-    };
+/* ---------- Sync DB -> store in realtime ---------- */
+onValue(rootRef, snap => {
+  const val = snap.val();
+  if(val){
+    store = val;
+  } else {
+    // create empty store object in DB if not exists
+    set(rootRef, store).catch(e=>console.error('init store error', e));
+  }
+  // update UI when store changes
+  renderAll();
+});
 
-    window.searchEV = function() {
-      const v = document.getElementById("evYM").value;
-      document.getElementById("evResult").innerHTML = "<p>EV info for " + v + "</p>";
-    };
+/* ---------- Write full store to DB ---------- */
+function saveStore(){
+  return set(rootRef, store).catch(e => console.error('saveStore error', e));
+}
 
-    window.searchWeather = function() {
-      const v = document.getElementById("weatherLoc").value;
-      document.getElementById("weatherResult").innerHTML = "<p>Weather info for " + v + "</p>";
-    };
+/* ---------- Login flow ---------- */
+async function createFallbackAdmin(){
+  if(!store.users || Object.keys(store.users).length === 0){
+    store.users = store.users || {};
+    store.users['ADMIN'] = { password:'ADMIN', role:'ADMIN', departmentId: null };
+    await saveStore();
+  }
+}
 
+async function loginAction(){
+  const u = $('loginUser').value.trim();
+  const p = $('loginPass').value.trim();
+  $('loginMsg').textContent = '';
+  if(!u || !p){ $('loginMsg').textContent = 'Enter username and password'; return; }
+
+  // if no users in DB, allow fallback creation (ADMIN/ADMIN)
+  if(!store.users || Object.keys(store.users).length === 0){
+    if(u === 'ADMIN' && p === 'ADMIN'){
+      store.users = store.users || {};
+      store.users['ADMIN'] = { password:'ADMIN', role:'ADMIN', departmentId: null };
+      await saveStore();
+      currentUser = { username:'ADMIN', role:'ADMIN', departmentId: null };
+      afterLogin(); return;
+    } else {
+      $('loginMsg').textContent = 'No users in DB yet — use fallback ADMIN/ADMIN';
+      return;
+    }
+  }
+
+  const dbUser = store.users[u];
+  if(!dbUser){ $('loginMsg').textContent = 'Invalid username'; return; }
+  if(dbUser.password !== p){ $('loginMsg').textContent = 'Invalid password'; return; }
+  currentUser = { username: u, role: dbUser.role, departmentId: dbUser.departmentId || null };
+  afterLogin();
+}
+
+function afterLogin(){
+  $('loginModal').style.display = 'none';
+  $('sidebar').classList.remove('hidden');
+  $('currentUserView').textContent = `${currentUser.username} • ${currentUser.role}`;
+  if(currentUser.role === 'ADMIN') $('manageUsersBtn').style.display = 'block'; else $('manageUsersBtn').style.display = 'none';
+  renderAll();
+  showPage('home');
+}
+
+/* ---------- UI helpers ---------- */
+function showPage(pageId){
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  const el = $(pageId);
+  if(el) el.style.display = 'block';
+  if(window.innerWidth <= 900) $('sidebar').classList.remove('show');
+}
+
+/* ---------- Renderers ---------- */
+function renderAll(){
+  renderUsers();
+  renderFireAgencies();
+  renderEMS();
+  renderResources();
+  renderCoordinators();
+}
+
+/* Users */
+function renderUsers(){
+  const target = $('userList');
+  if(!target) return;
+  target.innerHTML = '';
+  const users = store.users || {};
+  Object.keys(users).forEach(u => {
+    const item = users[u];
+    const div = document.createElement('div'); div.className='listItem';
+    div.innerHTML = `<div style="min-width:0"><strong>${u}</strong><div class="muted">${item.role}${item.departmentId?(' • dept:'+item.departmentId):''}</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="small" data-action="editUser" data-user="${u}">Edit</button>
+        <button class="small" data-action="delUser" data-user="${u}">Delete</button>
+      </div>`;
+    target.appendChild(div);
+  });
+}
+
+/* Fire Agencies */
+function renderFireAgencies(){
+  const t = $('fireList'); if(!t) return;
+  t.innerHTML = '';
+  (store.fireAgencies||[]).forEach(a=>{
+    const div = document.createElement('div'); div.className='listItem';
+    const count = (a.apparatus||[]).length;
+    div.innerHTML = `<div style="min-width:0"><strong>${a.name||'(Unnamed)'}</strong><div class="muted">Battalion: ${a.battalion||'-'} • Address: ${a.address||'-'} • Apparatus: ${count}</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="small" data-action="openDept" data-id="${a.id}">Open</button>
+        <button class="small" data-action="editFire" data-id="${a.id}">Edit</button>
+        <button class="small" data-action="delFire" data-id="${a.id}">Delete</button>
+      </div>`;
+    t.appendChild(div);
+  });
+}
+
+/* EMS */
+function renderEMS(){
+  const t = $('emsList'); if(!t) return; t.innerHTML='';
+  (store.emsAgencies||[]).forEach(e=>{
+    const div = document.createElement('div'); div.className='listItem';
+    div.innerHTML = `<div><strong>${e.name||'(Unnamed)'}</strong><div class="muted">${(e.stations||[]).join('; ')}</div></div>
+      <div style="display:flex;gap:8px"><button class="small" data-action="editEms" data-id="${e.id}">Edit</button><button class="small" data-action="delEms" data-id="${e.id}">Delete</button></div>`;
+    t.appendChild(div);
+  });
+}
+
+/* Resources */
+function renderResources(){
+  const t = $('resourceList'); if(!t) return; t.innerHTML='';
+  (store.resources||[]).forEach(r=>{
+    const div = document.createElement('div'); div.className='listItem';
+    div.innerHTML = `<div><strong>${r.name||'(Unnamed)'}</strong><div class="muted">${r.capabilities||''}</div></div>
+      <div style="display:flex;gap:8px"><button class="small" data-action="editRes" data-id="${r.id}">Edit</button><button class="small" data-action="delRes" data-id="${r.id}">Delete</button></div>`;
+    t.appendChild(div);
+  });
+}
+
+/* Coordinators */
+function renderCoordinators(){
+  const t = $('coordinatorList'); if(!t) return; t.innerHTML='';
+  (store.coordinators||[]).forEach(c=>{
+    const div = document.createElement('div'); div.className='listItem';
+    div.innerHTML = `<div><strong>${c.name||'(Unnamed)'}</strong><div class="muted">Callsign: ${c.callsign||''}</div></div>
+      <div style="display:flex;gap:8px"><button class="small" data-action="editCoord" data-id="${c.id}">Edit</button><button class="small" data-action="delCoord" data-id="${c.id}">Delete</button></div>`;
+    t.appendChild(div);
+  });
+}
+
+/* ---------- CRUD actions ---------- */
+
+/* Admin check */
+function isAdmin(){ return currentUser && currentUser.role === 'ADMIN'; }
+
+/* Users */
+async function addUser(){
+  if(!isAdmin()) return alert('Admin only');
+  const username = prompt('Username (no spaces):'); if(!username) return;
+  const password = prompt('Password:','changeme') || 'changeme';
+  let role = prompt('Role (ADMIN / DEPARTMENT / TRIAL):','DEPARTMENT') || 'DEPARTMENT'; role = role.toUpperCase();
+  let departmentId = null; if(role === 'DEPARTMENT') departmentId = prompt('Department ID for this user (leave blank to assign later):','') || null;
+  store.users = store.users || {}; store.users[username] = { password, role, departmentId };
+  await saveStore(); renderUsers();
+}
+async function editUser(username){
+  if(!isAdmin()) return alert('Admin only');
+  const u = store.users[username]; if(!u) return;
+  const password = prompt('Password:', u.password) || u.password;
+  let role = prompt('Role (ADMIN/DEPARTMENT/TRIAL):', u.role) || u.role; role = role.toUpperCase();
+  let departmentId = (role === 'DEPARTMENT') ? (prompt('Department ID', u.departmentId || '') || null) : null;
+  store.users[username] = { password, role, departmentId };
+  await saveStore(); renderUsers();
+}
+async function deleteUser(username){
+  if(!isAdmin()) return alert('Admin only');
+  if(!confirm('Delete user '+username+'?')) return;
+  delete store.users[username]; await saveStore(); renderUsers();
+}
+
+/* Fire agencies */
+async function addFire(){
+  if(!isAdmin()) return alert('Admin only');
+  const name = prompt('Agency name'); if(!name) return;
+  const battalion = prompt('Battalion (optional)','')||'';
+  const address = prompt('Address (optional)','')||'';
+  const id = genId('fire');
+  store.fireAgencies = store.fireAgencies || [];
+  store.fireAgencies.push({ id, name, battalion, address, stations: [], apparatus: [] });
+  await saveStore(); renderFireAgencies();
+}
+async function editFire(id){
+  const a = (store.fireAgencies||[]).find(x=>x.id===id); if(!a) return alert('Not found');
+  if(!isAdmin()){
+    const u = store.users[currentUser.username];
+    if(!(u && u.role === 'DEPARTMENT' && u.departmentId === id)) return alert('No permission');
+  }
+  a.name = prompt('Agency name', a.name) || a.name;
+  a.battalion = prompt('Battalion', a.battalion) || a.battalion;
+  a.address = prompt('Address', a.address) || a.address;
+  const stations = prompt('Stations (comma separated)', (a.stations||[]).join(',')) || '';
+  a.stations = stations ? stations.split(',').map(s=>s.trim()).filter(Boolean) : [];
+  await saveStore(); renderFireAgencies();
+}
+async function deleteFire(id){
+  if(!isAdmin()) return alert('Admin only');
+  if(!confirm('Delete agency?')) return;
+  store.fireAgencies = (store.fireAgencies||[]).filter(x=>x.id!==id);
+  Object.keys(store.users||{}).forEach(u=>{ if(store.users[u].departmentId === id) store.users[u].departmentId = null; });
+  await saveStore(); renderFireAgencies();
+}
+
+/* Department subpage */
+function openDepartment(id){
+  const dept = (store.fireAgencies||[]).find(x=>x.id===id);
+  if(!dept) return alert('Department not found');
+  // create modal card
+  const main = $('content');
+  const old = $('deptPanel'); if(old) old.remove();
+  const card = document.createElement('div'); card.id='deptPanel'; card.className='card';
+  card.innerHTML = `<h3 style="margin:0 0 8px">${dept.name}</h3>
+    <div class="muted">Battalion: ${dept.battalion||'-'} • Address: ${dept.address||'-'}</div>
+    <div style="margin-top:12px"><strong>Stations:</strong><div id="deptStations" class="muted">${(dept.stations||[]).join('; ')||'(none)'}</div><div style="margin-top:8px"><button id="addStationBtn" class="small primary">Add Station</button></div></div>
+    <div style="margin-top:12px"><strong>Apparatus</strong><div id="apparatusList" style="margin-top:8px"></div><div style="margin-top:8px"><button id="addAppBtn" class="small primary">Add Apparatus</button></div></div>
+    <div style="margin-top:12px"><button id="editDeptBtn" class="small">Edit Dept</button> <button id="closeDeptBtn" class="small ghost">Close</button></div>`;
+  main.prepend(card);
+
+  function renderApp(){
+    const list = card.querySelector('#apparatusList'); list.innerHTML = '';
+    (dept.apparatus||[]).forEach((app, idx)=>{
+      const row = document.createElement('div'); row.className='listItem';
+      row.innerHTML = `<div style="min-width:0"><strong>${app.name||'(unnamed)'}</strong><div class="muted">Type: ${app.type||''} • Status: <span class="${app.status==='OOS'?'status-out':'status-in'}">${app.status||'IN SERVICE'}</span></div></div>
+        <div style="display:flex;gap:8px">
+          <button class="small" data-idx="${idx}" data-action="toggleApp">${app.status==='OOS'?'Mark IN':'Mark OOS'}</button>
+          <button class="small" data-idx="${idx}" data-action="editApp">Edit</button>
+          <button class="small" data-idx="${idx}" data-action="delApp">Delete</button>
+        </div>`;
+      list.appendChild(row);
+    });
+  }
+  renderApp();
+
+  card.querySelector('#addStationBtn').onclick = async ()=>{
+    if(!isAdmin() && !(store.users[currentUser.username]?.role==='DEPARTMENT' && store.users[currentUser.username].departmentId===id)) return alert('No permission');
+    const s = prompt('Station name/address'); if(!s) return;
+    dept.stations = dept.stations||[]; dept.stations.push(s);
+    await saveStore(); renderApp(); card.querySelector('#deptStations').textContent = (dept.stations||[]).join('; '); renderFireAgencies();
   };
-  </script>
 
+  card.querySelector('#addAppBtn').onclick = async ()=>{
+    if(!isAdmin() && !(store.users[currentUser.username]?.role==='DEPARTMENT' && store.users[currentUser.username].departmentId===id)) return alert('No permission');
+    const name = prompt('Apparatus name (Engine 1)'); if(!name) return;
+    const type = prompt('Type (Engine/Truck/Rescue/Tanker/Other)','Engine')||'Engine';
+    const status = prompt('Status (IN SERVICE / OOS)','IN SERVICE')||'IN SERVICE';
+    dept.apparatus = dept.apparatus||[]; dept.apparatus.push({ id: genId('app'), name, type, status });
+    await saveStore(); renderApp(); renderFireAgencies();
+  };
+
+  card.querySelector('#editDeptBtn').onclick = async ()=>{
+    if(!isAdmin() && !(store.users[currentUser.username]?.role==='DEPARTMENT' && store.users[currentUser.username].departmentId===id)) return alert('No permission');
+    dept.name = prompt('Name', dept.name)||dept.name;
+    dept.battalion = prompt('Battalion', dept.battalion)||dept.battalion;
+    dept.address = prompt('Address', dept.address)||dept.address;
+    await saveStore(); renderFireAgencies(); card.remove();
+  };
+
+  card.querySelector('#closeDeptBtn').onclick = ()=> card.remove();
+
+  // delegated apparatus actions
+  card.addEventListener('click', async (ev)=>{
+    const btn = ev.target.closest('button'); if(!btn) return;
+    const action = btn.dataset.action; const idx = parseInt(btn.dataset.idx);
+    if(action === 'toggleApp'){ const app = dept.apparatus[idx]; if(!app) return; app.status = app.status==='OOS'?'IN SERVICE':'OOS'; await saveStore(); renderApp(); renderFireAgencies(); }
+    else if(action === 'editApp'){ const app = dept.apparatus[idx]; if(!app) return; app.name = prompt('Name', app.name)||app.name; app.type = prompt('Type', app.type)||app.type; app.status = prompt('Status', app.status)||app.status; await saveStore(); renderApp(); renderFireAgencies(); }
+    else if(action === 'delApp'){ if(!confirm('Delete apparatus?')) return; dept.apparatus.splice(idx,1); await saveStore(); renderApp(); renderFireAgencies(); }
+  });
+}
+
+/* EMS CRUD */
+async function addEms(){ if(!isAdmin()) return alert('Admin only'); const name = prompt('EMS name'); if(!name) return; const id = genId('ems'); store.emsAgencies = store.emsAgencies||[]; store.emsAgencies.push({ id, name, stations: [] }); await saveStore(); renderEMS(); }
+async function editEms(id){ const e = (store.emsAgencies||[]).find(x=>x.id===id); if(!e) return; e.name = prompt('Name', e.name)||e.name; e.stations = (prompt('Stations (comma separated)', (e.stations||[]).join(','))||'').split(',').map(s=>s.trim()).filter(Boolean); await saveStore(); renderEMS(); }
+async function deleteEms(id){ if(!isAdmin()) return alert('Admin only'); store.emsAgencies = (store.emsAgencies||[]).filter(x=>x.id!==id); await saveStore(); renderEMS(); }
+
+/* Resources CRUD */
+async function addResource(){ if(!isAdmin()) return alert('Admin only'); const name = prompt('Resource name'); if(!name) return; store.resources = store.resources||[]; store.resources.push({ id: genId('res'), name, capabilities: '' }); await saveStore(); renderResources(); }
+async function editResource(id){ if(!isAdmin()) return alert('Admin only'); const r = (store.resources||[]).find(x=>x.id===id); r.name = prompt('Name', r.name)||r.name; r.capabilities = prompt('Capabilities', r.capabilities||'')||r.capabilities; await saveStore(); renderResources(); }
+async function deleteResource(id){ if(!isAdmin()) return alert('Admin only'); store.resources = (store.resources||[]).filter(x=>x.id!==id); await saveStore(); renderResources(); }
+
+/* Coordinators */
+async function addCoordinator(){ if(!isAdmin()) return alert('Admin only'); const name = prompt('Coordinator name'); if(!name) return; store.coordinators = store.coordinators||[]; store.coordinators.push({ id: genId('coord'), name, callsign: '' }); await saveStore(); renderCoordinators(); }
+async function editCoordinator(id){ if(!isAdmin()) return alert('Admin only'); const c = (store.coordinators||[]).find(x=>x.id===id); c.name = prompt('Name', c.name)||c.name; c.callsign = prompt('Callsign', c.callsign||'')||c.callsign; await saveStore(); renderCoordinators(); }
+async function deleteCoordinator(id){ if(!isAdmin()) return alert('Admin only'); store.coordinators = (store.coordinators||[]).filter(x=>x.id!==id); await saveStore(); renderCoordinators(); }
+
+/* HazMat & EV */
+function searchHazmat(){ const q = ($('unInput') ? $('unInput').value.trim() : ''); const res = (store.hazmatDB && store.hazmatDB[q]) || null; $('unResult').textContent = res ? JSON.stringify(res,null,2) : 'Not found'; }
+async function editHazmat(){ if(!isAdmin()) return alert('Admin only'); const un = prompt('UN/NA number'); if(!un) return; const json = prompt('Paste JSON for this UN (e.g. {"name":"Gasoline","hazard_class":"3"})'); try{ store.hazmatDB = store.hazmatDB||{}; store.hazmatDB[un] = JSON.parse(json); await saveStore(); alert('Saved'); }catch(e){ alert('Invalid JSON'); } }
+function searchEv(){ const q = ($('evQuery') ? $('evQuery').value.trim() : ''); const res = (store.evDB && (store.evDB[q]||store.evDB[q.toUpperCase()])) || null; $('evResult').textContent = res ? JSON.stringify(res,null,2) : 'Not found'; }
+
+/* ---------- Delegated event handling ---------- */
+document.addEventListener('click', async (ev)=>{
+  const btn = ev.target.closest('button'); if(!btn) return;
+  // user management
+  if(btn.dataset.action === 'editUser') return editUser(btn.dataset.user);
+  if(btn.dataset.action === 'delUser') return deleteUser(btn.dataset.user);
+  // fire actions
+  if(btn.dataset.action === 'openDept') return openDepartment(btn.dataset.id);
+  if(btn.dataset.action === 'editFire') return editFire(btn.dataset.id);
+  if(btn.dataset.action === 'delFire') return deleteFire(btn.dataset.id);
+  // ems
+  if(btn.dataset.action === 'editEms') return editEms(btn.dataset.id);
+  if(btn.dataset.action === 'delEms') return deleteEms(btn.dataset.id);
+  // resources
+  if(btn.dataset.action === 'editRes') return editResource(btn.dataset.id);
+  if(btn.dataset.action === 'delRes') return deleteResource(btn.dataset.id);
+  // coordinators
+  if(btn.dataset.action === 'editCoord') return editCoordinator(btn.dataset.id);
+  if(btn.dataset.action === 'delCoord') return deleteCoordinator(btn.dataset.id);
+});
+
+/* ---------- Wiring static UI controls ---------- */
+$('menuBtn').addEventListener('click', ()=> {
+  if(window.innerWidth <= 900) $('sidebar').classList.toggle('show'); else $('sidebar').classList.toggle('hidden');
+});
+document.querySelectorAll('#sidebar button[data-page]').forEach(b=> b.addEventListener('click', ()=> showPage(b.dataset.page)));
+$('loginBtn').addEventListener('click', loginAction);
+$('demoBtn').addEventListener('click', async ()=> { $('loginUser').value='ADMIN'; $('loginPass').value='ADMIN'; await loginAction(); });
+$('signOutBtn').addEventListener('click', ()=> { currentUser=null; $('loginModal').style.display='flex'; $('sidebar').classList.add('hidden'); $('manageUsersBtn').style.display='none'; $('currentUserView').textContent='Not signed in'; });
+$('addUserBtn').addEventListener('click', addUser);
+$('addFireBtn').addEventListener('click', addFire);
+$('addEmsBtn').addEventListener('click', addEms);
+$('addResourceBtn').addEventListener('click', addResource);
+$('addCoordBtn').addEventListener('click', addCoordinator);
+$('searchUnBtn').addEventListener('click', searchHazmat);
+$('editHazmatBtn').addEventListener('click', editHazmat);
+$('searchEvBtn').addEventListener('click', searchEv);
+$('manageUsersBtn').addEventListener('click', ()=> showPage('manageUsers'));
+
+/* ---------- Startup ---------- */
+(async function init(){
+  // ensure DB has fallback admin if empty
+  await createFallbackAdmin();
+  // show login modal until user logs in
+  $('loginModal').style.display = 'flex';
+  $('sidebar').classList.add('hidden');
+  renderAll();
+})();
+
+/* expose for debugging */
+window._getStore = ()=> store;
+window._saveStore = saveStore;
+
+</script>
 </body>
 </html>
