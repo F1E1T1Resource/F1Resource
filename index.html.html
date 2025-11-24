@@ -1,130 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>F1 Resource</title>
-<style>
-  body { margin:0; font-family:Arial, sans-serif; background:#f5f5f5; }
-  #loginBox { width:300px; margin:120px auto; padding:20px; background:white; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.3); text-align:center; }
-  #loginBox h2 { margin-bottom:15px; }
-  #loginBox input { width:90%; padding:10px; margin:10px 0; border-radius:6px; border:1px solid #ccc; }
-  #loginBox button { width:95%; padding:10px; background:#1a73e8; color:white; border:none; border-radius:6px; cursor:pointer; }
-  #app { display:none; flex-direction:row; height:100vh; }
-  #sidebar { width:250px; background:#1a1a1a; color:white; padding:20px; position:fixed; top:0; bottom:0; left:0; overflow-y:auto; }
-  #sidebar h2 { margin-top:0; margin-bottom:20px; text-align:center; }
-  #sidebar button { width:100%; padding:10px; margin:5px 0; border:none; background:#333; color:white; border-radius:6px; cursor:pointer; text-align:left; }
-  #sidebar button:hover { background:#555; }
-  #content { margin-left:270px; padding:20px; flex:1; overflow-y:auto; }
-  .hidden { display:none; }
-  .card { background:white; padding:15px; border-radius:8px; margin:10px 0; box-shadow:0 0 5px rgba(0,0,0,0.1); }
-  input, select { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
-  @media (max-width: 768px) {
-    #sidebar { width:70px; padding:10px; }
-    #sidebar button { font-size:12px; text-align:center; padding:8px; }
-    #content { margin-left:80px; }
-  }
-</style>
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
-    authDomain: "f1resource-8fedc.firebaseapp.com",
-    databaseURL: "https://f1resource-8fedc-default-rtdb.firebaseio.com",
-    projectId: "f1resource-8fedc",
-    storageBucket: "f1resource-8fedc.firebasestorage.app",
-    messagingSenderId: "182745701982",
-    appId: "1:182745701982:web:9f4f3836b41b450987decf"
-  };
-
-  const appFirebase = initializeApp(firebaseConfig);
-  const db = getFirestore(appFirebase);
-
-  // Local login accounts
-  const USERS = {
-    "ADMIN": { password:"ADMIN", role:"admin" },
-    "DEPTADMIN": { password:"DEPTADMIN", role:"deptAdmin", department:"Station 1" },
-    "DEPTUSER": { password:"DEPTUSER", role:"deptUser", department:"Station 1" }
-  };
-
-  let currentUser = null;
-
-  function login() {
-    const u = document.getElementById("username").value.trim();
-    const p = document.getElementById("password").value.trim();
-    if (USERS[u] && USERS[u].password === p) {
-      currentUser = USERS[u];
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("app").style.display = "flex";
-      showPage("home");
-      loadAllData();
-    } else {
-      document.getElementById("loginError").textContent = "Invalid login";
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>F1 Resource</title>
+  <style>
+    body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5; }
+    #loginBox { width: 320px; margin: 120px auto; padding: 25px; background: white; border-radius: 10px; box-shadow:0 0 15px rgba(0,0,0,0.2);}
+    #loginBox h2 { text-align:center; margin-bottom:20px; }
+    #loginBox input { width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
+    #loginBox button { width:100%; padding:10px; margin-top:10px; background:#1a73e8; color:white; border:none; border-radius:5px; cursor:pointer; }
+    #loginBox button:hover { background:#155ab6; }
+    #app { display:none; flex-direction: row; height:100vh; }
+    #sidebar { width:250px; background:#1a1a1a; color:white; padding:20px; position:fixed; top:0; bottom:0; left:0; overflow-y:auto; transition: all 0.3s; }
+    #sidebar h2 { margin-top:0; margin-bottom:15px; font-size:1.5em; }
+    #sidebar button { width:100%; padding:10px; margin:5px 0; border:none; background:#333; color:white; border-radius:6px; cursor:pointer; text-align:left; }
+    #sidebar button:hover { background:#444; }
+    #sidebarToggle { display:none; position:fixed; top:10px; left:10px; z-index:1000; padding:10px; background:#1a73e8; color:white; border:none; border-radius:5px; }
+    #content { margin-left:270px; padding:20px; flex:1; overflow-y:auto; }
+    .hidden { display:none; }
+    .card { background:white; padding:15px; border-radius:8px; margin:10px 0; box-shadow:0 0 5px rgba(0,0,0,0.1); }
+    input, select { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
+    @media (max-width: 768px) {
+      #sidebar { width:200px; position:fixed; left:-220px; }
+      #sidebar.show { left:0; }
+      #content { margin-left:0; padding:10px; }
+      #sidebarToggle { display:block; }
     }
-  }
-
-  function showPage(id) {
-    document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
-    document.getElementById(id).classList.remove("hidden");
-  }
-
-  // ================= Firestore Functions =================
-  async function addItem(collectionName, fields) {
-    try { await addDoc(collection(db, collectionName), fields); } 
-    catch(e){ console.error(e); }
-  }
-
-  function renderList(containerId, data, collectionName, editable=true) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
-    data.forEach(docItem => {
-      const d = docItem.data();
-      const card = document.createElement("div");
-      card.className = "card";
-      let html = `<strong>${d.name || "No Name"}</strong>`;
-      if(editable){
-        html += `<br/><button onclick="editItem('${collectionName}','${docItem.id}')">Edit</button> <button onclick="deleteItem('${collectionName}','${docItem.id}')">Delete</button>`;
-      }
-      card.innerHTML = html;
-      container.appendChild(card);
-    });
-  }
-
-  async function deleteItem(collectionName, id){
-    if(confirm("Are you sure?")) await deleteDoc(doc(db, collectionName, id));
-  }
-
-  function editItem(collectionName, id){
-    const newName = prompt("Enter new name:");
-    if(newName) updateDoc(doc(db, collectionName, id), { name:newName });
-  }
-
-  function loadCollection(collectionName, containerId, editable=true){
-    const colRef = collection(db, collectionName);
-    onSnapshot(colRef, snapshot => {
-      renderList(containerId, snapshot.docs, collectionName, editable);
-    });
-  }
-
-  function loadAllData(){
-    const canEdit = currentUser.role==="admin" || currentUser.role==="deptAdmin";
-    loadCollection("departments","departmentList",canEdit);
-    loadCollection("ems","emsList",canEdit);
-    loadCollection("resources","resourceList",canEdit);
-    loadCollection("coordinators","coordinatorList",canEdit);
-  }
-
-  function addDepartment(){ addItem("departments",{ name:"New Department"}); }
-  function addEMS(){ addItem("ems",{ name:"New EMS Agency"}); }
-  function addResource(){ addItem("resources",{ name:"New Resource"}); }
-  function addCoordinator(){ addItem("coordinators",{ name:"New Coordinator"}); }
-
-</script>
+  </style>
 </head>
 <body>
+
 <div id="loginBox">
   <h2>Login</h2>
   <input id="username" placeholder="Username" />
@@ -132,6 +38,8 @@
   <button onclick="login()">Login</button>
   <p id="loginError" style="color:red;"></p>
 </div>
+
+<button id="sidebarToggle" onclick="toggleSidebar()">☰ Menu</button>
 
 <div id="app">
   <div id="sidebar">
@@ -141,13 +49,14 @@
     <button onclick="showPage('ems')">EMS Agencies</button>
     <button onclick="showPage('resources')">County Resources</button>
     <button onclick="showPage('coordinators')">County Coordinators</button>
-    <button onclick="showPage('hazmat')">HazMat</button>
+    <button onclick="showPage('hazmat')">HazMat Search</button>
     <button onclick="showPage('ev')">EV Safety</button>
     <button onclick="showPage('firerisk')">Fire Risk</button>
     <button onclick="showPage('drivingsafety')">Driving Safety</button>
   </div>
+
   <div id="content">
-    <div id="home" class="page"><h1>Welcome</h1><p>F1 Resource Home Page</p></div>
+    <div id="home" class="page"><h1>WELCOME</h1><p>This is F1 Resource, your all-inclusive application for resources in Oswego County.</p></div>
 
     <div id="departments" class="page hidden">
       <h2>Fire Departments</h2>
@@ -174,25 +83,158 @@
     </div>
 
     <div id="hazmat" class="page hidden">
-      <h2>HazMat</h2>
-      <p>Enter UN number search (mockup, populate manually)</p>
+      <h2>HazMat Search</h2>
+      <input id="hazmatInput" placeholder="Enter UN Number" />
+      <button onclick="searchHazMat()">Search</button>
+      <div id="hazmatResult"></div>
     </div>
 
     <div id="ev" class="page hidden">
       <h2>EV Safety</h2>
-      <p>EV information based on Year/Make/Model (mockup, populate manually)</p>
+      <input id="evYM" placeholder="Year Make Model" />
+      <button onclick="searchEV()">Search</button>
+      <div id="evResult"></div>
     </div>
 
     <div id="firerisk" class="page hidden">
       <h2>Fire Risk</h2>
-      <p>Fire Risk content here.</p>
+      <p>Fire risk page content will go here.</p>
     </div>
 
     <div id="drivingsafety" class="page hidden">
       <h2>Driving Safety</h2>
-      <p>Driving Safety content here.</p>
+      <p>Driving safety page content will go here.</p>
     </div>
   </div>
 </div>
+
+<script>
+  // Local login accounts
+  const USERS = {
+    "ADMIN": { password:"ADMIN", role:"admin" },
+    "DEPTADMIN": { password:"DEPTADMIN", role:"deptAdmin", dept:"Station 1" },
+    "DEPTUSER": { password:"DEPTUSER", role:"deptUser", dept:"Station 1" }
+  };
+
+  let currentUser = null;
+
+  function login() {
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value.trim();
+    if(USERS[u] && USERS[u].password === p){
+      currentUser = USERS[u];
+      document.getElementById("loginBox").style.display="none";
+      document.getElementById("app").style.display="flex";
+      showPage('home');
+      renderAll();
+    } else {
+      document.getElementById("loginError").textContent="Invalid login";
+    }
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    if(window.innerWidth <= 768) toggleSidebar(false);
+  }
+
+  function toggleSidebar(forceState) {
+    const sb = document.getElementById('sidebar');
+    if(forceState === false){ sb.classList.remove('show'); return; }
+    sb.classList.toggle('show');
+  }
+
+  // Sample hardcoded data
+  let departments = [{name:"Station 1", battalion:"1", address:"123 Main St", apparatus:[{name:"Engine 1", status:"IN SERVICE"}]}];
+  let ems = [{name:"EMS One", address:"456 Elm St"}];
+  let resources = [{name:"County Rescue Boat", location:"Lakefront"}];
+  let coordinators = [{name:"John Doe", role:"Coordinator", contact:"555-1234"}];
+
+  function renderAll(){
+    renderDepartments();
+    renderEMS();
+    renderResources();
+    renderCoordinators();
+  }
+
+  function renderDepartments(){
+    const container = document.getElementById("departmentList");
+    container.innerHTML="";
+    departments.forEach((d,i)=>{
+      const card = document.createElement("div"); card.className="card";
+      card.innerHTML=`<strong>${d.name}</strong><br>Battalion: ${d.battalion}<br>Address: ${d.address}<br>Apparatus:<ul>${d.apparatus.map(a=>"<li>"+a.name+" ("+a.status+")</li>").join('')}</ul>`;
+      if(currentUser.role==="admin" || (currentUser.role==="deptAdmin" && currentUser.dept===d.name)){
+        card.innerHTML += `<button onclick="editDepartment(${i})">Edit</button> <button onclick="deleteDepartment(${i})">Delete</button>`;
+      }
+      container.appendChild(card);
+    });
+  }
+
+  function addDepartment(){
+    if(currentUser.role!=="admin" && currentUser.role!=="deptAdmin") return alert("No permissions");
+    const name = prompt("Department Name"); 
+    if(!name) return;
+    const battalion = prompt("Battalion");
+    const address = prompt("Address");
+    const appName = prompt("Apparatus Name");
+    const appStatus = prompt("Status (IN SERVICE/OOS)");
+    departments.push({name, battalion, address, apparatus:[{name:appName,status:appStatus}]});
+    renderDepartments();
+  }
+
+  function editDepartment(i){
+    const d = departments[i];
+    const name = prompt("Department Name",d.name);
+    if(!name) return;
+    const battalion = prompt("Battalion",d.battalion);
+    const address = prompt("Address",d.address);
+    d.name=name; d.battalion=battalion; d.address=address;
+    renderDepartments();
+  }
+
+  function deleteDepartment(i){
+    if(confirm("Delete this department?")){
+      departments.splice(i,1);
+      renderDepartments();
+    }
+  }
+
+  function renderEMS(){
+    const container = document.getElementById("emsList");
+    container.innerHTML="";
+    ems.forEach((d,i)=>{
+      const card = document.createElement("div"); card.className="card";
+      card.innerHTML=`<strong>${d.name}</strong><br>Address: ${d.address}`;
+      if(currentUser.role==="admin") card.innerHTML += ` <button onclick="editEMS(${i})">Edit</button> <button onclick="deleteEMS(${i})">Delete</button>`;
+      container.appendChild(card);
+    });
+  }
+  function addEMS(){if(currentUser.role!=="admin") return alert("No permissions"); const name=prompt("EMS Name"); if(!name) return; const addr=prompt("Address"); ems.push({name,name,address:addr}); renderEMS();}
+  function editEMS(i){const d=ems[i]; const name=prompt("EMS Name",d.name); if(!name) return; const addr=prompt("Address",d.address); d.name=name; d.address=addr; renderEMS();}
+  function deleteEMS(i){if(confirm("Delete?")){ems.splice(i,1); renderEMS();}}
+
+  function renderResources(){
+    const container = document.getElementById("resourceList"); container.innerHTML="";
+    resources.forEach((r,i)=>{const card=document.createElement("div"); card.className="card"; card.innerHTML=`<strong>${r.name}</strong><br>Location: ${r.location}`; if(currentUser.role==="admin") card.innerHTML+=` <button onclick="editResource(${i})">Edit</button> <button onclick="deleteResource(${i})">Delete</button>`; container.appendChild(card);});
+  }
+  function addResource(){if(currentUser.role!=="admin") return alert("No permissions"); const name=prompt("Resource Name"); if(!name) return; const loc=prompt("Location"); resources.push({name,location:loc}); renderResources();}
+  function editResource(i){const r=resources[i]; const name=prompt("Resource Name",r.name); if(!name) return; const loc=prompt("Location",r.location); r.name=name; r.location=loc; renderResources();}
+  function deleteResource(i){if(confirm("Delete?")){resources.splice(i,1); renderResources();}}
+
+  function renderCoordinators(){
+    const container = document.getElementById("coordinatorList"); container.innerHTML="";
+    coordinators.forEach((c,i)=>{const card=document.createElement("div"); card.className="card"; card.innerHTML=`<strong>${c.name}</strong><br>Role: ${c.role}<br>Contact: ${c.contact}`; if(currentUser.role==="admin") card.innerHTML+=` <button onclick="editCoordinator(${i})">Edit</button> <button onclick="deleteCoordinator(${i})">Delete</button>`; container.appendChild(card);});
+  }
+  function addCoordinator(){if(currentUser.role!=="admin") return alert("No permissions"); const name=prompt("Name"); if(!name) return; const role=prompt("Role"); const contact=prompt("Contact"); coordinators.push({name,role,contact}); renderCoordinators();}
+  function editCoordinator(i){const c=coordinators[i]; const name=prompt("Name",c.name); if(!name) return; const role=prompt("Role",c.role); const contact=prompt("Contact",c.contact); c.name=name; c.role=role; c.contact=contact; renderCoordinators();}
+  function deleteCoordinator(i){if(confirm("Delete?")){coordinators.splice(i,1); renderCoordinators();}}
+
+  function searchHazMat(){const n=document.getElementById("hazmatInput").value; document.getElementById("hazmatResult").innerHTML=`<p>HazMat info for UN ${n}</p>`;}
+  function searchEV(){const ym=document.getElementById("evYM").value; document.getElementById("evResult").innerHTML=`<p>EV info for ${ym}</p>`;}
+
+  // Initialize rendering on page load
+  window.addEventListener('load',()=>{renderAll();});
+</script>
+
 </body>
 </html>
