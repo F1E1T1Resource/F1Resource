@@ -1,239 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>F1 Resource</title>
-  <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5; }
-    #loginBox { width: 320px; margin: 120px auto; padding: 25px; background: white; border-radius: 10px; box-shadow:0 0 15px rgba(0,0,0,0.2);}
-    #loginBox h2 { text-align:center; margin-bottom:20px; }
-    #loginBox input { width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
-    #loginBox button { width:100%; padding:10px; margin-top:10px; background:#1a73e8; color:white; border:none; border-radius:5px; cursor:pointer; }
-    #loginBox button:hover { background:#155ab6; }
-    #app { display:none; flex-direction: row; height:100vh; }
-    #sidebar { width:250px; background:#1a1a1a; color:white; padding:20px; position:fixed; top:0; bottom:0; left:0; overflow-y:auto; transition: all 0.3s; }
-    #sidebar h2 { margin-top:0; margin-bottom:15px; font-size:1.5em; }
-    #sidebar button { width:100%; padding:10px; margin:5px 0; border:none; background:#333; color:white; border-radius:6px; cursor:pointer; text-align:left; }
-    #sidebar button:hover { background:#444; }
-    #sidebarToggle { display:none; position:fixed; top:10px; left:10px; z-index:1000; padding:10px; background:#1a73e8; color:white; border:none; border-radius:5px; }
-    #content { margin-left:270px; padding:20px; flex:1; overflow-y:auto; }
-    .hidden { display:none; }
-    .card { background:white; padding:15px; border-radius:8px; margin:10px 0; box-shadow:0 0 5px rgba(0,0,0,0.1); }
-    input, select { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
-    @media (max-width: 768px) {
-      #sidebar { width:200px; position:fixed; left:-220px; }
-      #sidebar.show { left:0; }
-      #content { margin-left:0; padding:10px; }
-      #sidebarToggle { display:block; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 Resource</title>
+<style>
+body {margin:0; font-family: Arial, sans-serif; background:#f5f5f5;}
+#loginBox {width:320px; margin:100px auto; padding:25px; background:white; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.2);}
+#loginBox h2{text-align:center; margin-bottom:20px;}
+#loginBox input{width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc;}
+#loginBox button{width:100%; padding:10px; margin-top:10px; background:#1a73e8; color:white; border:none; border-radius:5px; cursor:pointer;}
+#loginBox button:hover{background:#155ab6;}
+#app{display:none; flex-direction: row; height:100vh;}
+#sidebar{width:250px; background:#1a1a1a; color:white; padding:20px; position:fixed; top:0; bottom:0; left:0; overflow-y:auto; transition:all 0.3s;}
+#sidebar h2{margin-top:0; margin-bottom:15px; font-size:1.5em;}
+#sidebar button{width:100%; padding:10px; margin:5px 0; border:none; background:#333; color:white; border-radius:6px; cursor:pointer; text-align:left;}
+#sidebar button:hover{background:#444;}
+#sidebarToggle{display:none; position:fixed; top:10px; left:10px; z-index:1000; padding:10px; background:#1a73e8; color:white; border:none; border-radius:5px;}
+#content{margin-left:270px; padding:20px; flex:1; overflow-y:auto;}
+.page.hidden{display:none;}
+.card{background:white; padding:15px; border-radius:8px; margin:10px 0; box-shadow:0 0 5px rgba(0,0,0,0.1);}
+input, select{width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc;}
+button.addBtn{margin-top:10px; background:#28a745; color:white;}
+button.addBtn:hover{background:#218838;}
+@media (max-width:768px){#sidebar{width:200px; position:fixed; left:-220px;} #sidebar.show{left:0;} #content{margin-left:0; padding:10px;} #sidebarToggle{display:block;}}
+</style>
 </head>
 <body>
 
 <div id="loginBox">
-  <h2>Login</h2>
-  <input id="username" placeholder="Username" />
-  <input id="password" type="password" placeholder="Password" />
-  <button onclick="login()">Login</button>
-  <p id="loginError" style="color:red;"></p>
+<h2>Login</h2>
+<input id="username" placeholder="Username" />
+<input id="password" type="password" placeholder="Password" />
+<button onclick="login()">Login</button>
+<p id="loginError" style="color:red;"></p>
 </div>
 
 <button id="sidebarToggle" onclick="toggleSidebar()">☰ Menu</button>
 
 <div id="app">
-  <div id="sidebar">
-    <h2>F1 Resource</h2>
-    <button onclick="showPage('home')">Home</button>
-    <button onclick="showPage('departments')">Fire Departments</button>
-    <button onclick="showPage('ems')">EMS Agencies</button>
-    <button onclick="showPage('resources')">County Resources</button>
-    <button onclick="showPage('coordinators')">County Coordinators</button>
-    <button onclick="showPage('hazmat')">HazMat Search</button>
-    <button onclick="showPage('ev')">EV Safety</button>
-    <button onclick="showPage('firerisk')">Fire Risk</button>
-    <button onclick="showPage('drivingsafety')">Driving Safety</button>
-  </div>
+<div id="sidebar">
+<h2>F1 Resource</h2>
+<button onclick="showPage('home')">Home</button>
+<button onclick="showPage('departments')">Fire Departments</button>
+<button onclick="showPage('ems')">EMS Agencies</button>
+<button onclick="showPage('resources')">County Resources</button>
+<button onclick="showPage('coordinators')">County Coordinators</button>
+<button onclick="showPage('hazmat')">HazMat Search</button>
+<button onclick="showPage('ev')">EV Safety</button>
+<button onclick="showPage('firerisk')">Fire Risk</button>
+<button onclick="showPage('drivingsafety')">Driving Safety</button>
+</div>
 
-  <div id="content">
-    <div id="home" class="page"><h1>WELCOME</h1><p>This is F1 Resource, your all-inclusive application for resources in Oswego County.</p></div>
+<div id="content">
+<div id="home" class="page"><h1>WELCOME</h1>
+<p>This is F1 Resource, your all-inclusive application for resources in Oswego County.</p>
+<div id="weatherResult"></div>
+</div>
 
-    <div id="departments" class="page hidden">
-      <h2>Fire Departments</h2>
-      <button onclick="addDepartment()">Add Department</button>
-      <div id="departmentList"></div>
-    </div>
+<div id="departments" class="page hidden">
+<h2>Fire Departments</h2>
+<button id="addDeptBtn" class="addBtn" onclick="addDepartment()">Add Department</button>
+<div id="departmentList"></div>
+</div>
 
-    <div id="ems" class="page hidden">
-      <h2>EMS Agencies</h2>
-      <button onclick="addEMS()">Add EMS Agency</button>
-      <div id="emsList"></div>
-    </div>
+<div id="ems" class="page hidden">
+<h2>EMS Agencies</h2>
+<button id="addEMSBtn" class="addBtn" onclick="addEMS()">Add EMS Agency</button>
+<div id="emsList"></div>
+</div>
 
-    <div id="resources" class="page hidden">
-      <h2>County Resources</h2>
-      <button onclick="addResource()">Add Resource</button>
-      <div id="resourceList"></div>
-    </div>
+<div id="resources" class="page hidden">
+<h2>County Resources</h2>
+<button id="addResourceBtn" class="addBtn" onclick="addResource()">Add Resource</button>
+<div id="resourceList"></div>
+</div>
 
-    <div id="coordinators" class="page hidden">
-      <h2>County Coordinators</h2>
-      <button onclick="addCoordinator()">Add Coordinator</button>
-      <div id="coordinatorList"></div>
-    </div>
+<div id="coordinators" class="page hidden">
+<h2>County Coordinators</h2>
+<button id="addCoordinatorBtn" class="addBtn" onclick="addCoordinator()">Add Coordinator</button>
+<div id="coordinatorList"></div>
+</div>
 
-    <div id="hazmat" class="page hidden">
-      <h2>HazMat Search</h2>
-      <input id="hazmatInput" placeholder="Enter UN Number" />
-      <button onclick="searchHazMat()">Search</button>
-      <div id="hazmatResult"></div>
-    </div>
+<div id="hazmat" class="page hidden">
+<h2>HazMat Search</h2>
+<input id="hazmatInput" placeholder="Enter UN Number" />
+<button onclick="searchHazMat()">Search</button>
+<div id="hazmatResult"></div>
+</div>
 
-    <div id="ev" class="page hidden">
-      <h2>EV Safety</h2>
-      <input id="evYM" placeholder="Year Make Model" />
-      <button onclick="searchEV()">Search</button>
-      <div id="evResult"></div>
-    </div>
+<div id="ev" class="page hidden">
+<h2>EV Safety</h2>
+<input id="evYM" placeholder="Year Make Model" />
+<button onclick="searchEV()">Search</button>
+<div id="evResult"></div>
+</div>
 
-    <div id="firerisk" class="page hidden">
-      <h2>Fire Risk</h2>
-      <p>Fire risk page content will go here.</p>
-    </div>
-
-    <div id="drivingsafety" class="page hidden">
-      <h2>Driving Safety</h2>
-      <p>Driving safety page content will go here.</p>
-    </div>
-  </div>
+<div id="firerisk" class="page hidden"><h2>Fire Risk</h2></div>
+<div id="drivingsafety" class="page hidden"><h2>Driving Safety</h2></div>
+</div>
 </div>
 
 <script>
-  // Local login accounts
-  const USERS = {
-    "ADMIN": { password:"ADMIN", role:"admin" },
-    "DEPTADMIN": { password:"DEPTADMIN", role:"deptAdmin", dept:"Station 1" },
-    "DEPTUSER": { password:"DEPTUSER", role:"deptUser", dept:"Station 1" }
-  };
+// User roles: admin, deptAdmin, deptUser
+const USERS = {
+"ADMIN": { password:"ADMIN", role:"admin" },
+"DEPTADMIN": { password:"DEPTADMIN", role:"deptAdmin", dept:"Station 1" },
+"DEPTUSER": { password:"DEPTUSER", role:"deptUser", dept:"Station 1" }
+};
+let currentUser = null;
 
-  let currentUser = null;
+// Sample preloaded data
+let departments=[{name:"Station 1", battalion:"1", address:"123 Main St", apparatus:[{name:"Engine 1", status:"IN SERVICE"}]}];
+let ems=[{name:"EMS One", address:"456 Elm St"}];
+let resources=[{name:"County Rescue Boat", location:"Lakefront"}];
+let coordinators=[{name:"John Doe", role:"Coordinator", contact:"555-1234"}];
 
-  function login() {
-    const u = document.getElementById("username").value.trim();
-    const p = document.getElementById("password").value.trim();
-    if(USERS[u] && USERS[u].password === p){
-      currentUser = USERS[u];
-      document.getElementById("loginBox").style.display="none";
-      document.getElementById("app").style.display="flex";
-      showPage('home');
-      renderAll();
-    } else {
-      document.getElementById("loginError").textContent="Invalid login";
-    }
-  }
+function login(){
+  const u=document.getElementById("username").value.trim();
+  const p=document.getElementById("password").value.trim();
+  if(USERS[u] && USERS[u].password===p){
+    currentUser=USERS[u];
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("app").style.display="flex";
+    enforceRoles();
+    renderAll();
+    showPage('home');
+    loadWeather();
+  } else document.getElementById("loginError").textContent="Invalid login";
+}
 
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-    if(window.innerWidth <= 768) toggleSidebar(false);
-  }
+function enforceRoles(){
+  document.getElementById("addDeptBtn").style.display=(currentUser.role==="admin"||currentUser.role==="deptAdmin")?"block":"none";
+  document.getElementById("addEMSBtn").style.display=(currentUser.role==="admin")?"block":"none";
+  document.getElementById("addResourceBtn").style.display=(currentUser.role==="admin")?"block":"none";
+  document.getElementById("addCoordinatorBtn").style.display=(currentUser.role==="admin")?"block":"none";
+}
 
-  function toggleSidebar(forceState) {
-    const sb = document.getElementById('sidebar');
-    if(forceState === false){ sb.classList.remove('show'); return; }
-    sb.classList.toggle('show');
-  }
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(window.innerWidth<=768) toggleSidebar(false);
+}
 
-  // Sample hardcoded data
-  let departments = [{name:"Station 1", battalion:"1", address:"123 Main St", apparatus:[{name:"Engine 1", status:"IN SERVICE"}]}];
-  let ems = [{name:"EMS One", address:"456 Elm St"}];
-  let resources = [{name:"County Rescue Boat", location:"Lakefront"}];
-  let coordinators = [{name:"John Doe", role:"Coordinator", contact:"555-1234"}];
+function toggleSidebar(force){
+  const sb=document.getElementById('sidebar');
+  if(force===false){sb.classList.remove('show'); return;}
+  sb.classList.toggle('show');
+}
 
-  function renderAll(){
-    renderDepartments();
-    renderEMS();
-    renderResources();
-    renderCoordinators();
-  }
+function renderAll(){ renderDepartments(); renderEMS(); renderResources(); renderCoordinators(); }
 
-  function renderDepartments(){
-    const container = document.getElementById("departmentList");
-    container.innerHTML="";
-    departments.forEach((d,i)=>{
-      const card = document.createElement("div"); card.className="card";
-      card.innerHTML=`<strong>${d.name}</strong><br>Battalion: ${d.battalion}<br>Address: ${d.address}<br>Apparatus:<ul>${d.apparatus.map(a=>"<li>"+a.name+" ("+a.status+")</li>").join('')}</ul>`;
-      if(currentUser.role==="admin" || (currentUser.role==="deptAdmin" && currentUser.dept===d.name)){
-        card.innerHTML += `<button onclick="editDepartment(${i})">Edit</button> <button onclick="deleteDepartment(${i})">Delete</button>`;
-      }
-      container.appendChild(card);
-    });
-  }
+function renderDepartments(){
+  const container=document.getElementById("departmentList"); container.innerHTML="";
+  departments.forEach((d,i)=>{
+    const card=document.createElement("div"); card.className="card";
+    card.innerHTML=`<strong>${d.name}</strong><br>Battalion:${d.battalion}<br>Address:${d.address}<br>Apparatus:<ul>${d.apparatus.map(a=>"<li>"+a.name+" ("+a.status+")</li>").join('')}</ul>`;
+    if(currentUser.role==="admin"||(currentUser.role==="deptAdmin"&&currentUser.dept===d.name))
+      card.innerHTML+=`<button onclick="editDepartment(${i})">Edit</button> <button onclick="deleteDepartment(${i})">Delete</button>`;
+    container.appendChild(card);
+  });
+}
+function addDepartment(){ if(currentUser.role!=="admin"&&currentUser.role!=="deptAdmin") return alert("No permission");
+const name=prompt("Department Name"); if(!name)return; const battalion=prompt("Battalion"); const addr=prompt("Address"); const appName=prompt("Apparatus Name"); const appStatus=prompt("Status");
+departments.push({name,battalion,address:addr,apparatus:[{name:appName,status:appStatus}]}); renderDepartments();}
+function editDepartment(i){const d=departments[i]; const name=prompt("Department Name",d.name); if(!name)return; const battalion=prompt("Battalion",d.battalion); const addr=prompt("Address",d.address); d.name=name; d.battalion=battalion; d.address=addr; renderDepartments();}
+function deleteDepartment(i){if(confirm("Delete?")){departments.splice(i,1); renderDepartments();}}
 
-  function addDepartment(){
-    if(currentUser.role!=="admin" && currentUser.role!=="deptAdmin") return alert("No permissions");
-    const name = prompt("Department Name"); 
-    if(!name) return;
-    const battalion = prompt("Battalion");
-    const address = prompt("Address");
-    const appName = prompt("Apparatus Name");
-    const appStatus = prompt("Status (IN SERVICE/OOS)");
-    departments.push({name, battalion, address, apparatus:[{name:appName,status:appStatus}]});
-    renderDepartments();
-  }
+// EMS
+function renderEMS(){ const container=document.getElementById("emsList"); container.innerHTML=""; ems.forEach((d,i)=>{ const card=document.createElement("div"); card.className="card"; card.innerHTML=`<strong>${d.name}</strong><br>Address:${d.address}`; if(currentUser.role==="admin") card.innerHTML+=` <button onclick="editEMS(${i})">Edit</button> <button onclick="deleteEMS(${i})">Delete</button>`; container.appendChild(card); });}
+function addEMS(){if(currentUser.role!=="admin") return alert("No permission"); const name=prompt("EMS Name"); if(!name)return; const addr=prompt("Address"); ems.push({name,address:addr}); renderEMS();}
+function editEMS(i){const d=ems[i]; const name=prompt("EMS Name",d.name); if(!name)return; const addr=prompt("Address",d.address); d.name=name; d.address=addr; renderEMS();}
+function deleteEMS(i){if(confirm("Delete?")){ems.splice(i,1); renderEMS();}}
 
-  function editDepartment(i){
-    const d = departments[i];
-    const name = prompt("Department Name",d.name);
-    if(!name) return;
-    const battalion = prompt("Battalion",d.battalion);
-    const address = prompt("Address",d.address);
-    d.name=name; d.battalion=battalion; d.address=address;
-    renderDepartments();
-  }
+// Resources
+function renderResources(){ const container=document.getElementById("resourceList"); container.innerHTML=""; resources.forEach((r,i)=>{ const card=document.createElement("div"); card.className="card"; card.innerHTML=`<strong>${r.name}</strong><br>Location:${r.location}`; if(currentUser.role==="admin") card.innerHTML+=` <button onclick="editResource(${i})">Edit</button> <button onclick="deleteResource(${i})">Delete</button>`; container.appendChild(card); }); }
+function addResource(){if(currentUser.role!=="admin") return alert("No permission"); const name=prompt("Resource Name"); if(!name)return; const loc=prompt("Location"); resources.push({name,location:loc}); renderResources();}
+function editResource(i){const r=resources[i]; const name=prompt("Resource Name",r.name); if(!name)return; const loc=prompt("Location",r.location); r.name=name; r.location=loc; renderResources();}
+function deleteResource(i){if(confirm("Delete?")){resources.splice(i,1); renderResources();}}
 
-  function deleteDepartment(i){
-    if(confirm("Delete this department?")){
-      departments.splice(i,1);
-      renderDepartments();
-    }
-  }
+// Coordinators
+function renderCoordinators(){ const container=document.getElementById("coordinatorList"); container.innerHTML=""; coordinators.forEach((c,i)=>{ const card=document.createElement("div"); card.className="card"; card.innerHTML=`<strong>${c.name}</strong><br>Role:${c.role}<br>Contact:${c.contact}`; if(currentUser.role==="admin") card.innerHTML+=` <button onclick="editCoordinator(${i})">Edit</button> <button onclick="deleteCoordinator(${i})">Delete</button>`; container.appendChild(card); });}
+function addCoordinator(){if(currentUser.role!=="admin") return alert("No permission"); const name=prompt("Name"); if(!name)return; const role=prompt("Role"); const contact=prompt("Contact"); coordinators.push({name,role,contact}); renderCoordinators();}
+function editCoordinator(i){const c=coordinators[i]; const name=prompt("Name",c.name); if(!name)return; const role=prompt("Role",c.role); const contact=prompt("Contact",c.contact); c.name=name; c.role=role; c.contact=contact; renderCoordinators();}
+function deleteCoordinator(i){if(confirm("Delete?")){coordinators.splice(i,1); renderCoordinators();}}
 
-  function renderEMS(){
-    const container = document.getElementById("emsList");
-    container.innerHTML="";
-    ems.forEach((d,i)=>{
-      const card = document.createElement("div"); card.className="card";
-      card.innerHTML=`<strong>${d.name}</strong><br>Address: ${d.address}`;
-      if(currentUser.role==="admin") card.innerHTML += ` <button onclick="editEMS(${i})">Edit</button> <button onclick="deleteEMS(${i})">Delete</button>`;
-      container.appendChild(card);
-    });
-  }
-  function addEMS(){if(currentUser.role!=="admin") return alert("No permissions"); const name=prompt("EMS Name"); if(!name) return; const addr=prompt("Address"); ems.push({name,name,address:addr}); renderEMS();}
-  function editEMS(i){const d=ems[i]; const name=prompt("EMS Name",d.name); if(!name) return; const addr=prompt("Address",d.address); d.name=name; d.address=addr; renderEMS();}
-  function deleteEMS(i){if(confirm("Delete?")){ems.splice(i,1); renderEMS();}}
+// HazMat & EV placeholders
+function searchHazMat(){const n=document.getElementById("hazmatInput").value; document.getElementById("hazmatResult").innerHTML=`<p>HazMat info for UN ${n} will be loaded from ERG 2024.</p>`;}
+function searchEV(){const ym=document.getElementById("evYM").value; document.getElementById("evResult").innerHTML=`<p>EV info for ${ym} from NHTSA guides.</p>`;}
 
-  function renderResources(){
-    const container = document.getElementById("resourceList"); container.innerHTML="";
-    resources.forEach((r,i)=>{const card=document.createElement("div"); card.className="card"; card.innerHTML=`<strong>${r.name}</strong><br>Location: ${r.location}`; if(currentUser.role==="admin") card.innerHTML+=` <button onclick="editResource(${i})">Edit</button> <button onclick="deleteResource(${i})">Delete</button>`; container.appendChild(card);});
-  }
-  function addResource(){if(currentUser.role!=="admin") return alert("No permissions"); const name=prompt("Resource Name"); if(!name) return; const loc=prompt("Location"); resources.push({name,location:loc}); renderResources();}
-  function editResource(i){const r=resources[i]; const name=prompt("Resource Name",r.name); if(!name) return; const loc=prompt("Location",r.location); r.name=name; r.location=loc; renderResources();}
-  function deleteResource(i){if(confirm("Delete?")){resources.splice(i,1); renderResources();}}
-
-  function renderCoordinators(){
-    const container = document.getElementById("coordinatorList"); container.innerHTML="";
-    coordinators.forEach((c,i)=>{const card=document.createElement("div"); card.className="card"; card.innerHTML=`<strong>${c.name}</strong><br>Role: ${c.role}<br>Contact: ${c.contact}`; if(currentUser.role==="admin") card.innerHTML+=` <button onclick="editCoordinator(${i})">Edit</button> <button onclick="deleteCoordinator(${i})">Delete</button>`; container.appendChild(card);});
-  }
-  function addCoordinator(){if(currentUser.role!=="admin") return alert("No permissions"); const name=prompt("Name"); if(!name) return; const role=prompt("Role"); const contact=prompt("Contact"); coordinators.push({name,role,contact}); renderCoordinators();}
-  function editCoordinator(i){const c=coordinators[i]; const name=prompt("Name",c.name); if(!name) return; const role=prompt("Role",c.role); const contact=prompt("Contact",c.contact); c.name=name; c.role=role; c.contact=contact; renderCoordinators();}
-  function deleteCoordinator(i){if(confirm("Delete?")){coordinators.splice(i,1); renderCoordinators();}}
-
-  function searchHazMat(){const n=document.getElementById("hazmatInput").value; document.getElementById("hazmatResult").innerHTML=`<p>HazMat info for UN ${n}</p>`;}
-  function searchEV(){const ym=document.getElementById("evYM").value; document.getElementById("evResult").innerHTML=`<p>EV info for ${ym}</p>`;}
-
-  // Initialize rendering on page load
-  window.addEventListener('load',()=>{renderAll();});
+// Weather placeholder
+function loadWeather(){document.getElementById("weatherResult").innerHTML="<p>Weather alerts for Oswego County will appear here.</p>";}
 </script>
 
 </body>
