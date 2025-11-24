@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>F1 Resource</title>
 <style>
-body { margin:0; font-family:Arial,sans-serif; background:#f5f5f5; }
-#loginBox { width:300px; margin:120px auto; padding:20px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
-#app { display:none; flex-direction:row; height:100vh; }
-#sidebar { width:250px; background:#1a1a1a; color:white; padding:20px; position:fixed; top:0; bottom:0; left:0; overflow-y:auto; }
-#sidebar h2 { margin-top:0; }
-#sidebar button { width:100%; padding:10px; margin:5px 0; border:none; background:#333; color:white; border-radius:6px; }
-#content { margin-left:270px; padding:20px; flex:1; overflow-y:auto; }
-.page.hidden { display:none; }
-.card { background:white; padding:15px; border-radius:8px; margin:10px 0; box-shadow:0 0 5px rgba(0,0,0,0.1); }
-input, select { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
-button.small { padding:4px 8px; margin-left:5px; font-size:0.9em; }
-@media(max-width:768px){
-  #sidebar { width:100%; position:relative; display:flex; flex-wrap:wrap; }
-  #sidebar button { width:48%; margin:1%; }
-  #content { margin-left:0; }
-}
+  body { margin:0; font-family:Arial,sans-serif; background:#f5f5f5; }
+  #loginBox { width:300px; margin:120px auto; padding:20px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
+  #app { display:none; height:100vh; }
+  #sidebar { width:250px; background:#1a1a1a; color:white; padding:20px; position:fixed; top:0; bottom:0; left:0; overflow-y:auto; }
+  #sidebar h2 { margin-top:0; }
+  #sidebar button { width:100%; padding:10px; margin:5px 0; border:none; background:#333; color:white; border-radius:6px; text-align:left; }
+  #sidebar button:hover { background:#444; cursor:pointer; }
+  #content { margin-left:270px; padding:20px; }
+  .hidden { display:none; }
+  .card { background:white; padding:15px; border-radius:8px; margin:10px 0; box-shadow:0 0 5px rgba(0,0,0,0.1); }
+  input, select, textarea { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
+  @media(max-width:768px){
+    #sidebar { width:100%; height:auto; position:relative; }
+    #content { margin-left:0; }
+  }
 </style>
 </head>
 <body>
+
+<!-- Login Screen -->
 <div id="loginBox">
   <h2>Login</h2>
-  <input id="username" placeholder="Username" />
-  <input id="password" type="password" placeholder="Password" />
+  <input id="username" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
   <button onclick="login()">Login</button>
   <p id="loginError" style="color:red;"></p>
 </div>
 
+<!-- App -->
 <div id="app">
   <div id="sidebar">
     <h2>F1 Resource</h2>
@@ -47,187 +49,246 @@ button.small { padding:4px 8px; margin-left:5px; font-size:0.9em; }
   </div>
 
   <div id="content">
-    <div id="home" class="page"><h1>WELCOME</h1><p>F1 Resource Application for Oswego County</p></div>
+    <!-- Home -->
+    <div id="home" class="page">
+      <h1>Welcome</h1>
+      <p>This is F1 Resource, your all-inclusive application for Oswego County.</p>
+      <div id="weatherWidget">
+        <h3>Weather Alerts</h3>
+        <div id="weatherResult"></div>
+      </div>
+    </div>
 
+    <!-- Fire Departments -->
     <div id="departments" class="page hidden">
       <h2>Fire Departments</h2>
-      <button id="addDeptBtn">Add Department</button>
+      <button onclick="addDepartment()">Add Department</button>
       <div id="departmentList"></div>
     </div>
 
+    <!-- EMS Agencies -->
     <div id="ems" class="page hidden">
       <h2>EMS Agencies</h2>
-      <button id="addEMSBtn">Add EMS Agency</button>
+      <button onclick="addEMS()">Add EMS Agency</button>
       <div id="emsList"></div>
     </div>
 
+    <!-- County Resources -->
     <div id="resources" class="page hidden">
       <h2>County Resources</h2>
-      <button id="addResourceBtn">Add Resource</button>
+      <button onclick="addResource()">Add Resource</button>
       <div id="resourceList"></div>
     </div>
 
+    <!-- County Coordinators -->
     <div id="coordinators" class="page hidden">
       <h2>County Coordinators</h2>
-      <button id="addCoordinatorBtn">Add Coordinator</button>
+      <button onclick="addCoordinator()">Add Coordinator</button>
       <div id="coordinatorList"></div>
     </div>
 
+    <!-- HazMat -->
     <div id="hazmat" class="page hidden">
       <h2>HazMat Search</h2>
-      <input id="hazmatInput" placeholder="Enter UN Number" />
+      <input id="hazmatInput" placeholder="Enter UN Number">
       <button onclick="searchHazMat()">Search</button>
       <div id="hazmatResult"></div>
     </div>
 
+    <!-- EV Safety -->
     <div id="ev" class="page hidden">
       <h2>EV Safety</h2>
-      <input id="evYM" placeholder="Year Make Model" />
+      <input id="evYM" placeholder="Year Make Model">
       <button onclick="searchEV()">Search</button>
       <div id="evResult"></div>
     </div>
 
-    <div id="firerisk" class="page hidden"><h2>Fire Risk</h2></div>
-    <div id="drivingsafety" class="page hidden"><h2>Driving Safety</h2></div>
+    <!-- Fire Risk -->
+    <div id="firerisk" class="page hidden">
+      <h2>Fire Risk</h2>
+      <p>Content will be added here.</p>
+    </div>
+
+    <!-- Driving Safety -->
+    <div id="drivingsafety" class="page hidden">
+      <h2>Driving Safety</h2>
+      <p>Content will be added here.</p>
+    </div>
   </div>
 </div>
 
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getFirestore, collection, doc, getDoc, setDoc, getDocs, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getFirestore, collection, doc, getDocs, setDoc, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
   authDomain: "f1resource-8fedc.firebaseapp.com",
+  databaseURL: "https://f1resource-8fedc-default-rtdb.firebaseio.com",
   projectId: "f1resource-8fedc",
   storageBucket: "f1resource-8fedc.firebasestorage.app",
   messagingSenderId: "182745701982",
   appId: "1:182745701982:web:9f4f3836b41b450987decf"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const appFirebase = initializeApp(firebaseConfig);
+const db = getFirestore(appFirebase);
 
-const username = document.getElementById('username');
-const password = document.getElementById('password');
-const loginBox = document.getElementById('loginBox');
-const appDiv = document.getElementById('app');
-const loginError = document.getElementById('loginError');
-
+// Local hidden Admin
+const LOCAL_ADMIN = { username:"ADMIN", password:"ADMIN", role:"admin" };
 let currentUser = null;
 
 async function login() {
   const u = username.value.trim();
   const p = password.value.trim();
-  const userRef = doc(db, "users", u);
-  const userSnap = await getDoc(userRef);
 
-  if (!userSnap.exists()) {
-    // Auto-create ADMIN if first login
-    if (u === "ADMIN" && p === "ADMIN") {
-      await setDoc(userRef, { username:"ADMIN", password:"ADMIN", role:"admin", department:"" });
-      currentUser = { username:"ADMIN", role:"admin", department:"" };
-      showApp();
-      return;
-    }
-    loginError.textContent = "Invalid login";
+  // Local hidden admin
+  if(u === LOCAL_ADMIN.username && p === LOCAL_ADMIN.password){
+    currentUser = LOCAL_ADMIN;
+    loginBox.style.display = "none";
+    app.style.display = "flex";
+    showPage('home');
+    loadAllData();
     return;
   }
 
-  const data = userSnap.data();
-  if (data.password === p) {
-    currentUser = data;
-    showApp();
-  } else {
-    loginError.textContent = "Invalid login";
-  }
+  // Firestore login
+  const usersCol = collection(db, "users");
+  const usersSnapshot = await getDocs(usersCol);
+  let found = false;
+  usersSnapshot.forEach(docu => {
+    const data = docu.data();
+    if(data.username === u && data.password === p){
+      currentUser = { username:u, role:data.role, department:data.department || null };
+      loginBox.style.display = "none";
+      app.style.display = "flex";
+      showPage('home');
+      loadAllData();
+      found = true;
+    }
+  });
+  if(!found) loginError.textContent = "Invalid login";
 }
 
-function showApp() {
-  loginBox.style.display = "none";
-  appDiv.style.display = "flex";
-  showPage('home');
-  setupPagePermissions();
-  loadAllData();
-}
-
-function showPage(id) {
+function showPage(id){
   document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
 }
 
-function setupPagePermissions() {
-  if (currentUser.role !== 'admin' && currentUser.role !== 'dept_admin') {
-    document.querySelectorAll('button[id^="add"]').forEach(btn => btn.style.display = 'none');
-  }
+// =================== Data Functions ===================
+
+// Departments
+async function addDepartment(){
+  if(currentUser.role !== "admin" && currentUser.role !== "departmentAdmin") return alert("No permission");
+  const name = prompt("Enter Department Name:");
+  if(!name) return;
+  await addDoc(collection(db,"departments"),{ name });
+  loadDepartments();
 }
 
-// ===== Firestore functions =====
-async function loadAllData() {
-  await loadCollection('departments', 'departmentList');
-  await loadCollection('ems', 'emsList');
-  await loadCollection('resources', 'resourceList');
-  await loadCollection('coordinators', 'coordinatorList');
-}
-
-async function loadCollection(colName, listDivId) {
-  const listDiv = document.getElementById(listDivId);
-  listDiv.innerHTML = '';
-  const snapshot = await getDocs(collection(db, colName));
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `<b>${data.name || data.username}</b>
-      ${currentUser.role === 'admin' || (currentUser.role==='dept_admin' && (data.department===currentUser.department)) ?
-        `<button class="small" onclick="editItem('${colName}','${docSnap.id}')">Edit</button>
-         <button class="small" onclick="deleteItem('${colName}','${docSnap.id}')">Delete</button>` : ''}`;
-    listDiv.appendChild(card);
+async function loadDepartments(){
+  const list = document.getElementById("departmentList");
+  list.innerHTML = "";
+  const snapshot = await getDocs(collection(db,"departments"));
+  snapshot.forEach(docu=>{
+    const d = docu.data();
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.textContent = d.name;
+    list.appendChild(card);
   });
 }
 
-async function addItem(colName) {
-  const name = prompt("Enter Name/Title:");
-  if (!name) return;
-  const data = { name };
-  if (colName==='users') {
-    const uname = prompt("Enter username:"); 
-    const pass = prompt("Enter password:"); 
-    const role = prompt("Enter role (admin/dept_admin/dept_user):");
-    data.username=uname; data.password=pass; data.role=role;
-  }
-  await addDoc(collection(db, colName), data);
-  loadAllData();
+// EMS
+async function addEMS(){
+  if(currentUser.role !== "admin" && currentUser.role !== "departmentAdmin") return alert("No permission");
+  const name = prompt("Enter EMS Agency Name:");
+  if(!name) return;
+  await addDoc(collection(db,"ems"),{ name });
+  loadEMS();
 }
 
-async function editItem(colName, docId) {
-  const newName = prompt("Enter new name:");
-  if (!newName) return;
-  await updateDoc(doc(db,colName,docId), { name:newName });
-  loadAllData();
+async function loadEMS(){
+  const list = document.getElementById("emsList");
+  list.innerHTML = "";
+  const snapshot = await getDocs(collection(db,"ems"));
+  snapshot.forEach(docu=>{
+    const d = docu.data();
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.textContent = d.name;
+    list.appendChild(card);
+  });
 }
 
-async function deleteItem(colName, docId) {
-  if (!confirm("Delete this item?")) return;
-  await deleteDoc(doc(db,colName,docId));
-  loadAllData();
+// Coordinators
+async function addCoordinator(){
+  if(currentUser.role !== "admin" && currentUser.role !== "departmentAdmin") return alert("No permission");
+  const name = prompt("Enter Coordinator Name:");
+  if(!name) return;
+  await addDoc(collection(db,"coordinators"),{ name });
+  loadCoordinators();
 }
 
-// Bind Add buttons
-document.getElementById('addDeptBtn').onclick = () => addItem('departments');
-document.getElementById('addEMSBtn').onclick = () => addItem('ems');
-document.getElementById('addResourceBtn').onclick = () => addItem('resources');
-document.getElementById('addCoordinatorBtn').onclick = () => addItem('coordinators');
+async function loadCoordinators(){
+  const list = document.getElementById("coordinatorList");
+  list.innerHTML = "";
+  const snapshot = await getDocs(collection(db,"coordinators"));
+  snapshot.forEach(docu=>{
+    const d = docu.data();
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.textContent = d.name;
+    list.appendChild(card);
+  });
+}
 
-// HazMat and EV placeholders
-function searchHazMat() {
-  const n = document.getElementById('hazmatInput').value.trim();
-  document.getElementById('hazmatResult').innerHTML = `<p>HazMat info for UN ${n}</p>`;
+// Resources
+async function addResource(){
+  if(currentUser.role !== "admin" && currentUser.role !== "departmentAdmin") return alert("No permission");
+  const name = prompt("Enter Resource Name:");
+  if(!name) return;
+  await addDoc(collection(db,"resources"),{ name });
+  loadResources();
 }
-function searchEV() {
-  const ym = document.getElementById('evYM').value.trim();
-  document.getElementById('evResult').innerHTML = `<p>EV info for ${ym}</p>`;
+
+async function loadResources(){
+  const list = document.getElementById("resourceList");
+  list.innerHTML = "";
+  const snapshot = await getDocs(collection(db,"resources"));
+  snapshot.forEach(docu=>{
+    const d = docu.data();
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.textContent = d.name;
+    list.appendChild(card);
+  });
 }
+
+// HazMat
+function searchHazMat(){
+  const n = hazmatInput.value.trim();
+  hazmatResult.innerHTML = `<p>HazMat info for UN ${n}. <br>Use ERG 2024 as reference.</p>`;
+}
+
+// EV Safety
+function searchEV(){
+  const ym = evYM.value.trim();
+  evResult.innerHTML = `<p>EV info for ${ym}. <br>Use <a href="https://www.nhtsa.gov/emergency-response-guides" target="_blank">NHTSA ERG</a>.</p>`;
+}
+
+// Load all data
+function loadAllData(){
+  loadDepartments();
+  loadEMS();
+  loadCoordinators();
+  loadResources();
+}
+
+// Load weather alerts (replace this with actual API)
+document.getElementById("weatherResult").innerHTML = "<p>Active weather alerts for Oswego County.</p>";
 </script>
+
 </body>
 </html>
