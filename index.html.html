@@ -1,13 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>F1 Resource — Departments (Option B)</title>
-<link rel="icon" href="data:," />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>F1 Resource — Firestore</title>
 <style>
 :root{
-  --bg:#f5f8fc; --card:#fff; --primary:#0b5fff; --accent:#0b72ff; --dark:#062044; --muted:#6b7280;
+  --bg:#f5f8fc; --card:#fff; --primary:#0b5fff; --dark:#062044; --muted:#6b7280;
   --success:#16a34a; --danger:#ef4444;
 }
 *{box-sizing:border-box}
@@ -39,11 +38,10 @@ button.ghost{background:transparent;border:1px solid #dbeafe;color:var(--primary
   nav#sidebar.hidden{transform:translateY(-150%)}
   main#content{padding:12px}
 }
-/* Login modal */
 #loginModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:80}
 #loginCard{width:360px;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.25)}
 .tiny{font-size:12px;color:var(--muted)}
-pre{white-space:pre-wrap;word-break:break-word}
+pre{white-space:pre-wrap;word-break:break-word;font-family:monospace}
 </style>
 </head>
 <body>
@@ -74,7 +72,7 @@ pre{white-space:pre-wrap;word-break:break-word}
       <button id="signOutBtn" style="margin-top:8px">Sign Out</button>
     </div>
 
-    <div style="margin-top:18px" class="muted tiny">Version 1.2 — Option B</div>
+    <div style="margin-top:18px" class="muted tiny">Version 2.0 — Firestore</div>
   </nav>
 
   <main id="content">
@@ -84,33 +82,32 @@ pre{white-space:pre-wrap;word-break:break-word}
     </section>
 
     <section id="fireAgencies" class="card page" style="display:none">
-      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;justify-content:space-between;align-items:center">
         <h3 style="margin:0">Fire Agencies</h3>
-        <div><button id="addFireBtn" class="small primary">Add Agency</button></div>
+        <div><button id="addDeptBtn" class="small primary">Add Department</button></div>
       </div>
       <div id="fireList" style="margin-top:12px"></div>
     </section>
 
     <section id="emsAgencies" class="card page" style="display:none">
-      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0">EMS Agencies</h3>
-        <div><button id="addEmsBtn" class="small primary">Add EMS</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">EMS (enter the department and add units)</h3>
+        <div class="muted tiny">EMS units live under departments</div>
       </div>
       <div id="emsList" style="margin-top:12px"></div>
     </section>
 
     <section id="countyResources" class="card page" style="display:none">
-      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;justify-content:space-between;align-items:center">
         <h3 style="margin:0">County Resources</h3>
-        <div><button id="addResourceBtn" class="small primary">Add Resource</button></div>
+        <div class="muted tiny">Resources belong to departments</div>
       </div>
       <div id="resourceList" style="margin-top:12px"></div>
     </section>
 
     <section id="countyCoordinators" class="card page" style="display:none">
-      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;justify-content:space-between;align-items:center">
         <h3 style="margin:0">County Coordinators</h3>
-        <div><button id="addCoordBtn" class="small primary">Add Coordinator</button></div>
       </div>
       <div id="coordinatorList" style="margin-top:12px"></div>
     </section>
@@ -146,14 +143,13 @@ pre{white-space:pre-wrap;word-break:break-word}
     </section>
 
     <section id="manageUsers" class="card page" style="display:none">
-      <div class="flex-between" style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;justify-content:space-between;align-items:center">
         <h3 style="margin:0">Manage Users</h3>
         <div><button id="addUserBtn" class="small primary">Add User</button></div>
       </div>
       <div id="userList" style="margin-top:12px"></div>
     </section>
 
-    <!-- Weather section separate (inline input) -->
     <section id="weatherCard" class="card" style="display:block">
       <h3 style="margin:0">Weather (quick lookup)</h3>
       <div style="margin-top:10px" class="row">
@@ -162,7 +158,6 @@ pre{white-space:pre-wrap;word-break:break-word}
       </div>
       <pre id="weatherResult" style="margin-top:12px;background:#f3fbff;padding:12px;border-radius:8px;min-height:60px"></pre>
     </section>
-
   </main>
 </div>
 
@@ -170,10 +165,10 @@ pre{white-space:pre-wrap;word-break:break-word}
 <div id="loginModal" style="display:flex;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:80">
   <div id="loginCard" style="width:360px;background:var(--card);padding:20px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.25)">
     <h2>F1 Resource Login</h2>
-    <div class="muted">Sign in with DB user (fallback: <strong>ADMIN/ADMIN</strong>)</div>
+    <div class="muted">Sign in with your account (stored in Firestore). First-run fallback: <strong>ADMIN / ADMIN</strong></div>
     <div style="margin-top:10px">
-      <input id="loginUser" placeholder="Username" autocomplete="username"/>
-      <input id="loginPass" placeholder="Password" type="password" autocomplete="current-password"/>
+      <input id="loginUser" placeholder="Username" autocomplete="username" />
+      <input id="loginPass" placeholder="Password" type="password" autocomplete="current-password" />
     </div>
     <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
       <button id="loginBtn" class="primary">Sign In</button>
@@ -184,96 +179,79 @@ pre{white-space:pre-wrap;word-break:break-word}
 </div>
 
 <script type="module">
-/* ------------------------------
-  F1 Resource — Option B (final)
-  Departments structured as:
-  /store/departments/{deptId} => { info: {name,battalion,address}, apparatus: {...}, members: {...} }
-  Users at /store/users/{username} => { password, role, department }
--------------------------------*/
+/* ================================
+  F1 Resource — Firestore Full App
+  - Firestore used for all data & login
+  - Collections: users, departments
+  - Departments: info, apparatus, resources, coordinators, members, hazmat, evDB
+  - Roles: ADMIN, DEPT_ADMIN, DEPT_USER
+  - NOTE: uses modular Firebase v9+ Firestore SDK
+=================================*/
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import {
+  getFirestore, collection, doc, setDoc, getDoc, onSnapshot, getDocs, deleteDoc
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
-
-/* ======== Firebase config (your provided config) ======== */
+/* ---------- Your Firebase config (provided earlier) ---------- */
 const firebaseConfig = {
   apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
   authDomain: "f1resource-8fedc.firebaseapp.com",
-  databaseURL: "https://f1resource-8fedc-default-rtdb.firebaseio.com",
   projectId: "f1resource-8fedc",
   storageBucket: "f1resource-8fedc.firebasestorage.app",
   messagingSenderId: "182745701982",
   appId: "1:182745701982:web:9f4f3836b41b450987decf"
 };
-/* ======================================================= */
+/* -------------------------------------------------------------- */
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const rootPath = 'store';
-const storeRef = ref(db, rootPath);
+const db = getFirestore(app);
 
-/* small DOM helper */
+/* DOM helper */
 const $ = id => document.getElementById(id);
 function genId(prefix='id'){ return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,6); }
 
-/* runtime mirror */
-let store = { users: {}, departments: {}, ems: {}, resources: {}, coordinators: {}, hazmat: {}, evDB: {} };
+/* runtime mirrors */
+let users = {};         // users keyed by username (doc id)
+let departments = {};   // departments keyed by doc id
 let currentUser = null;
 
-/* Real-time sync (mirror entire store) */
-onValue(storeRef, snapshot => {
-  const val = snapshot.val();
-  if(val) store = val;
-  else {
-    // create minimal structure if none
-    set(storeRef, store).catch(e => console.error('init error', e));
+/* ---------- Snapshot listeners for realtime updates ---------- */
+/* users collection */
+onSnapshot(collection(db, 'users'), snapshot => {
+  users = {};
+  snapshot.forEach(docSnap => { users[docSnap.id] = docSnap.data(); });
+  renderUsers();
+  // ensure fallback admin exists if none
+  if(Object.keys(users).length === 0){
+    (async ()=>{
+      const admin = { password:'ADMIN', role:'ADMIN', department: null };
+      await setDoc(doc(db, 'users', 'ADMIN'), admin);
+    })();
   }
-  // re-render UI after every DB change
-  renderAll();
 });
 
-/* targeted write helpers */
-async function writePath(path, value){
-  const fullRef = ref(db, `${rootPath}/${path}`);
-  await set(fullRef, value);
-}
-async function removePath(path){
-  const fullRef = ref(db, `${rootPath}/${path}`);
-  await set(fullRef, null);
-}
+/* departments collection */
+onSnapshot(collection(db, 'departments'), snapshot => {
+  departments = {};
+  snapshot.forEach(docSnap => { departments[docSnap.id] = docSnap.data(); });
+  renderDepartments();
+});
 
-/* ---------- Authentication (DB-backed) ---------- */
-async function ensureFallbackAdmin(){
-  if(!store.users || Object.keys(store.users).length === 0){
-    store.users = store.users || {};
-    store.users['ADMIN'] = { password:'ADMIN', role:'ADMIN', department: null };
-    await writePath('users', store.users);
-  }
-}
-
+/* ---------- Auth/Login (Firestore-backed) ---------- */
 async function loginAction(){
   const u = $('loginUser').value.trim();
   const p = $('loginPass').value.trim();
   $('loginMsg').textContent = '';
   if(!u || !p){ $('loginMsg').textContent = 'Enter username/password'; return; }
 
-  // allow fallback creation if DB empty
-  if(!store.users || Object.keys(store.users).length === 0){
-    if(u === 'ADMIN' && p === 'ADMIN'){
-      store.users = store.users || {};
-      store.users['ADMIN'] = { password:'ADMIN', role:'ADMIN', department: null };
-      await writePath('users', store.users);
-      currentUser = { username:'ADMIN', role:'ADMIN', department: null };
-      afterLogin(); return;
-    } else {
-      $('loginMsg').textContent = 'No users in DB yet — use ADMIN/ADMIN';
-      return;
-    }
+  const userDoc = await getDoc(doc(db, 'users', u));
+  if(!userDoc.exists()){
+    $('loginMsg').textContent = 'Invalid username';
+    return;
   }
-
-  const dbUser = (store.users || {})[u];
-  if(!dbUser){ $('loginMsg').textContent = 'Invalid username'; return; }
-  if(dbUser.password !== p){ $('loginMsg').textContent = 'Invalid password'; return; }
-  currentUser = { username: u, role: dbUser.role, department: dbUser.department || null };
+  const data = userDoc.data();
+  if(data.password !== p){ $('loginMsg').textContent = 'Invalid password'; return; }
+  currentUser = { username: u, role: data.role || 'DEPT_USER', department: data.department || null };
   afterLogin();
 }
 
@@ -282,50 +260,36 @@ function afterLogin(){
   $('sidebar').classList.remove('hidden');
   $('currentUserView').textContent = `${currentUser.username} • ${currentUser.role}`;
   $('manageUsersBtn').style.display = (currentUser.role === 'ADMIN' || currentUser.role === 'DEPT_ADMIN') ? 'block' : 'none';
-  renderAll();
   showPage('home');
 }
 
 /* ---------- UI helpers ---------- */
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
   const el = $(id); if(el) el.style.display = 'block';
   if(window.innerWidth <= 900) $('sidebar').classList.remove('show');
 }
 
 /* ---------- Renderers ---------- */
-function renderAll(){
-  renderUsers();
-  renderDepartments();
-  renderEMS();
-  renderResources();
-  renderCoordinators();
-  // in-page results (hazmat/ev/weather) remain until user clears
-}
-
-/* USERS list (manage page) */
 function renderUsers(){
   const target = $('userList'); if(!target) return;
   target.innerHTML = '';
-  const users = store.users || {};
   Object.keys(users).forEach(username => {
     const u = users[username];
     const div = document.createElement('div'); div.className = 'listItem';
     div.innerHTML = `<div style="min-width:0"><strong>${username}</strong><div class="muted">${u.role}${u.department?(' • dept:'+u.department):''}</div></div>
       <div style="display:flex;gap:8px">
         <button class="small" data-action="editUser" data-user="${username}">Edit</button>
-        <button class="small" data-action="delUser" data-user="${username}">Delete</button>
+        <button class="small" data-action="deleteUser" data-user="${username}">Delete</button>
       </div>`;
     target.appendChild(div);
   });
 }
 
-/* DEPARTMENTS — Option B structure */
 function renderDepartments(){
   const listEl = $('fireList'); if(!listEl) return; listEl.innerHTML = '';
-  const depts = store.departments || {};
-  Object.keys(depts).forEach(id => {
-    const d = depts[id];
+  Object.keys(departments).forEach(id => {
+    const d = departments[id];
     const name = d.info?.name || '(Unnamed)';
     const battalion = d.info?.battalion || '-';
     const address = d.info?.address || '-';
@@ -342,385 +306,332 @@ function renderDepartments(){
   });
 }
 
-/* EMS */
-function renderEMS(){
-  const t = $('emsList'); if(!t) return; t.innerHTML = '';
-  const ems = store.ems || {};
-  Object.keys(ems).forEach(id => {
-    const e = ems[id];
-    const div = document.createElement('div'); div.className='listItem';
-    div.innerHTML = `<div><strong>${e.name||'(Unnamed)'}</strong><div class="muted">${(e.stations||[]).join('; ')}</div></div>
-      <div style="display:flex;gap:8px"><button class="small" data-action="editEms" data-id="${id}">Edit</button><button class="small" data-action="delEms" data-id="${id}">Delete</button></div>`;
-    t.appendChild(div);
-  });
-}
-
-/* RESOURCES */
-function renderResources(){
-  const t = $('resourceList'); if(!t) return; t.innerHTML='';
-  const resources = store.resources || {};
-  Object.keys(resources).forEach(id=>{
-    const r = resources[id];
-    const div = document.createElement('div'); div.className='listItem';
-    div.innerHTML = `<div><strong>${r.name||'(Unnamed)'}</strong><div class="muted">${r.capabilities||''}</div></div>
-      <div style="display:flex;gap:8px"><button class="small" data-action="editRes" data-id="${id}">Edit</button><button class="small" data-action="delRes" data-id="${id}">Delete</button></div>`;
-    t.appendChild(div);
-  });
-}
-
-/* COORDINATORS */
-function renderCoordinators(){
-  const t = $('coordinatorList'); if(!t) return; t.innerHTML='';
-  const coords = store.coordinators || {};
-  Object.keys(coords).forEach(id=>{
-    const c = coords[id];
-    const div = document.createElement('div'); div.className='listItem';
-    div.innerHTML = `<div><strong>${c.name||'(Unnamed)'}</strong><div class="muted">Callsign: ${c.callsign||''}</div></div>
-      <div style="display:flex;gap:8px"><button class="small" data-action="editCoord" data-id="${id}">Edit</button><button class="small" data-action="delCoord" data-id="${id}">Delete</button></div>`;
-    t.appendChild(div);
-  });
-}
-
-/* ---------- Permission utilities ---------- */
-function isAdmin(){ return currentUser && currentUser.role === 'ADMIN'; }
-function isDeptAdmin(){ return currentUser && currentUser.role === 'DEPT_ADMIN'; }
-function isDeptUser(){ return currentUser && currentUser.role === 'DEPT_USER'; }
-
 /* ---------- CRUD: Users ---------- */
 async function addUser(){
-  if(!(isAdmin() || isDeptAdmin())) return alert('Admin privileges required');
+  if(!(currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'DEPT_ADMIN'))) return alert('Admin privileges required');
   const username = prompt('Username (no spaces)'); if(!username) return;
   const password = prompt('Password','changeme') || 'changeme';
   let role = prompt('Role (ADMIN / DEPT_ADMIN / DEPT_USER)','DEPT_USER') || 'DEPT_USER'; role = role.toUpperCase();
   let department = null;
   if(role === 'DEPT_ADMIN' || role === 'DEPT_USER'){
-    if(isDeptAdmin()) department = currentUser.department; else department = prompt('Department ID assign to user (deptId):','') || null;
+    if(currentUser.role === 'DEPT_ADMIN') department = currentUser.department;
+    else department = prompt('Department ID to assign this user to (deptId):','') || null;
   }
-  store.users = store.users || {};
-  store.users[username] = { password, role, department };
-  await writePath(`users/${username}`, store.users[username]);
-  renderUsers();
+  const payload = { password, role, department };
+  await setDoc(doc(db, 'users', username), payload);
 }
 
 async function editUser(username){
-  if(!(isAdmin() || isDeptAdmin())) return alert('Admin privileges required');
-  if(isDeptAdmin() && store.users[username]?.department !== currentUser.department && username !== currentUser.username) return alert('You can only edit users in your department');
-  const u = store.users[username]; if(!u) return;
+  if(!(currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'DEPT_ADMIN'))) return alert('Admin privileges required');
+  if(currentUser.role === 'DEPT_ADMIN' && users[username]?.department !== currentUser.department && username !== currentUser.username) return alert('You can only edit users in your department');
+  const u = users[username]; if(!u) return;
   const password = prompt('Password', u.password) || u.password;
   let role = prompt('Role (ADMIN / DEPT_ADMIN / DEPT_USER)', u.role) || u.role; role = role.toUpperCase();
   let department = u.department || null;
   if(role === 'DEPT_ADMIN' || role === 'DEPT_USER'){
-    if(isDeptAdmin()) department = currentUser.department;
+    if(currentUser.role === 'DEPT_ADMIN') department = currentUser.department;
     else department = prompt('Department ID', u.department || '') || null;
   } else department = null;
-  store.users[username] = { password, role, department };
-  await writePath(`users/${username}`, store.users[username]);
-  renderUsers();
+  const payload = { password, role, department };
+  await setDoc(doc(db, 'users', username), payload);
 }
 
 async function deleteUser(username){
-  if(!(isAdmin() || isDeptAdmin())) return alert('Admin privileges required');
-  if(isDeptAdmin() && store.users[username]?.department !== currentUser.department) return alert('You can only delete users in your department');
+  if(!(currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'DEPT_ADMIN'))) return alert('Admin privileges required');
+  if(currentUser.role === 'DEPT_ADMIN' && users[username]?.department !== currentUser.department) return alert('You can only delete users in your department');
   if(!confirm('Delete user '+username+'?')) return;
-  await removePath(`users/${username}`);
-  delete store.users[username];
-  renderUsers();
+  await deleteDoc(doc(db, 'users', username));
 }
 
 /* ---------- CRUD: Departments (Option B) ---------- */
 async function addDepartment(){
-  if(!isAdmin()) return alert('Admin only');
+  if(!(currentUser && currentUser.role === 'ADMIN')) return alert('Admin only');
   const name = prompt('Department name'); if(!name) return;
   const battalion = prompt('Battalion (optional)','')||'';
   const address = prompt('Address (optional)','')||'';
-  const id = genId('dept');
-  const deptObj = {
-    info: { name, battalion, address },
-    apparatus: {}, // map appId => { name, type, status }
-    members: {}    // map username => true
+  const deptId = genId('dept');
+  const docObj = {
+    info: { name, battalion, address, city:'', state:'', zip:'', phone:'' },
+    apparatus: {}, resources: {}, coordinators: {}, members: {}, hazmat: {}, evDB: {}
   };
-  store.departments = store.departments || {};
-  store.departments[id] = deptObj;
-  await writePath(`departments/${id}`, deptObj);
-  renderDepartments();
+  await setDoc(doc(db, 'departments', deptId), docObj);
 }
 
 async function editDepartment(id){
-  const dept = store.departments?.[id];
-  if(!dept) return alert('Not found');
-  if(!(isAdmin() || (isDeptAdmin() && currentUser.department === id))) return alert('No permission');
-  const name = prompt('Department name', dept.info.name) || dept.info.name;
-  const battalion = prompt('Battalion', dept.info.battalion) || dept.info.battalion;
-  const address = prompt('Address', dept.info.address) || dept.info.address;
-  dept.info = { name, battalion, address };
-  await writePath(`departments/${id}/info`, dept.info);
-  renderDepartments();
+  const d = departments[id]; if(!d) return;
+  if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+  const name = prompt('Department name', d.info.name) || d.info.name;
+  const battalion = prompt('Battalion', d.info.battalion || '') || d.info.battalion;
+  const address = prompt('Address', d.info.address || '') || d.info.address;
+  d.info = { ...d.info, name, battalion, address };
+  await setDoc(doc(db, 'departments', id), d);
 }
 
 async function deleteDepartment(id){
-  if(!isAdmin()) return alert('Admin only');
+  if(!(currentUser && currentUser.role === 'ADMIN')) return alert('Admin only');
   if(!confirm('Delete department and all nested data?')) return;
-  await removePath(`departments/${id}`);
-  delete store.departments[id];
-  // remove department association from users
-  Object.keys(store.users||{}).forEach(u => {
-    if(store.users[u].department === id){
-      store.users[u].department = null;
-      writePath(`users/${u}`, store.users[u]);
-    }
-  });
-  renderDepartments();
+  await deleteDoc(doc(db, 'departments', id));
 }
 
-/* open department modal/subpage for management */
+/* ---------- Department panel: manage apparatus, members, resources, coordinators ---------- */
 function openDepartment(id){
-  const dept = store.departments?.[id];
-  if(!dept) return alert('Department not found');
-  // create card panel
+  const dept = departments[id]; if(!dept) return alert('Department not found');
   const main = $('content');
   const old = $('deptPanel'); if(old) old.remove();
   const card = document.createElement('div'); card.id='deptPanel'; card.className='card';
   card.innerHTML = `<h3 style="margin:0 0 8px">${dept.info.name}</h3>
     <div class="muted">Battalion: ${dept.info.battalion||'-'} • Address: ${dept.info.address||'-'}</div>
-    <div style="margin-top:12px"><strong>Stations / info</strong><div id="deptMembers" class="muted" style="margin-top:6px">${Object.keys(dept.members||{}).join('; ')||'(no members)'}</div><div style="margin-top:8px"><button id="addMemberBtn" class="small primary">Add Member (assign username)</button></div></div>
+    <div style="margin-top:12px"><strong>Members</strong><div id="deptMembers" class="muted" style="margin-top:6px">${Object.keys(dept.members||{}).join('; ')||'(no members)'}</div><div style="margin-top:8px"><button id="addMemberBtn" class="small primary">Add Member (assign username)</button></div></div>
     <div style="margin-top:12px"><strong>Apparatus</strong><div id="apparatusList" style="margin-top:8px"></div><div style="margin-top:8px"><button id="addAppBtn" class="small primary">Add Apparatus</button></div></div>
+    <div style="margin-top:12px"><strong>Resources</strong><div id="resourcesList" style="margin-top:8px"></div><div style="margin-top:8px"><button id="addResBtn" class="small primary">Add Resource</button></div></div>
+    <div style="margin-top:12px"><strong>Coordinators</strong><div id="coordList" style="margin-top:8px"></div><div style="margin-top:8px"><button id="addCoordBtn" class="small primary">Add Coordinator</button></div></div>
     <div style="margin-top:12px"><button id="editDeptBtn" class="small">Edit Dept</button> <button id="closeDeptBtn" class="small ghost">Close</button></div>`;
   main.prepend(card);
 
-  function renderApp(){
-    const list = card.querySelector('#apparatusList'); list.innerHTML = '';
+  function renderApparatus(){
+    const container = card.querySelector('#apparatusList'); container.innerHTML = '';
     const apps = dept.apparatus || {};
     Object.keys(apps).forEach(appId => {
-      const app = apps[appId];
+      const a = apps[appId];
       const row = document.createElement('div'); row.className='listItem';
-      row.innerHTML = `<div style="min-width:0"><strong>${app.name||'(unnamed)'}</strong><div class="muted">Type: ${app.type||''} • Status: <span class="${app.status==='OOS'?'status-out':'status-in'}">${app.status||'IN SERVICE'}</span></div></div>
-        <div style="display:flex;gap:8px">
-          <button class="small" data-action="toggleApp" data-id="${appId}">${app.status==='OOS'?'Mark IN':'Mark OOS'}</button>
-          <button class="small" data-action="editApp" data-id="${appId}">Edit</button>
-          <button class="small" data-action="delApp" data-id="${appId}">Delete</button>
-        </div>`;
-      list.appendChild(row);
+      row.innerHTML = `<div style="min-width:0"><strong>${a.name||'(unnamed)'}</strong><div class="muted">Type: ${a.type||''} • Status: <span class="${a.status==='OOS'?'status-out':'status-in'}">${a.status||'IN SERVICE'}</span></div></div>
+        <div style="display:flex;gap:8px"><button class="small" data-act="toggleApp" data-id="${appId}">${a.status==='OOS'?'Mark IN':'Mark OOS'}</button><button class="small" data-act="editApp" data-id="${appId}">Edit</button><button class="small" data-act="delApp" data-id="${appId}">Delete</button></div>`;
+      container.appendChild(row);
     });
   }
-  renderApp();
+  function renderResources(){
+    const container = card.querySelector('#resourcesList'); container.innerHTML = '';
+    const res = dept.resources || {};
+    Object.keys(res).forEach(rid=>{
+      const r = res[rid];
+      const row = document.createElement('div'); row.className='listItem';
+      row.innerHTML = `<div style="min-width:0"><strong>${r.name||'(unnamed)'}</strong><div class="muted">${r.description||''}</div></div>
+        <div style="display:flex;gap:8px"><button class="small" data-act="editRes" data-id="${rid}">Edit</button><button class="small" data-act="delRes" data-id="${rid}">Delete</button></div>`;
+      container.appendChild(row);
+    });
+  }
+  function renderCoords(){
+    const container = card.querySelector('#coordList'); container.innerHTML = '';
+    const coords = dept.coordinators || {};
+    Object.keys(coords).forEach(cid=>{
+      const c = coords[cid];
+      const row = document.createElement('div'); row.className='listItem';
+      row.innerHTML = `<div style="min-width:0"><strong>${c.name||'(unnamed)'}</strong><div class="muted">${c.title||''} • ${c.phone||''}</div></div>
+        <div style="display:flex;gap:8px"><button class="small" data-act="editCoord" data-id="${cid}">Edit</button><button class="small" data-act="delCoord" data-id="${cid}">Delete</button></div>`;
+      container.appendChild(row);
+    });
+  }
+  renderApparatus(); renderResources(); renderCoords();
 
-  // add member
   card.querySelector('#addMemberBtn').onclick = async ()=>{
-    if(!(isAdmin() || (isDeptAdmin() && currentUser.department === id))) return alert('No permission');
-    const username = prompt('Enter username to add as member (must exist):');
-    if(!username) return;
-    if(!store.users?.[username]) return alert('User not found in system');
-    dept.members = dept.members || {};
-    dept.members[username] = true;
-    // persist both department members and user's department (assign)
-    await writePath(`departments/${id}/members/${username}`, true);
-    // assign department to user if not set
-    store.users[username] = store.users[username] || {};
-    store.users[username].department = id;
-    await writePath(`users/${username}`, store.users[username]);
+    if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+    const username = prompt('Enter an existing username to add to this department:'); if(!username) return;
+    if(!users[username]) return alert('User not found');
+    dept.members = dept.members || {}; dept.members[username] = true;
+    // assign user's department
+    users[username].department = id;
+    await setDoc(doc(db, 'departments', id), dept);
+    await setDoc(doc(db, 'users', username), users[username]);
     card.querySelector('#deptMembers').textContent = Object.keys(dept.members||{}).join('; ');
   };
 
-  // add apparatus
   card.querySelector('#addAppBtn').onclick = async ()=>{
-    if(!(isAdmin() || (isDeptAdmin() && currentUser.department === id))) return alert('No permission');
+    if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
     const name = prompt('Apparatus name (Engine 1)'); if(!name) return;
     const type = prompt('Type (Engine/Truck/Rescue/Tanker/Other)','Engine')||'Engine';
     const status = prompt('Status (IN SERVICE / OOS)','IN SERVICE')||'IN SERVICE';
     const appId = genId('app');
-    dept.apparatus = dept.apparatus || {};
-    dept.apparatus[appId] = { id: appId, name, type, status };
-    await writePath(`departments/${id}/apparatus/${appId}`, dept.apparatus[appId]);
-    renderApp(); renderDepartments();
+    dept.apparatus = dept.apparatus || {}; dept.apparatus[appId] = { id: appId, name, type, status };
+    await setDoc(doc(db, 'departments', id), dept);
+    renderApparatus(); renderDepartments();
+  };
+
+  card.querySelector('#addResBtn').onclick = async ()=>{
+    if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+    const name = prompt('Resource name'); if(!name) return;
+    const desc = prompt('Description','')||'';
+    const rid = genId('res');
+    dept.resources = dept.resources || {}; dept.resources[rid] = { id: rid, name, description: desc };
+    await setDoc(doc(db, 'departments', id), dept);
+    renderResources(); renderDepartments();
+  };
+
+  card.querySelector('#addCoordBtn').onclick = async ()=>{
+    if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+    const name = prompt('Coordinator name'); if(!name) return;
+    const title = prompt('Title','')||'';
+    const phone = prompt('Phone','')||'';
+    const cid = genId('coord');
+    dept.coordinators = dept.coordinators || {}; dept.coordinators[cid] = { id: cid, name, title, phone };
+    await setDoc(doc(db, 'departments', id), dept);
+    renderCoords(); renderDepartments();
   };
 
   card.querySelector('#editDeptBtn').onclick = async ()=>{
-    if(!(isAdmin() || (isDeptAdmin() && currentUser.department === id))) return alert('No permission');
+    if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
     const name = prompt('Department name', dept.info.name) || dept.info.name;
-    const battalion = prompt('Battalion', dept.info.battalion) || dept.info.battalion;
-    const address = prompt('Address', dept.info.address) || dept.info.address;
-    dept.info = { name, battalion, address };
-    await writePath(`departments/${id}/info`, dept.info);
-    renderDepartments();
-    card.remove();
+    const battalion = prompt('Battalion', dept.info.battalion||'') || dept.info.battalion;
+    const address = prompt('Address', dept.info.address||'') || dept.info.address;
+    dept.info = { ...dept.info, name, battalion, address };
+    await setDoc(doc(db, 'departments', id), dept);
+    renderDepartments(); card.remove();
   };
 
   card.querySelector('#closeDeptBtn').onclick = ()=> card.remove();
 
-  // apparatus actions delegated
   card.addEventListener('click', async (ev)=>{
     const btn = ev.target.closest('button'); if(!btn) return;
-    const action = btn.dataset.action; const appId = btn.dataset.id;
-    if(action === 'toggleApp'){
-      const app = dept.apparatus[appId]; if(!app) return;
+    const act = btn.dataset.act; const itemId = btn.dataset.id;
+    if(!act) return;
+    if(act === 'toggleApp'){
+      if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+      const app = dept.apparatus[itemId]; if(!app) return;
       app.status = app.status === 'OOS' ? 'IN SERVICE' : 'OOS';
-      await writePath(`departments/${id}/apparatus/${appId}`, app);
-      renderApp(); renderDepartments();
-    } else if(action === 'editApp'){
-      const app = dept.apparatus[appId]; if(!app) return;
+      await setDoc(doc(db, 'departments', id), dept);
+      renderApparatus(); renderDepartments();
+    } else if(act === 'editApp'){
+      if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+      const app = dept.apparatus[itemId]; if(!app) return;
       app.name = prompt('Name', app.name) || app.name;
       app.type = prompt('Type', app.type) || app.type;
       app.status = prompt('Status', app.status) || app.status;
-      await writePath(`departments/${id}/apparatus/${appId}`, app);
-      renderApp(); renderDepartments();
-    } else if(action === 'delApp'){
+      await setDoc(doc(db, 'departments', id), dept);
+      renderApparatus(); renderDepartments();
+    } else if(act === 'delApp'){
+      if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
       if(!confirm('Delete apparatus?')) return;
-      await removePath(`departments/${id}/apparatus/${appId}`);
-      delete dept.apparatus[appId];
-      renderApp(); renderDepartments();
+      delete dept.apparatus[itemId];
+      await setDoc(doc(db, 'departments', id), dept);
+      renderApparatus(); renderDepartments();
+    } else if(act === 'editRes'){
+      if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+      const r = dept.resources[itemId]; if(!r) return;
+      r.name = prompt('Name', r.name) || r.name;
+      r.description = prompt('Description', r.description||'') || r.description;
+      await setDoc(doc(db, 'departments', id), dept);
+      renderResources(); renderDepartments();
+    } else if(act === 'delRes'){
+      if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+      if(!confirm('Delete resource?')) return;
+      delete dept.resources[itemId];
+      await setDoc(doc(db, 'departments', id), dept);
+      renderResources(); renderDepartments();
+    } else if(act === 'editCoord'){
+      if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+      const c = dept.coordinators[itemId]; if(!c) return;
+      c.name = prompt('Name', c.name) || c.name;
+      c.title = prompt('Title', c.title||'') || c.title;
+      c.phone = prompt('Phone', c.phone||'') || c.phone;
+      await setDoc(doc(db, 'departments', id), dept);
+      renderCoords(); renderDepartments();
+    } else if(act === 'delCoord'){
+      if(!(currentUser && (currentUser.role === 'ADMIN' || (currentUser.role === 'DEPT_ADMIN' && currentUser.department === id)))) return alert('No permission');
+      if(!confirm('Delete coordinator?')) return;
+      delete dept.coordinators[itemId];
+      await setDoc(doc(db, 'departments', id), dept);
+      renderCoords(); renderDepartments();
     }
   });
 }
 
-/* ---------- EMS CRUD (kept simple) ---------- */
-async function addEms(){
-  if(!isAdmin()) return alert('Admin only');
-  const name = prompt('EMS name'); if(!name) return;
-  const id = genId('ems');
-  store.ems = store.ems || {};
-  store.ems[id] = { id, name, stations: [] };
-  await writePath(`ems/${id}`, store.ems[id]);
-  renderEMS();
-}
-async function editEms(id){
-  const e = store.ems?.[id]; if(!e) return;
-  if(!isAdmin()) return alert('Admin only');
-  e.name = prompt('Name', e.name) || e.name;
-  e.stations = (prompt('Stations (comma separated)', (e.stations||[]).join(','))||'').split(',').map(s=>s.trim()).filter(Boolean);
-  await writePath(`ems/${id}`, e);
-  renderEMS();
-}
-async function deleteEms(id){
-  if(!isAdmin()) return alert('Admin only');
-  await removePath(`ems/${id}`);
-  delete store.ems[id];
-  renderEMS();
-}
-
-/* ---------- Resources CRUD ---------- */
-async function addResource(){
-  if(!isAdmin()) return alert('Admin only');
-  const name = prompt('Resource name'); if(!name) return;
-  const id = genId('res');
-  store.resources = store.resources || {};
-  store.resources[id] = { id, name, capabilities: '' };
-  await writePath(`resources/${id}`, store.resources[id]);
-  renderResources();
-}
-async function editResource(id){
-  if(!isAdmin()) return alert('Admin only');
-  const r = store.resources?.[id]; if(!r) return;
-  r.name = prompt('Name', r.name) || r.name;
-  r.capabilities = prompt('Capabilities', r.capabilities||'') || r.capabilities;
-  await writePath(`resources/${id}`, r);
-  renderResources();
-}
-async function deleteResource(id){
-  if(!isAdmin()) return alert('Admin only');
-  await removePath(`resources/${id}`); delete store.resources[id]; renderResources();
-}
-
-/* ---------- Coordinators CRUD ---------- */
-async function addCoordinator(){ if(!isAdmin()) return alert('Admin only'); const name = prompt('Coordinator name'); if(!name) return; const id = genId('coord'); store.coordinators = store.coordinators||{}; store.coordinators[id] = { id, name, callsign: '' }; await writePath(`coordinators/${id}`, store.coordinators[id]); renderCoordinators(); }
-async function editCoordinator(id){ if(!isAdmin()) return alert('Admin only'); const c = store.coordinators?.[id]; if(!c) return; c.name = prompt('Name', c.name)||c.name; c.callsign = prompt('Callsign', c.callsign||'')||c.callsign; await writePath(`coordinators/${id}`, c); renderCoordinators(); }
-async function deleteCoordinator(id){ if(!isAdmin()) return alert('Admin only'); await removePath(`coordinators/${id}`); delete store.coordinators[id]; renderCoordinators(); }
-
-/* ---------- HazMat (simple search + admin JSON editor) ---------- */
+/* HazMat search across departments */
 function searchHazmat(){
   const q = $('unInput').value.trim();
   if(!q){ $('unResult').textContent = 'Enter UN/NA number'; return; }
-  const entry = store.hazmat?.[q];
-  if(!entry){ $('unResult').textContent = 'Not found'; return; }
-  $('unResult').textContent = JSON.stringify(entry, null, 2);
+  let found = null;
+  Object.keys(departments).forEach(did=>{
+    const d = departments[did];
+    if(d.hazmat && d.hazmat[q]) found = { dept: did, entry: d.hazmat[q] };
+  });
+  if(found) $('unResult').textContent = `Department: ${found.dept}\n` + JSON.stringify(found.entry, null, 2);
+  else $('unResult').textContent = 'Not found';
 }
+
+/* Admin HazMat add/edit under department */
 async function editHazmat(){
-  if(!isAdmin()) return alert('Admin only');
-  const un = prompt('UN/NA number to add/edit:'); if(!un) return;
-  const json = prompt('Paste JSON for this UN (example: {"name":"Gasoline","hazard_class":"3","flammability":"Extremely flammable"})');
+  if(!(currentUser && currentUser.role === 'ADMIN')) return alert('Admin only');
+  const deptId = prompt('Department ID to store this HazMat (deptId):'); if(!deptId) return;
+  const q = prompt('UN/NA number (e.g. 1203):'); if(!q) return;
+  const json = prompt('Paste JSON for this entry (e.g. {"name":"Gasoline","hazard_class":"3"})'); if(!json) return;
   try{
     const obj = JSON.parse(json);
-    store.hazmat = store.hazmat || {};
-    store.hazmat[un] = obj;
-    await writePath(`hazmat/${un}`, obj);
-    alert('Saved HazMat entry.');
+    const dept = departments[deptId] || { info:{name:'(new)'}, apparatus:{}, resources:{}, coordinators:{}, members:{}, hazmat:{}, evDB:{} };
+    dept.hazmat = dept.hazmat || {};
+    dept.hazmat[q] = obj;
+    await setDoc(doc(db, 'departments', deptId), dept);
+    alert('Saved HazMat entry');
   }catch(e){ alert('Invalid JSON'); }
 }
 
-/* ---------- EV DB (simple) ---------- */
+/* EV search across departments */
 function searchEv(){
   const q = $('evQuery').value.trim();
-  if(!q){ $('evResult').textContent = 'Enter VIN/Plate or Year,Make,Model'; return; }
-  const res = store.evDB?.[q] || null;
-  if(res) $('evResult').textContent = JSON.stringify(res, null, 2);
+  if(!q){ $('evResult').textContent = 'Enter VIN/Plate or YMM'; return; }
+  let found = null;
+  Object.keys(departments).forEach(did=>{
+    const d = departments[did];
+    if(d.evDB && d.evDB[q]) found = { dept: did, entry: d.evDB[q] };
+    if(!found && d.evDB && d.evDB[q.toUpperCase()]) found = { dept: did, entry: d.evDB[q.toUpperCase()] };
+  });
+  if(found) $('evResult').textContent = `Department: ${found.dept}\n` + JSON.stringify(found.entry, null, 2);
   else $('evResult').textContent = 'Not found';
 }
+
+/* Admin add/edit EV under department */
 async function editEv(){
-  if(!isAdmin()) return alert('Admin only');
-  const key = prompt('Key (VIN or YMM string)'); if(!key) return;
-  const json = prompt('Paste JSON for vehicle (rescue info)'); try{
-    const obj = JSON.parse(json); store.evDB = store.evDB || {}; store.evDB[key] = obj; await writePath(`evDB/${key}`, obj); alert('Saved'); }
-  catch(e){ alert('Invalid JSON'); }
+  if(!(currentUser && currentUser.role === 'ADMIN')) return alert('Admin only');
+  const deptId = prompt('Department ID to store this EV (deptId):'); if(!deptId) return;
+  const key = prompt('Key (VIN or YMM)'); if(!key) return;
+  const json = prompt('Paste JSON for this vehicle'); if(!json) return;
+  try{
+    const obj = JSON.parse(json);
+    const dept = departments[deptId] || { info:{name:'(new)'}, apparatus:{}, resources:{}, coordinators:{}, members:{}, hazmat:{}, evDB:{} };
+    dept.evDB = dept.evDB || {}; dept.evDB[key] = obj;
+    await setDoc(doc(db, 'departments', deptId), dept);
+    alert('Saved EV entry');
+  }catch(e){ alert('Invalid JSON'); }
 }
 
-/* ---------- Weather (Open-Meteo) ---------- */
+/* Weather using Open-Meteo */
 async function searchWeather(){
   const loc = $('weatherInput').value.trim();
-  if(!loc){ $('weatherResult').textContent = 'Enter a location first'; return; }
+  if(!loc){ $('weatherResult').textContent = 'Enter a location'; return; }
   $('weatherResult').textContent = 'Geocoding...';
   try{
     const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(loc)}&count=1`).then(r=>r.json());
     if(!geo.results || geo.results.length === 0){ $('weatherResult').textContent = 'Location not found'; return; }
     const p = geo.results[0];
-    $('weatherResult').textContent = 'Fetching weather...';
     const weather = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.latitude}&longitude=${p.longitude}&current_weather=true`).then(r=>r.json());
     if(!weather.current_weather){ $('weatherResult').textContent = 'Weather not available'; return; }
     const cw = weather.current_weather;
-    const out = {
-      location: `${p.name}, ${p.country}`,
-      latitude: p.latitude,
-      longitude: p.longitude,
-      temperature_C: cw.temperature,
-      wind_kmh: cw.windspeed,
-      wind_deg: cw.winddirection,
-      time: cw.time
-    };
-    $('weatherResult').textContent = JSON.stringify(out, null, 2);
-  }catch(e){ console.error(e); $('weatherResult').textContent = 'Weather lookup failed'; }
+    const out = { location:`${p.name}, ${p.country}`, temp_C:cw.temperature, wind_kmh:cw.windspeed, wind_deg:cw.winddirection, time:cw.time };
+    $('weatherResult').textContent = JSON.stringify(out,null,2);
+  }catch(e){ console.error(e); $('weatherResult').textContent='Weather lookup failed'; }
 }
 
 /* ---------- Delegated click handling ---------- */
 document.addEventListener('click', async (ev)=>{
   const btn = ev.target.closest('button'); if(!btn) return;
-  const act = btn.dataset.action;
-  if(act === 'editUser') return editUser(btn.dataset.user);
-  if(act === 'delUser') return deleteUser(btn.dataset.user);
-  if(act === 'openDept') return openDepartment(btn.dataset.id);
-  if(act === 'editDept') return editDepartment(btn.dataset.id);
-  if(act === 'deleteDept') return deleteDepartment(btn.dataset.id);
-  if(act === 'editEms') return editEms(btn.dataset.id);
-  if(act === 'delEms') return deleteEms(btn.dataset.id);
-  if(act === 'editRes') return editResource(btn.dataset.id);
-  if(act === 'delRes') return deleteResource(btn.dataset.id);
-  if(act === 'editCoord') return editCoordinator(btn.dataset.id);
-  if(act === 'delCoord') return deleteCoordinator(btn.dataset.id);
+  if(btn.dataset.action === 'editUser') return editUser(btn.dataset.user);
+  if(btn.dataset.action === 'deleteUser') return deleteUser(btn.dataset.user);
+  if(btn.dataset.action === 'openDept') return openDepartment(btn.dataset.id);
+  if(btn.dataset.action === 'editDept') return editDepartment(btn.dataset.id);
+  if(btn.dataset.action === 'deleteDept') return deleteDepartment(btn.dataset.id);
 });
 
 /* ---------- UI wiring ---------- */
 $('menuBtn').addEventListener('click', ()=> {
   if(window.innerWidth <= 900) $('sidebar').classList.toggle('show'); else $('sidebar').classList.toggle('hidden');
 });
-document.querySelectorAll('#sidebar button[data-page]').forEach(b=>b.addEventListener('click', ()=> showPage(b.dataset.page)));
+document.querySelectorAll('#sidebar button[data-page]').forEach(b=> b.addEventListener('click', ()=> showPage(b.dataset.page)));
 
 $('loginBtn').addEventListener('click', loginAction);
-$('demoBtn').addEventListener('click', async ()=>{ $('loginUser').value='ADMIN'; $('loginPass').value='ADMIN'; await loginAction(); });
+$('demoBtn').addEventListener('click', ()=>{ $('loginUser').value='ADMIN'; $('loginPass').value='ADMIN'; loginAction(); });
 
 $('signOutBtn').addEventListener('click', ()=>{ currentUser=null; $('loginModal').style.display='flex'; $('sidebar').classList.add('hidden'); $('manageUsersBtn').style.display='none'; $('currentUserView').textContent='Not signed in'; });
 
 $('addUserBtn').addEventListener('click', addUser);
-$('addFireBtn').addEventListener('click', addDepartment);
-$('addEmsBtn').addEventListener('click', addEms);
-$('addResourceBtn').addEventListener('click', addResource);
-$('addCoordBtn').addEventListener('click', addCoordinator);
+$('addDeptBtn').addEventListener('click', addDepartment);
 
 $('searchUnBtn').addEventListener('click', searchHazmat);
 $('editHazmatBtn').addEventListener('click', editHazmat);
@@ -730,18 +641,15 @@ $('editEvBtn').addEventListener('click', editEv);
 $('weatherBtn').addEventListener('click', searchWeather);
 $('manageUsersBtn').addEventListener('click', ()=> showPage('manageUsers'));
 
-/* ---------- Initialization ---------- */
-(async function init(){
-  await ensureFallbackAdmin();
+/* ---------- Init ---------- */
+(function init(){
+  // snapshots will populate users & departments and render UI
   $('loginModal').style.display = 'flex';
   $('sidebar').classList.add('hidden');
-  renderAll();
 })();
 
-/* expose quick debugging helpers */
-window._getStore = ()=> store;
-window._writePath = writePath;
-window._removePath = removePath;
+/* debugging helper */
+window._debug = ()=> ({ users, departments, currentUser });
 
 </script>
 </body>
