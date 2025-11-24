@@ -1,41 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>F1 Resource</title>
 <style>
-  body { margin:0; font-family:Arial,sans-serif; background:#f5f5f5; }
-  #loginBox { width:300px; margin:120px auto; padding:20px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
-  #app { display:none; height:100vh; }
-  #sidebar { width:250px; background:#1a1a1a; color:white; padding:20px; position:fixed; top:0; bottom:0; left:0; overflow-y:auto; }
-  #sidebar h2 { margin-top:0; }
-  #sidebar button { width:100%; padding:10px; margin:5px 0; border:none; background:#333; color:white; border-radius:6px; text-align:left; }
-  #sidebar button:hover { background:#444; cursor:pointer; }
-  #content { margin-left:270px; padding:20px; }
-  .hidden { display:none; }
-  .card { background:white; padding:15px; border-radius:8px; margin:10px 0; box-shadow:0 0 5px rgba(0,0,0,0.1); }
-  input, select { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
-  .top-alerts { background:#ffdddd; padding:10px; text-align:center; font-weight:bold; }
-  @media(max-width:768px){
-    #sidebar { width:70px; padding:10px; }
-    #content { margin-left:90px; padding:10px; }
-    #sidebar button { font-size:12px; padding:5px; }
-  }
+body { margin:0; font-family:Arial,sans-serif; background:#f5f5f5; }
+#loginBox { width:300px; margin:120px auto; padding:20px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
+#app { display:none; flex-direction:row; height:100vh; }
+#sidebar { width:250px; background:#1a1a1a; color:white; padding:20px; position:fixed; top:0; bottom:0; left:0; overflow-y:auto; }
+#sidebar h2 { margin-top:0; }
+#sidebar button { width:100%; padding:10px; margin:5px 0; border:none; background:#333; color:white; border-radius:6px; }
+#content { margin-left:270px; padding:20px; flex:1; overflow-y:auto; }
+.page.hidden { display:none; }
+.card { background:white; padding:15px; border-radius:8px; margin:10px 0; box-shadow:0 0 5px rgba(0,0,0,0.1); }
+input, select { width:100%; padding:8px; margin:5px 0; border-radius:6px; border:1px solid #ccc; }
+button.small { padding:4px 8px; margin-left:5px; font-size:0.9em; }
+@media(max-width:768px){
+  #sidebar { width:100%; position:relative; display:flex; flex-wrap:wrap; }
+  #sidebar button { width:48%; margin:1%; }
+  #content { margin-left:0; }
+}
 </style>
 </head>
 <body>
-
 <div id="loginBox">
   <h2>Login</h2>
-  <input id="username" placeholder="Username">
-  <input id="password" type="password" placeholder="Password">
+  <input id="username" placeholder="Username" />
+  <input id="password" type="password" placeholder="Password" />
   <button onclick="login()">Login</button>
   <p id="loginError" style="color:red;"></p>
 </div>
 
 <div id="app">
-  <div class="top-alerts" id="activeAlerts">Loading active weather alerts...</div>
   <div id="sidebar">
     <h2>F1 Resource</h2>
     <button onclick="showPage('home')">Home</button>
@@ -43,49 +40,49 @@
     <button onclick="showPage('ems')">EMS Agencies</button>
     <button onclick="showPage('resources')">County Resources</button>
     <button onclick="showPage('coordinators')">County Coordinators</button>
-    <button onclick="showPage('hazmat')">HazMat</button>
+    <button onclick="showPage('hazmat')">HazMat Search</button>
     <button onclick="showPage('ev')">EV Safety</button>
     <button onclick="showPage('firerisk')">Fire Risk</button>
     <button onclick="showPage('drivingsafety')">Driving Safety</button>
   </div>
 
   <div id="content">
-    <div id="home" class="page"><h1>WELCOME</h1><p>This is F1 Resource, your all inclusive application for Oswego County resources.</p></div>
+    <div id="home" class="page"><h1>WELCOME</h1><p>F1 Resource Application for Oswego County</p></div>
 
     <div id="departments" class="page hidden">
       <h2>Fire Departments</h2>
-      <button onclick="addDepartment()">Add Department</button>
+      <button id="addDeptBtn">Add Department</button>
       <div id="departmentList"></div>
     </div>
 
     <div id="ems" class="page hidden">
       <h2>EMS Agencies</h2>
-      <button onclick="addEMS()">Add EMS Agency</button>
+      <button id="addEMSBtn">Add EMS Agency</button>
       <div id="emsList"></div>
     </div>
 
     <div id="resources" class="page hidden">
       <h2>County Resources</h2>
-      <button onclick="addResource()">Add Resource</button>
+      <button id="addResourceBtn">Add Resource</button>
       <div id="resourceList"></div>
     </div>
 
     <div id="coordinators" class="page hidden">
       <h2>County Coordinators</h2>
-      <button onclick="addCoordinator()">Add Coordinator</button>
+      <button id="addCoordinatorBtn">Add Coordinator</button>
       <div id="coordinatorList"></div>
     </div>
 
     <div id="hazmat" class="page hidden">
-      <h2>HazMat</h2>
-      <input id="hazmatInput" placeholder="Enter UN Number">
+      <h2>HazMat Search</h2>
+      <input id="hazmatInput" placeholder="Enter UN Number" />
       <button onclick="searchHazMat()">Search</button>
       <div id="hazmatResult"></div>
     </div>
 
     <div id="ev" class="page hidden">
       <h2>EV Safety</h2>
-      <input id="evYM" placeholder="Year Make Model">
+      <input id="evYM" placeholder="Year Make Model" />
       <button onclick="searchEV()">Search</button>
       <div id="evResult"></div>
     </div>
@@ -96,173 +93,141 @@
 </div>
 
 <script type="module">
-  // Firebase SDK
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, setDoc, getDocs, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
-    authDomain: "f1resource-8fedc.firebaseapp.com",
-    projectId: "f1resource-8fedc",
-    storageBucket: "f1resource-8fedc.firebasestorage.app",
-    messagingSenderId: "182745701982",
-    appId: "1:182745701982:web:9f4f3836b41b450987decf"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
+  authDomain: "f1resource-8fedc.firebaseapp.com",
+  projectId: "f1resource-8fedc",
+  storageBucket: "f1resource-8fedc.firebasestorage.app",
+  messagingSenderId: "182745701982",
+  appId: "1:182745701982:web:9f4f3836b41b450987decf"
+};
 
-  const appFirebase = initializeApp(firebaseConfig);
-  const db = getFirestore(appFirebase);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  // Login roles
-  let currentUser = null;
+const username = document.getElementById('username');
+const password = document.getElementById('password');
+const loginBox = document.getElementById('loginBox');
+const appDiv = document.getElementById('app');
+const loginError = document.getElementById('loginError');
 
-  async function login(){
-    const u = username.value.trim();
-    const p = password.value.trim();
+let currentUser = null;
 
-    const usersCol = collection(db, "users");
-    const q = query(usersCol, where("username","==",u), where("password","==",p));
-    const userSnap = await getDocs(q);
+async function login() {
+  const u = username.value.trim();
+  const p = password.value.trim();
+  const userRef = doc(db, "users", u);
+  const userSnap = await getDoc(userRef);
 
-    if(!userSnap.empty){
-      currentUser = userSnap.docs[0].data();
-      loginBox.style.display = "none";
-      app.style.display = "flex";
-      loadAllData();
-      showPage('home');
-    } else {
-      loginError.textContent = "Invalid login";
+  if (!userSnap.exists()) {
+    // Auto-create ADMIN if first login
+    if (u === "ADMIN" && p === "ADMIN") {
+      await setDoc(userRef, { username:"ADMIN", password:"ADMIN", role:"admin", department:"" });
+      currentUser = { username:"ADMIN", role:"admin", department:"" };
+      showApp();
+      return;
     }
+    loginError.textContent = "Invalid login";
+    return;
   }
 
-  function showPage(id){
-    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
+  const data = userSnap.data();
+  if (data.password === p) {
+    currentUser = data;
+    showApp();
+  } else {
+    loginError.textContent = "Invalid login";
   }
+}
 
-  // --- Real-time Firestore sync ---
-  async function loadAllData(){
-    loadDepartments();
-    loadEMS();
-    loadResources();
-    loadCoordinators();
-    loadActiveAlerts();
+function showApp() {
+  loginBox.style.display = "none";
+  appDiv.style.display = "flex";
+  showPage('home');
+  setupPagePermissions();
+  loadAllData();
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function setupPagePermissions() {
+  if (currentUser.role !== 'admin' && currentUser.role !== 'dept_admin') {
+    document.querySelectorAll('button[id^="add"]').forEach(btn => btn.style.display = 'none');
   }
+}
 
-  async function loadDepartments(){
-    const deptList = document.getElementById('departmentList');
-    deptList.innerHTML = "";
-    const q = collection(db, "departments");
-    onSnapshot(q, (snap)=>{
-      deptList.innerHTML = "";
-      snap.forEach(doc => {
-        const d = doc.data();
-        const card = document.createElement('div');
-        card.className="card";
-        card.innerHTML=`<b>${d.name}</b> - ${d.battalion}<br>${d.address}`;
-        if(currentUser.role === "admin" || (currentUser.role==="deptadmin" && currentUser.department===d.name)){
-          card.innerHTML += `<br><button onclick="editDepartment('${doc.id}')">Edit</button>`;
-        }
-        deptList.appendChild(card);
-      });
-    });
+// ===== Firestore functions =====
+async function loadAllData() {
+  await loadCollection('departments', 'departmentList');
+  await loadCollection('ems', 'emsList');
+  await loadCollection('resources', 'resourceList');
+  await loadCollection('coordinators', 'coordinatorList');
+}
+
+async function loadCollection(colName, listDivId) {
+  const listDiv = document.getElementById(listDivId);
+  listDiv.innerHTML = '';
+  const snapshot = await getDocs(collection(db, colName));
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<b>${data.name || data.username}</b>
+      ${currentUser.role === 'admin' || (currentUser.role==='dept_admin' && (data.department===currentUser.department)) ?
+        `<button class="small" onclick="editItem('${colName}','${docSnap.id}')">Edit</button>
+         <button class="small" onclick="deleteItem('${colName}','${docSnap.id}')">Delete</button>` : ''}`;
+    listDiv.appendChild(card);
+  });
+}
+
+async function addItem(colName) {
+  const name = prompt("Enter Name/Title:");
+  if (!name) return;
+  const data = { name };
+  if (colName==='users') {
+    const uname = prompt("Enter username:"); 
+    const pass = prompt("Enter password:"); 
+    const role = prompt("Enter role (admin/dept_admin/dept_user):");
+    data.username=uname; data.password=pass; data.role=role;
   }
+  await addDoc(collection(db, colName), data);
+  loadAllData();
+}
 
-  async function loadEMS(){
-    const list = document.getElementById('emsList'); list.innerHTML="";
-    const q = collection(db,"ems");
-    onSnapshot(q,(snap)=>{
-      list.innerHTML="";
-      snap.forEach(doc=>{
-        const d=doc.data();
-        const card=document.createElement('div');
-        card.className="card";
-        card.innerHTML=`<b>${d.name}</b><br>${d.address}`;
-        if(currentUser.role==="admin") card.innerHTML+=`<br><button onclick="editEMS('${doc.id}')">Edit</button>`;
-        list.appendChild(card);
-      });
-    });
-  }
+async function editItem(colName, docId) {
+  const newName = prompt("Enter new name:");
+  if (!newName) return;
+  await updateDoc(doc(db,colName,docId), { name:newName });
+  loadAllData();
+}
 
-  async function loadResources(){
-    const list = document.getElementById('resourceList'); list.innerHTML="";
-    const q = collection(db,"resources");
-    onSnapshot(q,(snap)=>{
-      list.innerHTML="";
-      snap.forEach(doc=>{
-        const d=doc.data();
-        const card=document.createElement('div');
-        card.className="card";
-        card.innerHTML=`<b>${d.name}</b><br>${d.details}`;
-        if(currentUser.role==="admin") card.innerHTML+=`<br><button onclick="editResource('${doc.id}')">Edit</button>`;
-        list.appendChild(card);
-      });
-    });
-  }
+async function deleteItem(colName, docId) {
+  if (!confirm("Delete this item?")) return;
+  await deleteDoc(doc(db,colName,docId));
+  loadAllData();
+}
 
-  async function loadCoordinators(){
-    const list=document.getElementById('coordinatorList'); list.innerHTML="";
-    const q=collection(db,"coordinators");
-    onSnapshot(q,(snap)=>{
-      list.innerHTML="";
-      snap.forEach(doc=>{
-        const d=doc.data();
-        const card=document.createElement('div');
-        card.className="card";
-        card.innerHTML=`<b>${d.name}</b><br>${d.contact}`;
-        if(currentUser.role==="admin") card.innerHTML+=`<br><button onclick="editCoordinator('${doc.id}')">Edit</button>`;
-        list.appendChild(card);
-      });
-    });
-  }
+// Bind Add buttons
+document.getElementById('addDeptBtn').onclick = () => addItem('departments');
+document.getElementById('addEMSBtn').onclick = () => addItem('ems');
+document.getElementById('addResourceBtn').onclick = () => addItem('resources');
+document.getElementById('addCoordinatorBtn').onclick = () => addItem('coordinators');
 
-  async function loadActiveAlerts(){
-    const alertsEl = document.getElementById('activeAlerts');
-    // Dummy alerts - replace with actual API integration
-    alertsEl.textContent = "No active weather alerts in Oswego County.";
-  }
-
-  // --- Add/Edit functions ---
-  async function addDepartment(){
-    const name=prompt("Department Name");
-    const battalion=prompt("Battalion");
-    const address=prompt("Address");
-    if(name && battalion && address){
-      await addDoc(collection(db,"departments"),{name,battalion,address});
-    }
-  }
-
-  async function editDepartment(id){
-    const dRef=doc(db,"departments",id);
-    const name=prompt("New Department Name");
-    const battalion=prompt("Battalion");
-    const address=prompt("Address");
-    if(name && battalion && address){
-      await updateDoc(dRef,{name,battalion,address});
-    }
-  }
-
-  async function addEMS(){ const name=prompt("EMS Name"); const address=prompt("Address"); if(name){await addDoc(collection(db,"ems"),{name,address});}}
-  async function editEMS(id){ const dRef=doc(db,"ems",id); const name=prompt("New Name"); const address=prompt("Address"); if(name){await updateDoc(dRef,{name,address});}}
-
-  async function addResource(){ const name=prompt("Resource Name"); const details=prompt("Details"); if(name){await addDoc(collection(db,"resources"),{name,details});}}
-  async function editResource(id){ const dRef=doc(db,"resources",id); const name=prompt("New Name"); const details=prompt("Details"); if(name){await updateDoc(dRef,{name,details});}}
-
-  async function addCoordinator(){ const name=prompt("Coordinator Name"); const contact=prompt("Contact Info"); if(name){await addDoc(collection(db,"coordinators"),{name,contact});}}
-  async function editCoordinator(id){ const dRef=doc(db,"coordinators",id); const name=prompt("New Name"); const contact=prompt("Contact Info"); if(name){await updateDoc(dRef,{name,contact});}}
-
-  function searchHazMat(){
-    const un = hazmatInput.value.trim();
-    hazmatResult.innerHTML = `<p>ERGuide 2024 lookup for UN ${un} will appear here.</p>`;
-  }
-
-  function searchEV(){
-    const ym = evYM.value.trim();
-    evResult.innerHTML = `<p>NHTSA EV Emergency Guide info for ${ym} will appear here.</p>`;
-  }
-
+// HazMat and EV placeholders
+function searchHazMat() {
+  const n = document.getElementById('hazmatInput').value.trim();
+  document.getElementById('hazmatResult').innerHTML = `<p>HazMat info for UN ${n}</p>`;
+}
+function searchEV() {
+  const ym = document.getElementById('evYM').value.trim();
+  document.getElementById('evResult').innerHTML = `<p>EV info for ${ym}</p>`;
+}
 </script>
-
 </body>
 </html>
-
-
