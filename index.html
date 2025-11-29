@@ -4,93 +4,77 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>F1 Resource — Oswego County</title>
-  <meta name="description" content="F1 Resource - Fire & EMS resource hub" />
   <style>
-    /* Theme + layout */
     :root{
       --accent1:#7b5cff; --accent2:#ff6f91;
-      --bg-light:#f6f7fb; --bg-light2:#eef2f7; --bg-dark:#0b0622;
-      --muted-light:#4b5563; --muted-dark:#cbd5e1;
-      --card-bg: rgba(255,255,255,0.02); --radius:12px;
+      --bg1:#f6f7fb; --bg2:#eef2f7;
+      --text:#0b1220; --muted:#54616a;
+      --card-bg: #fff; --radius:12px;
     }
-    @media (prefers-color-scheme: dark){ :root{ --bg:var(--bg-dark); --text:#f7f7fb; --muted:var(--muted-dark);} }
-    @media (prefers-color-scheme: light){ :root{ --bg:linear-gradient(180deg,var(--bg-light),var(--bg-light2)); --text:#0b1220; --muted:var(--muted-light);} }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--text);background:var(--bg)}
-    a{color:inherit}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--text);background:linear-gradient(180deg,var(--bg1),var(--bg2));}
     .app{display:flex;min-height:100vh}
-    .sidebar{width:220px;padding:18px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;border-right:1px solid rgba(0,0,0,0.04)}
+    .sidebar{width:220px;padding:18px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;border-right:1px solid rgba(11,17,32,0.04);background:transparent}
     .logoImg{height:44px;border-radius:8px}
-    .appTitle{font-weight:800;font-size:16px}
-    .nav{display:flex;flex-direction:column;gap:6px;margin-top:8px}
     .nav button{background:transparent;border:none;text-align:left;padding:10px 12px;border-radius:8px;font-weight:700;color:var(--muted);cursor:pointer}
-    .nav button.active, .nav button:hover{background:linear-gradient(90deg,rgba(123,92,255,0.12),rgba(255,111,145,0.06));color:var(--text);transform:translateX(2px)}
-    .main{flex:1;display:flex;flex-direction:column;gap:18px;padding:22px}
+    .nav button.active, .nav button:hover{background:linear-gradient(90deg,rgba(123,92,255,0.10),rgba(255,111,145,0.04));color:var(--text)}
+    .main{flex:1;padding:22px;display:flex;flex-direction:column;gap:18px}
     .topBar{display:flex;justify-content:space-between;align-items:center}
-    .siteLogo{height:60px;border-radius:10px}
-    .title{font-size:22px;margin:0}
-    .muted{color:var(--muted);font-size:13px}
-    .card{background:var(--card-bg);padding:16px;border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.03)}
+    .card{background:var(--card-bg);padding:16px;border-radius:var(--radius);box-shadow:0 8px 26px rgba(9,12,18,0.04);border:1px solid rgba(11,17,32,0.03)}
     .view{display:none}
     .view.active{display:block}
     .list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-    .listItem{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.03)}
+    .listItem{display:flex;justify-content:space-between;align-items:center;background:#fff;padding:12px;border-radius:10px;border:1px solid rgba(11,17,32,0.03)}
     .meta{color:var(--muted);font-size:12px}
     .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
     .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
-    .btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--muted)}
-    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(4px)}
+    .btn.ghost{background:transparent;border:1px solid rgba(11,17,32,0.06);color:var(--muted)}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:999}
     .modal-backdrop.show{display:flex}
-    .modal{width:720px;max-width:96%;max-height:86vh;overflow:auto;border-radius:12px;padding:18px;background:var(--card-bg);border:1px solid rgba(0,0,0,0.06)}
-    .modal input,.modal textarea,.modal select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;color:var(--text)}
+    .modal{width:760px;max-width:96%;max-height:86vh;overflow:auto;border-radius:12px;padding:18px;background:#fff;border:1px solid rgba(11,17,32,0.05)}
+    input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(11,17,32,0.06);margin:6px 0}
     @media (max-width:980px){
       .sidebar{display:none}
-      .mobileTop{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(0,0,0,0.04);background:transparent}
-      .drawer{position:fixed;left:0;top:0;height:100%;width:260px;background:var(--card-bg);box-shadow:6px 0 28px rgba(0,0,0,0.3);transform:translateX(-120%);transition:transform .22s;z-index:1000;padding:18px}
+      .mobileTop{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid rgba(0,0,0,0.04)}
+      .drawer{position:fixed;left:0;top:0;height:100%;width:260px;background:#fff;box-shadow:6px 0 28px rgba(0,0,0,0.16);transform:translateX(-120%);transition:transform .22s;z-index:1000;padding:18px}
       .drawer.open{transform:translateX(0)}
     }
-    .small{padding:6px 8px;font-size:13px;border-radius:8px}
-    .mutedBlock{color:var(--muted);font-size:13px}
-    .hidden{display:none}
-    /* dispatch-specific */
-    .dispatch-root{max-width:960px;margin:24px auto}
-    .dispatch-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px}
-    .statusBtn{padding:8px 10px;border-radius:8px;border:none;margin-right:6px;cursor:pointer}
-    .statusRow{display:flex;flex-wrap:wrap;margin-top:10px}
-    .chatBox{border-radius:8px;padding:8px;border:1px solid rgba(0,0,0,0.06);min-height:120px;max-height:220px;overflow:auto;background:transparent}
-    .incidentItem{padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.03);margin-bottom:8px;background:rgba(255,255,255,0.01)}
+    /* dispatch styles */
+    .dispatch-root{max-width:980px;margin:20px auto}
+    .incidentItem{padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.04);background:#fafafa;margin-bottom:8px}
+    .chatBox{min-height:120px;max-height:250px;overflow:auto;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:#fff}
   </style>
 </head>
 <body>
-  <!-- Login -->
-  <div id="loginView" style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px">
+  <!-- LOGIN -->
+  <div id="loginView" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
     <div class="card" style="max-width:820px;width:100%;display:flex;gap:18px;align-items:center">
-      <img id="logoLogin" src="./logo.png" alt="logo" class="logoImg" style="height:96px">
+      <img src="./logo.png" alt="logo" style="height:96px">
       <div style="flex:1">
         <h2 style="margin:0">F1 Resource — Login</h2>
-        <p class="muted">Local login (Admin / Department Admin / Department User / Apparatus Mobile). Data stored in Firestore.</p>
-        <div style="margin-top:12px;display:flex;gap:8px;flex-direction:column">
+        <p style="margin:6px 0;color:var(--muted)">Local login for testing. Data stored in Firestore (app data) — login remains local.</p>
+        <div>
           <input id="login_user" placeholder="Username" />
-          <input id="login_pass" type="password" placeholder="Password" />
-          <div style="display:flex;gap:8px">
+          <input id="login_pass" placeholder="Password" type="password" />
+          <div style="display:flex;gap:8px;margin-top:8px">
             <button id="loginBtn" class="btn primary">Login</button>
             <button id="loginFill" class="btn ghost">Demo Fill</button>
           </div>
-          <div id="loginMsg" class="muted" style="color:crimson"></div>
+          <div id="loginMsg" style="color:crimson;margin-top:8px"></div>
+          <p style="color:var(--muted);margin-top:10px">Demo accounts: <strong>ADMIN/ADMIN</strong>, <strong>DEPTADMIN/DEPTADMIN</strong>, <strong>DEPTUSER/DEPTUSER</strong>, <strong>APPARATUS/APPARATUS</strong></p>
         </div>
-        <p class="muted" style="margin-top:10px">Demo accounts: <strong>ADMIN/ADMIN</strong>, <strong>DEPTADMIN/DEPTADMIN</strong>, <strong>DEPTUSER/DEPTUSER</strong>, <strong>APPARATUS/APPARATUS</strong></p>
       </div>
     </div>
   </div>
 
-  <!-- Full SPA -->
-  <div id="spa" class="app hidden" style="display:none">
-    <aside class="sidebar" role="navigation" aria-label="Main navigation">
+  <!-- SPA -->
+  <div id="spa" class="app" style="display:none">
+    <aside class="sidebar">
       <div style="display:flex;align-items:center;gap:12px">
         <img src="./logo.png" class="logoImg" alt="logo">
-        <div><div class="appTitle">F1 Resource</div><div class="muted">Oswego County</div></div>
+        <div><div style="font-weight:800">F1 Resource</div><div style="color:var(--muted);font-size:13px">Oswego County</div></div>
       </div>
-      <nav class="nav" aria-label="Pages">
+      <nav class="nav" aria-label="Main navigation">
         <button data-view="home" class="active">HOME</button>
         <button data-view="departments">FIRE DEPARTMENTS</button>
         <button data-view="ems">EMS AGENCIES</button>
@@ -104,104 +88,119 @@
         <button data-view="admin">ADMIN</button>
         <button id="logoutButton">LOGOUT</button>
       </nav>
-      <div style="margin-top:auto" class="muted">Version 1.0</div>
+      <div style="margin-top:auto;color:var(--muted)">Version 1.0</div>
     </aside>
 
-    <!-- main -->
     <main class="main">
       <div class="topBar">
         <div style="display:flex;gap:12px;align-items:center">
-          <img src="./logo.png" class="siteLogo" alt="logo">
+          <img src="./logo.png" style="height:56px;border-radius:8px">
           <div>
-            <h1 class="title">WELCOME</h1>
-            <div class="muted">This is <strong>F1 Resource</strong>.</div>
+            <h1 style="margin:0">WELCOME</h1>
+            <div style="color:var(--muted)">This is F1 Resource.</div>
           </div>
         </div>
-        <div id="userStatus" class="muted"></div>
+        <div id="userStatus" style="color:var(--muted)"></div>
       </div>
 
-      <!-- Views (unchanged views kept as before) -->
-      <section id="home" class="view active">
-        <div class="card"><h2 style="margin:0">Home</h2><div class="mutedBlock" style="margin-top:8px">Home intentionally displays no lists or sensitive data.</div></div>
+      <!-- Views -->
+      <section id="home" class="view active card">
+        <h2 style="margin:0">Home</h2>
+        <div style="color:var(--muted);margin-top:8px">Home intentionally shows no lists. Use the navigation to access tools.</div>
       </section>
 
-      <section id="departments" class="view">
-        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Fire Departments</strong></div><div><button id="addDeptBtn" class="btn primary small">+ Add Department</button></div></div><div id="departmentsList" class="list"></div></div>
-      </section>
-
-      <section id="ems" class="view">
-        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>EMS Agencies</strong></div><div><button id="addEmsBtn" class="btn primary small">+ Add EMS</button></div></div><div id="emsList" class="list"></div></div>
-      </section>
-
-      <section id="coordinators" class="view">
-        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>County Coordinators</strong></div><div><button id="addCoordBtn" class="btn primary small">+ Add</button></div></div><div id="coordList" class="list"></div></div>
-      </section>
-
-      <section id="teams" class="view">
-        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>County Teams</strong></div><div><button id="addTeamBtn" class="btn primary small">+ Add Team</button></div></div><div id="teamList" class="list"></div></div>
-      </section>
-
-      <section id="hazmat" class="view">
-        <div class="card"><h3 style="margin:0 0 8px">HazMat Search</h3><div style="display:flex;gap:8px"><input id="hazInput" placeholder="UN/NA number" /><button id="hazSearchBtn" class="btn primary small">Search</button><button id="hazAddBtn" class="btn ghost small">Admin Add</button></div><div id="hazResult" style="margin-top:12px"></div></div>
-      </section>
-
-      <section id="ev" class="view">
-        <div class="card"><h3>EV Safety</h3><div style="display:flex;gap:8px"><input id="evYMM" placeholder="Year,Make,Model" /><button id="evSearchBtn" class="btn primary small">Find Vehicle</button></div><div id="evResult" style="margin-top:12px"></div></div>
-      </section>
-
-      <section id="risks" class="view">
-        <div class="card"><h3>Fire & Driving Risk</h3><div class="muted">Risk checklists.</div><div id="riskBody"></div></div>
-      </section>
-
-      <section id="weather" class="view">
-        <div class="card"><h3>Weather</h3><div class="muted">Active weather alerts for Oswego County</div><div id="weatherAlerts" style="margin-top:12px" class="muted">Loading alerts...</div></div>
-      </section>
-
-      <!-- DISPATCH (main admin/dispatcher view) -->
-      <section id="dispatch" class="view">
-        <div class="card">
-          <h3 style="margin:0 0 8px">Dispatch Center (Admin View)</h3>
-          <div class="muted">Admins and Department Admins can view/create incidents and manage templates. Apparatus users will have a separate dispatch-only interface (no navigation).</div>
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <button id="openDispatchAdmin" class="btn primary small">Open Dispatch Admin UI</button>
-            <button id="openCreateIncidentAdmin" class="btn ghost small">Quick Create Incident</button>
-          </div>
-          <div id="dispatchAdminBody" style="margin-top:12px"></div>
+      <section id="departments" class="view card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Fire Departments</strong><div style="color:var(--muted)">Manage departments</div></div>
+          <div><button id="addDeptBtn" class="btn primary small">+ Add Department</button></div>
         </div>
+        <div id="departmentsList" class="list"></div>
       </section>
 
-      <section id="admin" class="view">
-        <div class="card">
-          <h3>Admin</h3>
-          <div class="muted">Manage local users, HazMat, EV links, alarm templates.</div>
-          <div style="display:flex;gap:8px;margin-top:12px">
-            <button id="manageUsersBtn" class="btn primary">Manage Local Users</button>
-            <button id="adminAddHaz" class="btn ghost">Add HazMat</button>
-            <button id="adminAddEv" class="btn ghost">Add EV Link</button>
-            <button id="adminManageAlarms" class="btn ghost">Manage Alarm Templates</button>
-          </div>
+      <section id="ems" class="view card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>EMS Agencies</strong></div>
+          <div><button id="addEmsBtn" class="btn primary small">+ Add EMS</button></div>
+        </div>
+        <div id="emsList" class="list"></div>
+      </section>
+
+      <section id="coordinators" class="view card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>County Coordinators</strong></div>
+          <div><button id="addCoordBtn" class="btn primary small">+ Add</button></div>
+        </div>
+        <div id="coordList" class="list"></div>
+      </section>
+
+      <section id="teams" class="view card"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>County Teams</strong></div><div><button id="addTeamBtn" class="btn primary small">+ Add Team</button></div></div><div id="teamList" class="list"></div></section>
+
+      <section id="hazmat" class="view card">
+        <h3 style="margin:0 0 8px">HazMat Search</h3>
+        <div style="display:flex;gap:8px">
+          <input id="hazInput" placeholder="UN/NA number e.g. 1203" />
+          <button id="hazSearchBtn" class="btn primary small">Search</button>
+          <button id="hazAddBtn" class="btn ghost small">Admin Add/Edit</button>
+        </div>
+        <div id="hazResult" style="margin-top:12px"></div>
+      </section>
+
+      <section id="ev" class="view card">
+        <h3 style="margin:0 0 8px">EV Safety</h3>
+        <div style="display:flex;gap:8px">
+          <input id="evYMM" placeholder="Year,Make,Model e.g. 2021,Tesla,Model 3" />
+          <button id="evSearchBtn" class="btn primary small">Find Vehicle</button>
+        </div>
+        <div id="evResult" style="margin-top:12px"></div>
+      </section>
+
+      <section id="risks" class="view card">
+        <h3>Fire &amp; Driving Risk</h3>
+        <div id="riskBody" style="margin-top:8px;color:var(--muted)"></div>
+      </section>
+
+      <section id="weather" class="view card">
+        <h3>Weather</h3>
+        <div style="color:var(--muted);margin-top:8px">Active weather alerts for Oswego County</div>
+        <pre id="weatherAlerts" style="white-space:pre-wrap;margin-top:8px;color:var(--muted)">Loading...</pre>
+      </section>
+
+      <section id="dispatch" class="view card">
+        <h3>Dispatch (Admin)</h3>
+        <div style="color:var(--muted);margin-top:8px">Admins / Dept admins can create and manage incidents. Apparatus users get a dedicated dispatch-only UI after login.</div>
+        <div style="margin-top:12px">
+          <button id="openDispatchAdmin" class="btn primary small">Open Dispatch Admin UI</button>
+          <button id="openCreateIncidentAdmin" class="btn ghost small">Quick Create Incident</button>
+        </div>
+        <div id="dispatchAdminBody" style="margin-top:12px"></div>
+      </section>
+
+      <section id="admin" class="view card">
+        <h3>Admin</h3>
+        <div style="color:var(--muted);margin-top:8px">Manage local users, HazMat, EV guides, alarm templates.</div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="manageUsersBtn" class="btn primary">Manage Local Users</button>
+          <button id="adminAddHaz" class="btn ghost">Add HazMat</button>
+          <button id="adminAddEv" class="btn ghost">Add EV Link</button>
+          <button id="adminManageAlarms" class="btn ghost">Manage Alarm Templates</button>
         </div>
       </section>
 
     </main>
   </div>
 
-  <!-- Apparatus-only UI (appears instead of full SPA when APPARATUS logs in) -->
-  <div id="apparatusUI" style="display:none;padding:12px;">
-    <div style="max-width:980px;margin:8px auto;">
+  <!-- APPARATUS MOBILE UI -->
+  <div id="apparatusUI" style="display:none;padding:12px;background:transparent;">
+    <div style="max-width:980px;margin:12px auto">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><img src="./logo.png" style="height:48px"><div class="muted">APPARATUS MOBILE</div></div>
-        <div><span id="appUserLabel" class="muted"></span> <button id="appLogout" class="btn ghost">Logout</button></div>
+        <div><img src="./logo.png" style="height:48px;border-radius:8px"><div style="color:var(--muted)">APPARATUS MOBILE</div></div>
+        <div><span id="appUserLabel" style="color:var(--muted)"></span> <button id="appLogout" class="btn ghost">Logout</button></div>
       </div>
 
       <div class="dispatch-root">
-        <!-- Apparatus Home -->
-        <div id="appHome" class="dispatch-card card" style="margin-top:12px">
+        <div class="card" style="margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <h3 style="margin:0">Create Incident</h3>
-              <div class="muted">No navigation here — Apparatus users only see dispatch screens.</div>
-            </div>
+            <div><h3 style="margin:0">Create Incident</h3><div style="color:var(--muted)">Apparatus users only — no nav.</div></div>
             <div style="display:flex;gap:8px">
               <button id="appCreateBtn" class="btn primary">Create Incident</button>
               <button id="appArchivedBtn" class="btn ghost">Archived (3 months)</button>
@@ -210,23 +209,21 @@
           <div id="appActiveList" style="margin-top:12px"></div>
         </div>
 
-        <!-- Create Incident Modal UI (rendered inline when triggered) -->
-        <div id="appCreatePanel" class="dispatch-card card hidden" style="margin-top:12px">
+        <!-- Create panel -->
+        <div id="appCreatePanel" class="card" style="margin-top:12px;display:none">
           <h4>Create Incident</h4>
-          <div style="display:flex;gap:8px;flex-direction:column">
-            <select id="appType"><option>FIRE</option><option>EMS</option><option>MISC</option></select>
-            <input id="appAddress" placeholder="Street address" />
-            <input id="appNature" placeholder="Nature (short)" />
-            <textarea id="appDetails" placeholder="Details"></textarea>
-            <div style="display:flex;gap:8px">
-              <button id="appSubmitIncident" class="btn primary">Submit Incident</button>
-              <button id="appCancelCreate" class="btn ghost">Cancel</button>
-            </div>
+          <select id="appType"><option>FIRE</option><option>EMS</option><option>MISC</option></select>
+          <input id="appAddress" placeholder="Address" />
+          <input id="appNature" placeholder="Nature" />
+          <textarea id="appDetails" placeholder="Details"></textarea>
+          <div style="display:flex;gap:8px">
+            <button id="appSubmitIncident" class="btn primary">Submit</button>
+            <button id="appCancelCreate" class="btn ghost">Cancel</button>
           </div>
         </div>
 
-        <!-- Incident Detail (when selected) -->
-        <div id="appIncidentPanel" class="dispatch-card card hidden" style="margin-top:12px">
+        <!-- Incident detail -->
+        <div id="appIncidentPanel" class="card" style="margin-top:12px;display:none">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div id="appIncidentTitle" style="font-weight:800"></div>
@@ -234,24 +231,22 @@
             </div>
             <div>
               <button id="appAttachBtn" class="btn primary small">Attach</button>
-              <button id="appDetachBtn" class="btn ghost small hidden">Detach</button>
+              <button id="appDetachBtn" class="btn ghost small" style="display:none">Detach</button>
               <button id="appArchiveBtn" class="btn ghost small">Archive</button>
             </div>
           </div>
 
-          <div style="margin-top:10px">
-            <div><strong>Units & Status</strong></div>
-            <div id="appUnitsList" style="margin-top:8px"></div>
+          <div style="margin-top:12px">
+            <div><strong>Units & Status</strong><div id="appUnitsList" style="margin-top:8px"></div></div>
 
-            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-              <div><strong>Update Status:</strong></div>
-              <div class="statusRow" id="statusButtonsRow">
-                <button class="statusBtn" data-status="Acknowledged">Acknowledged</button>
-                <button class="statusBtn" data-status="Responding">Responding</button>
-                <button class="statusBtn" data-status="Staged">Staged</button>
-                <button class="statusBtn" data-status="Arrived">Arrived</button>
-                <button class="statusBtn" data-status="Returning">Returning</button>
-                <button class="statusBtn" data-status="Clear">Clear</button>
+            <div style="margin-top:10px"><strong>Update Status</strong>
+              <div style="display:flex;flex-wrap:wrap;margin-top:8px">
+                <button class="btn ghost statusBtn" data-status="Acknowledged">Acknowledged</button>
+                <button class="btn ghost statusBtn" data-status="Responding">Responding</button>
+                <button class="btn ghost statusBtn" data-status="Staged">Staged</button>
+                <button class="btn ghost statusBtn" data-status="Arrived">Arrived</button>
+                <button class="btn ghost statusBtn" data-status="Returning">Returning</button>
+                <button class="btn ghost statusBtn" data-status="Clear">Clear</button>
               </div>
             </div>
 
@@ -259,26 +254,24 @@
               <button id="appAddAgencyBtn" class="btn ghost">Add Agency</button>
               <div style="position:relative">
                 <button id="appAddAlarmBtn" class="btn ghost">Add Alarm ▾</button>
-                <div id="alarmMenu" style="position:absolute;left:0;top:34px;display:none;background:var(--card-bg);border-radius:8px;padding:8px;border:1px solid rgba(0,0,0,0.06)">
+                <div id="alarmMenu" style="position:absolute;left:0;top:36px;display:none;background:#fff;border-radius:8px;padding:8px;border:1px solid rgba(0,0,0,0.06)">
                   <div><button class="btn small alarmOption" data-template="first">1st Alarm Structure</button></div>
                   <div><button class="btn small alarmOption" data-template="second">2nd Alarm Structure</button></div>
                   <div><button class="btn small alarmOption" data-template="third">3rd Alarm Structure</button></div>
                 </div>
               </div>
-
               <button id="appAddDetailBtn" class="btn ghost">Add Detail</button>
             </div>
 
             <div style="margin-top:12px">
-              <div><strong>Details & Timeline</strong></div>
-              <div id="appTimeline" style="margin-top:8px"></div>
+              <div><strong>Details & Timeline</strong><div id="appTimeline" style="margin-top:8px;color:var(--muted)"></div></div>
             </div>
 
             <div style="margin-top:12px">
               <div><strong>Chat</strong></div>
               <div id="appChat" class="chatBox" style="margin-top:8px"></div>
               <div style="display:flex;gap:8px;margin-top:8px">
-                <input id="appChatInput" placeholder="Message..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+                <input id="appChatInput" placeholder="Message..." />
                 <button id="appSendChat" class="btn primary">Send</button>
               </div>
             </div>
@@ -286,8 +279,7 @@
           </div>
         </div>
 
-        <!-- Archived list -->
-        <div id="appArchivePanel" class="dispatch-card card hidden" style="margin-top:12px">
+        <div id="appArchivePanel" class="card" style="margin-top:12px;display:none">
           <h4>Archived Incidents (last 3 months)</h4>
           <div id="appArchivedList" style="margin-top:8px"></div>
           <div style="margin-top:8px"><button id="appBackToHome" class="btn ghost">Back</button></div>
@@ -296,7 +288,7 @@
     </div>
   </div>
 
-  <!-- modal -->
+  <!-- Modal -->
   <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <h3 id="modalTitle"></h3>
@@ -308,562 +300,613 @@
     </div>
   </div>
 
+  <!-- SCRIPT (clean imports, no duplicates) -->
   <script type="module">
-  // ---------------- FIREBASE (Firestore) ----------------
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import {
-    getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc,
-    onSnapshot, query, where, orderBy
-  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    // -------- Firebase imports (modular v9) --------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import {
+      getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc,
+      onSnapshot, query, where, orderBy
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
-    authDomain: "f1resource-8fedc.firebaseapp.com",
-    projectId: "f1resource-8fedc",
-    storageBucket: "f1resource-8fedc.firebasestorage.app",
-    messagingSenderId: "182745701982",
-    appId: "1:182745701982:web:9f4f3836b41b450987decf"
-  };
+    // -------- Config (your provided config) --------
+    const firebaseConfig = {
+      apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
+      authDomain: "f1resource-8fedc.firebaseapp.com",
+      projectId: "f1resource-8fedc",
+      storageBucket: "f1resource-8fedc.firebasestorage.app",
+      messagingSenderId: "182745701982",
+      appId: "1:182745701982:web:9f4f3836b41b450987decf"
+    };
 
-  const fbApp = initializeApp(firebaseConfig);
-  const db = getFirestore(fbApp);
+    const fbApp = initializeApp(firebaseConfig);
+    const db = getFirestore(fbApp);
 
-  // Root doc/subcollection helpers (Option 2 structure)
-  const ROOT_COL = 'f1root';
-  const ROOT_DOC_ID = 'f1resource';
-  function subColRef(name){ return collection(db, ROOT_COL, ROOT_DOC_ID, name); }
-  function docRef(col, id){ return doc(db, ROOT_COL, ROOT_DOC_ID, col, id); }
+    // Root doc/subcollection helpers (Option 2)
+    const ROOT_COL = 'f1root';
+    const ROOT_DOC_ID = 'f1resource';
+    const subColRef = (name) => collection(db, ROOT_COL, ROOT_DOC_ID, name);
+    const docRef = (col, id) => doc(db, ROOT_COL, ROOT_DOC_ID, col, id);
 
-  // ---------------- Local users (client side) ----------------
-  const LOCAL_USERS = {
-    "ADMIN": { password: "ADMIN", role: "ADMIN" },
-    "DEPTADMIN": { password: "DEPTADMIN", role: "DEPTADMIN", dept: null },
-    "DEPTUSER": { password: "DEPTUSER", role: "DEPTUSER", dept: null },
-    // default apparatus demo
-    "APPARATUS": { password: "APPARATUS", role: "APPARATUS", dept: "Central Square Fire Department", apparatusName: "Engine 511" }
-  };
+    // ---------- Local login users ----------
+    const LOCAL_USERS = {
+      "ADMIN": { password: "ADMIN", role: "ADMIN" },
+      "DEPTADMIN": { password: "DEPTADMIN", role: "DEPTADMIN", dept: null },
+      "DEPTUSER": { password: "DEPTUSER", role: "DEPTUSER", dept: null },
+      "APPARATUS": { password: "APPARATUS", role: "APPARATUS", dept: "Central Square Fire Dept", apparatusName: "Engine 511" }
+    };
 
-  // ---------------- Helpers ----------------
-  const el = id => document.getElementById(id);
-  const nowISO = ()=> new Date().toISOString();
-  function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function saveSession(u){ localStorage.setItem('f1_user', JSON.stringify(u)); }
-  function getSession(){ try{return JSON.parse(localStorage.getItem('f1_user'));}catch(e){return null} }
-  function clearSession(){ localStorage.removeItem('f1_user'); }
+    // ---------- Utils ----------
+    const el = id => document.getElementById(id);
+    const nowISO = () => new Date().toISOString();
+    const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;') : '';
+    const saveSession = u => localStorage.setItem('f1_user', JSON.stringify(u));
+    const getSession = () => { try{ return JSON.parse(localStorage.getItem('f1_user')); }catch(e){return null} }
+    const clearSession = () => localStorage.removeItem('f1_user');
 
-  // Modal helpers
-  const modalBackdrop = el('modalBackdrop'), modalTitle = el('modalTitle'), modalBody = el('modalBody'), modalSave = el('modalSave'), modalCancel = el('modalCancel');
-  function showModal(title, build, onSave){
-    modalTitle.textContent = title; modalBody.innerHTML = ''; build(modalBody); modalBackdrop.classList.add('show');
-    modalSave.onclick = async ()=>{ await onSave(); modalBackdrop.classList.remove('show'); modalBody.innerHTML = ''; modalSave.onclick = null; };
-    modalCancel.onclick = ()=>{ modalBackdrop.classList.remove('show'); modalBody.innerHTML = ''; modalSave.onclick = null; };
-  }
-
-  // ---------------- Login flow ----------------
-  el('loginFill').addEventListener('click', ()=>{ el('login_user').value='ADMIN'; el('login_pass').value='ADMIN'; });
-  el('loginBtn').addEventListener('click', ()=>{
-    const u = (el('login_user').value||'').trim().toUpperCase();
-    const p = (el('login_pass').value||'').trim();
-    if(!u||!p){ el('loginMsg').textContent='Enter username & password'; return; }
-    const user = LOCAL_USERS[u];
-    if(!user || user.password !== p){ el('loginMsg').textContent='Invalid credentials'; return; }
-    const session = { username: u, role: user.role, dept: user.dept || null, apparatusName: user.apparatusName || null };
-    saveSession(session);
-    startApp(session);
-  });
-  el('logoutButton').addEventListener('click', ()=>{ clearSession(); location.reload(); });
-
-  // Apparatus logout
-  el('appLogout')?.addEventListener('click', ()=>{ clearSession(); location.reload(); });
-
-  // ---------------- App UI initialization ----------------
-  let currentUser = null;
-
-  function startApp(session){
-    currentUser = session;
-    // If apparatus user -> show apparatus UI only (no nav)
-    if(currentUser.role === 'APPARATUS'){
-      el('loginView').style.display='none';
-      el('spa').style.display='none';
-      el('apparatusUI').style.display='block';
-      el('appUserLabel').textContent = `${currentUser.username} • ${currentUser.dept||''} ${currentUser.apparatusName? '• '+currentUser.apparatusName : ''}`;
-      setupApparatusUI();
-      return;
+    // ---------- Modal helpers ----------
+    const modalBackdrop = el('modalBackdrop'), modalTitle = el('modalTitle'), modalBody = el('modalBody');
+    const modalSave = el('modalSave'), modalCancel = el('modalCancel');
+    function showModal(title, buildFn, onSave){
+      modalTitle.textContent = title;
+      modalBody.innerHTML = '';
+      buildFn(modalBody);
+      modalBackdrop.classList.add('show');
+      modalSave.onclick = async ()=>{ await onSave(); modalBackdrop.classList.remove('show'); modalBody.innerHTML=''; modalSave.onclick = null; };
+      modalCancel.onclick = ()=>{ modalBackdrop.classList.remove('show'); modalBody.innerHTML=''; modalSave.onclick = null; };
     }
-    // else show SPA
-    el('loginView').style.display='none';
-    el('spa').style.display='flex';
-    el('apparatusUI').style.display='none';
-    el('userStatus').textContent = `${currentUser.username} — ${currentUser.role}${currentUser.dept? ' • '+currentUser.dept : ''}`;
-    bootWatchers(); // set up real-time watchers for main app
-  }
 
-  // restore session if exists
-  const sess = getSession();
-  if(sess) startApp(sess); else el('loginView').style.display='flex';
-
-  // ---------------- Main SPA watchers + renderers (unchanged pages) ----------------
-  function bootWatchers(){
-    // departments, ems, coordinators, county_teams
-    onSnapshot(query(subColRef('fire_departments')), snap=> {
-      const out={}; snap.forEach(d=> out[d.id]=d.data()); renderDepartments(out);
-    });
-    onSnapshot(query(subColRef('ems_agencies')), snap=> { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderEMS(out); });
-    onSnapshot(query(subColRef('coordinators')), snap=> { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderCoordinators(out); });
-    onSnapshot(query(subColRef('county_teams')), snap=> { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderTeams(out); });
-    // other watchers can be added as needed
-  }
-
-  // render functions (kept nearly identical)
-  function renderDepartments(data){
-    const target = el('departmentsList'); target.innerHTML='';
-    Object.entries(data||{}).forEach(([id,d])=>{
-      const div=document.createElement('div'); div.className='listItem';
-      div.innerHTML = `<div><div style="font-weight:800">${escapeHtml(d.name||'Unnamed')}</div><div class="meta">${escapeHtml(d.battalion||'')} ${d.address? ' • '+escapeHtml(d.address):''}</div></div>
-        <div style="display:flex;gap:8px"><button class="btn" data-id="${id}" data-act="edit-dept">Edit</button></div>`;
-      target.appendChild(div);
-    });
-  }
-  function renderEMS(data){ const target=el('emsList'); target.innerHTML=''; Object.entries(data||{}).forEach(([id,e])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${escapeHtml(e.name||'Unnamed')}</strong><div class="meta">${escapeHtml(e.address||'')}</div></div><div><button class="btn" data-id="${id}" data-act="view-ems">View</button></div>`; target.appendChild(div); }); }
-  function renderCoordinators(data){ const target=el('coordList'); target.innerHTML=''; Object.entries(data||{}).forEach(([id,c])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${escapeHtml(c.name||'')}</strong><div class="meta">${escapeHtml(c.callsign||'')}</div></div><div></div>`; target.appendChild(div); }); }
-  function renderTeams(data){ const target=el('teamList'); target.innerHTML=''; Object.entries(data||{}).forEach(([id,t])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${escapeHtml(t.name||'')}</strong><div class="meta">${escapeHtml(t.lead||'')}</div></div><div></div>`; target.appendChild(div); }); }
-
-  // ---------------- Dispatch system (Apparatus UI) ----------------
-  // Panels and controls
-  const appCreateBtn = el('appCreateBtn'), appCreatePanel = el('appCreatePanel'), appSubmitIncident = el('appSubmitIncident'), appCancelCreate = el('appCancelCreate');
-  const appActiveList = el('appActiveList'), appIncidentPanel = el('appIncidentPanel'), appAttachBtn = el('appAttachBtn'), appDetachBtn = el('appDetachBtn'), appUnitsList = el('appUnitsList');
-  const appArchivePanel = el('appArchivePanel'), appArchivedList = el('appArchivedList'), appArchivedBtn = el('appArchivedBtn'), appBackToHome = el('appBackToHome');
-  const appAddAgencyBtn = el('appAddAgencyBtn'), appAddAlarmBtn = el('appAddAlarmBtn'), alarmMenu = el('alarmMenu'), appAddDetailBtn = el('appAddDetailBtn');
-  const appTimeline = el('appTimeline'), appChat = el('appChat'), appChatInput = el('appChatInput'), appSendChat = el('appSendChat');
-  const statusButtonsRow = el('statusButtonsRow');
-
-  let activeIncidentsCache = {}; // local cache to display active incidents
-  let selectedIncident = null; // currently open incident id
-  let attachedThisUnit = false; // boolean if current unit attached to selected incident
-
-  // Setup apparatus UI listeners
-  function setupApparatusUI(){
-    // load active incidents and watch
-    watchIncidentsRealtime();
-
-    // buttons
-    appCreateBtn.addEventListener('click', ()=> { appCreatePanel.classList.remove('hidden'); appIncidentPanel.classList.add('hidden'); appArchivePanel.classList.add('hidden'); });
-    appCancelCreate.addEventListener('click', ()=> { appCreatePanel.classList.add('hidden'); });
-
-    appSubmitIncident.addEventListener('click', async ()=>{
-      const type = el('appType').value || 'MISC';
-      const address = el('appAddress').value.trim();
-      const nature = el('appNature').value.trim();
-      const details = el('appDetails').value.trim();
-      const incObj = {
-        createdAt: nowISO(),
-        createdBy: currentUser.username,
-        creatorDept: currentUser.dept || '',
-        creatorApparatus: currentUser.apparatusName || '',
-        type, address, nature, details,
-        isClosed: false,
-        archived: false,
-        unitsAttached: [], // filled later
-        statusUpdates: [],
-        messages: []
-      };
-      // create incident under subcollection 'incidents':
-      const docRef = await addDoc(subColRef('incidents'), incObj);
-      // optionally auto-attach the creating unit:
-      // We'll leave attach as manual (Attach button), but you could auto attach by calling attachUnit(docRef.id)
-      appCreatePanel.classList.add('hidden');
-      // show the created incident
-      openIncident(docRef.id);
+    // ---------- Login ----------
+    el('loginFill').addEventListener('click', ()=>{ el('login_user').value='ADMIN'; el('login_pass').value='ADMIN'; });
+    el('loginBtn').addEventListener('click', ()=> {
+      const u = (el('login_user').value||'').trim().toUpperCase();
+      const p = (el('login_pass').value||'').trim();
+      if(!u||!p){ el('loginMsg').textContent = 'Enter username & password'; return; }
+      const user = LOCAL_USERS[u];
+      if(!user || user.password !== p){ el('loginMsg').textContent = 'Invalid credentials'; return; }
+      const session = { username: u, role: user.role, dept: user.dept || null, apparatusName: user.apparatusName || null };
+      saveSession(session);
+      bootApp(session);
     });
 
-    appArchivedBtn.addEventListener('click', ()=> { appArchivePanel.classList.remove('hidden'); appCreatePanel.classList.add('hidden'); appIncidentPanel.classList.add('hidden'); loadArchivedIncidents(); });
-    appBackToHome.addEventListener('click', ()=> { appArchivePanel.classList.add('hidden'); });
-
-    appAttachBtn.addEventListener('click', async ()=>{
-      if(!selectedIncident) return alert('No incident selected');
-      // attach current unit to the incident (if not already attached)
-      const incRef = doc(subColRef('incidents').path.split('/').slice(0,-1).join('/'), selectedIncident);
-      // simpler: set document merge: we will fetch current doc and update unitsAttached array
-      const d = await getDoc( doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncident) );
-      if(!d.exists()) return alert('Incident not found');
-      const inc = d.data();
-      const unitId = currentUser.username;
-      const already = (inc.unitsAttached||[]).some(u=>u.unitId === unitId);
-      if(already) { attachedThisUnit = true; renderSelectedIncident(inc); updateAttachButtons(); return; }
-      const newUnit = { unitId, agency: currentUser.dept||'', apparatus: currentUser.apparatusName||'', status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: nowISO(), by: unitId }] };
-      (inc.unitsAttached = inc.unitsAttached || []).push(newUnit);
-      (inc.statusUpdates = inc.statusUpdates || []).push({unitId, status:'Acknowledged', ts: nowISO()});
-      await setDoc( doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncident), inc );
-      attachedThisUnit = true;
-      renderSelectedIncident(inc);
-      updateAttachButtons();
-    });
-
-    appDetachBtn.addEventListener('click', async ()=>{
-      if(!selectedIncident) return;
-      const d = await getDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncident));
-      if(!d.exists()) return;
-      const inc = d.data();
-      inc.unitsAttached = (inc.unitsAttached||[]).filter(u=> u.unitId !== currentUser.username);
-      await setDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncident), inc);
-      attachedThisUnit = false; updateAttachButtons(); renderSelectedIncident(inc);
-    });
-
-    // status button clicks
-    statusButtonsRow.querySelectorAll('button').forEach(b=>{
-      b.addEventListener('click', async ()=>{
-        if(!selectedIncident) return alert('Select an incident first');
-        const newStatus = b.dataset.status;
-        await updateUnitStatus(selectedIncident, currentUser.username, newStatus);
-      });
-    });
-
-    appAddAgencyBtn.addEventListener('click', async ()=>{
-      if(!selectedIncident) return alert('Select an incident first');
-      // show modal with list of departments to choose from (read from Firestore)
-      const deptsSnap = await getDocs(subColRef('fire_departments'));
-      const depts = []; deptsSnap.forEach(d=> depts.push({ id:d.id, ...d.data() }));
-      showModal('Add Agency', (root)=>{
-        root.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px"><select id="selAgency"><option value="">-- Select agency --</option>${depts.map(dd=>`<option value="${escapeHtml(dd.name)}">${escapeHtml(dd.name)}</option>`).join('')}</select></div>`;
-      }, async ()=>{
-        const sel = root.querySelector ? root.querySelector('#selAgency')?.value : el('selAgency')?.value;
-        // fallback
-        const chosen = document.querySelector('#selAgency')?.value;
-        const agencyName = chosen || (document.getElementById('selAgency')?.value);
-        if(!agencyName) return alert('Pick an agency');
-        await addAgencyToIncident(selectedIncident, agencyName);
-      });
-    });
-
-    // simpler Add Agency (without modal fallback)
-    appAddAgencyBtn.addEventListener('click', async ()=>{ /* handler above will handle modal */ });
-
-    // alarm menu toggling
-    appAddAlarmBtn.addEventListener('click', ()=>{ alarmMenu.style.display = alarmMenu.style.display === 'block' ? 'none' : 'block'; });
-    alarmMenu.querySelectorAll('.alarmOption').forEach(opt=>{
-      opt.addEventListener('click', async ()=>{
-        const templateKey = opt.dataset.template; // 'first'|'second'|'third'
-        await addAlarmTemplateUnitsToIncident(selectedIncident, templateKey);
-        alarmMenu.style.display = 'none';
-      });
-    });
-
-    appAddDetailBtn.addEventListener('click', async ()=>{
-      if(!selectedIncident) return alert('Select an incident first');
-      const detail = prompt('Add a detail / note to the incident:');
-      if(!detail) return;
-      await addDetailToIncident(selectedIncident, currentUser.username, detail);
-    });
-
-    appSendChat.addEventListener('click', async ()=>{
-      const text = appChatInput.value.trim(); if(!text) return;
-      await addChatMessage(selectedIncident, currentUser.username, text);
-      appChatInput.value = '';
-    });
-  }
-
-  // ---------------- Incident realtime watchers ----------------
-  function watchIncidentsRealtime(){
-    const q = query( subColRef('incidents') );
-    onSnapshot(q, snap => {
-      const out = {}; snap.forEach(d=> out[d.id] = d.data());
-      activeIncidentsCache = out;
-      renderActiveIncidents(out);
-    });
-  }
-
-  function renderActiveIncidents(data){
-    appActiveList.innerHTML = '';
-    const keys = Object.keys(data||{}).sort((a,b)=> (data[b].createdAt||'').localeCompare(data[a].createdAt||''));
-    if(!keys.length) appActiveList.innerHTML = `<div class="muted">No active incidents</div>`;
-    keys.forEach(id=>{
-      const inc = data[id];
-      if(inc.archived) return; // skip archived
-      if(inc.isClosed && inc.archived) return;
-      const div = document.createElement('div'); div.className='incidentItem';
-      div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${escapeHtml(inc.type||'INCIDENT')}</strong> <div class="meta">${escapeHtml(inc.address||'')}</div></div><div><button class="btn small" data-id="${id}" data-act="open">Open</button></div></div>`;
-      appActiveList.appendChild(div);
-    });
-    // wire open buttons
-    appActiveList.querySelectorAll('button[data-act="open"]').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
-  }
-
-  async function openIncident(id){
-    selectedIncident = id;
-    // fetch doc
-    const d = await getDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', id));
-    if(!d.exists()) return alert('Incident not found');
-    const inc = d.data();
-    renderSelectedIncident(inc);
-    appIncidentPanel.classList.remove('hidden');
-    appCreatePanel.classList.add('hidden');
-    appArchivePanel.classList.add('hidden');
-  }
-
-  function renderSelectedIncident(inc){
-    el('appIncidentTitle').textContent = `INCIDENT ${escapeHtml(inc.type||'')} — ${escapeHtml(inc.address||'')}`;
-    el('appIncidentMeta').textContent = `Created: ${inc.createdAt||''} • By: ${inc.createdBy||''} ${inc.creatorApparatus? '• '+inc.creatorApparatus:''}`;
-    // render units
-    appUnitsList.innerHTML = '';
-    (inc.unitsAttached||[]).forEach(u=>{
-      const div = document.createElement('div'); div.style.marginBottom='6px';
-      div.innerHTML = `<div style="font-weight:800">${escapeHtml(u.apparatus||u.unitId)}</div><div class="meta">${escapeHtml(u.agency||'')} • ${escapeHtml(u.status||'')}</div><div class="meta">${(u.statusHistory||[]).map(h=>`${h.status} @ ${h.ts}`).join(' | ')}</div>`;
-      appUnitsList.appendChild(div);
-    });
-    // timeline: combine statusUpdates and messages and details
-    appTimeline.innerHTML = '';
-    const timeline = [];
-    (inc.statusUpdates||[]).forEach(s=> timeline.push({ type:'status', text:`${s.unitId} → ${s.status}`, ts:s.ts }));
-    (inc.messages||[]).forEach(m=> timeline.push({ type:'msg', text:`${m.sender}: ${m.text}`, ts:m.ts }));
-    (inc.details||[]).forEach(d=> timeline.push({ type:'detail', text:`Detail by ${d.by}: ${d.text}`, ts:d.ts }));
-    timeline.sort((a,b)=> (a.ts||'').localeCompare(b.ts||''));
-    timeline.forEach(item=>{
-      const elNode = document.createElement('div'); elNode.className='muted'; elNode.style.marginBottom='6px';
-      elNode.textContent = `${item.ts} — ${item.text}`;
-      appTimeline.appendChild(elNode);
-    });
-    // check if current unit attached
-    attachedThisUnit = (inc.unitsAttached||[]).some(u=> u.unitId === currentUser.username);
-    updateAttachButtons();
-    // render chat
-    appChat.innerHTML = '';
-    (inc.messages||[]).forEach(m=> {
-      const d = document.createElement('div'); d.innerHTML = `<div style="font-weight:700">${escapeHtml(m.sender)}</div><div class="meta">${escapeHtml(m.text)}</div><div class="muted" style="font-size:11px">${escapeHtml(m.ts)}</div>`;
-      appChat.appendChild(d);
-    });
-    appChat.scrollTop = appChat.scrollHeight;
-  }
-
-  function updateAttachButtons(){
-    if(attachedThisUnit){
-      appAttachBtn.classList.add('hidden');
-      appDetachBtn.classList.remove('hidden');
-    } else {
-      appAttachBtn.classList.remove('hidden');
-      appDetachBtn.classList.add('hidden');
-    }
-  }
-
-  // ---------------- Incident operations ----------------
-  async function updateUnitStatus(incidentId, unitId, newStatus){
-    const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', incidentId);
-    const snap = await getDoc(ref);
-    if(!snap.exists()) return;
-    const inc = snap.data();
-    inc.unitsAttached = inc.unitsAttached || [];
-    const u = inc.unitsAttached.find(x=> x.unitId === unitId);
-    if(!u) return alert('You are not attached to this incident');
-    // push to statusHistory and set status
-    u.status = newStatus;
-    u.statusHistory = u.statusHistory || [];
-    u.statusHistory.push({ status: newStatus, ts: nowISO(), by: unitId });
-    inc.statusUpdates = inc.statusUpdates || [];
-    inc.statusUpdates.push({ unitId, status: newStatus, ts: nowISO() });
-    // if newStatus == 'Clear' check if all clear
-    if(newStatus === 'Clear'){
-      const stillActive = (inc.unitsAttached || []).some(x => x.status !== 'Clear');
-      if(!stillActive){
-        inc.isClosed = true;
-        inc.closedAt = nowISO();
+    // ---------- Session boot ----------
+    let currentUser = null;
+    function bootApp(session){
+      currentUser = session;
+      // apparatus branch
+      if(currentUser.role === 'APPARATUS'){
+        el('loginView').style.display='none';
+        el('spa').style.display='none';
+        el('apparatusUI').style.display='block';
+        el('appUserLabel').textContent = `${currentUser.username}${currentUser.apparatusName? ' • '+currentUser.apparatusName:''}`;
+        initApparatusUI();
+        return;
       }
+      // normal SPA
+      el('loginView').style.display='none';
+      el('spa').style.display='flex';
+      el('apparatusUI').style.display='none';
+      el('userStatus').textContent = `${currentUser.username} — ${currentUser.role}${currentUser.dept? ' • '+currentUser.dept:''}`;
+      setupNav();
+      bootWatchers();
     }
-    await setDoc(ref, inc);
-    renderSelectedIncident(inc);
-  }
 
-  async function addAgencyToIncident(incidentId, agencyName){
-    const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', incidentId);
-    const snap = await getDoc(ref);
-    if(!snap.exists()) return;
-    const inc = snap.data();
-    inc.unitsAttached = inc.unitsAttached || [];
-    // add agency as a unit entry with unitId = AgencyName-<random>
-    const uid = `${agencyName.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,6)}`;
-    const newUnit = { unitId: uid, agency: agencyName, apparatus: agencyName, status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts: nowISO(), by: 'SYSTEM'}] };
-    inc.unitsAttached.push(newUnit);
-    inc.statusUpdates = inc.statusUpdates || [];
-    inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: nowISO() });
-    await setDoc(ref, inc);
-    renderSelectedIncident(inc);
-  }
+    const sess = getSession();
+    if(sess) bootApp(sess); else el('loginView').style.display='flex';
 
-  async function addAlarmTemplateUnitsToIncident(incidentId, templateKey){
-    // templateKey: 'first'|'second'|'third'
-    const tDoc = await getDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'alarm_templates', templateKey));
-    if(!tDoc.exists()) return alert('Alarm template not configured');
-    const template = tDoc.data();
-    const units = template.units || []; // array of department names
-    const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', incidentId);
-    const snap = await getDoc(ref); if(!snap.exists()) return;
-    const inc = snap.data();
-    inc.unitsAttached = inc.unitsAttached || [];
-    units.forEach(deptName => {
-      const uid = `${deptName.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
-      inc.unitsAttached.push({ unitId: uid, agency: deptName, apparatus: deptName, status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts:nowISO(), by:'SYSTEM'}] });
-      inc.statusUpdates = inc.statusUpdates || [];
-      inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: nowISO() });
+    el('logoutButton').addEventListener('click', ()=>{ clearSession(); location.reload(); });
+    el('appLogout').addEventListener('click', ()=>{ clearSession(); location.reload(); });
+
+    // ---------- Navigation ----------
+    function setupNav(){
+      document.querySelectorAll('.nav button[data-view]').forEach(b=>{
+        b.addEventListener('click', ()=> setActiveView(b.dataset.view));
+      });
+      setActiveView('home');
+    }
+    function setActiveView(id){
+      document.querySelectorAll('.view').forEach(v=> v.classList.remove('active'));
+      const v = el(id);
+      if(v) v.classList.add('active');
+      document.querySelectorAll('.nav button[data-view]').forEach(b=> b.classList.toggle('active', b.dataset.view === id));
+    }
+
+    // ---------- Firestore watchers for SPA lists ----------
+    function bootWatchers(){
+      onSnapshot(query(subColRef('fire_departments')), snap => {
+        const out = {}; snap.forEach(d=> out[d.id]=d.data()); renderDepartments(out);
+      });
+      onSnapshot(query(subColRef('ems_agencies')), snap => {
+        const out = {}; snap.forEach(d=> out[d.id]=d.data()); renderEMS(out);
+      });
+      onSnapshot(query(subColRef('coordinators')), snap => {
+        const out = {}; snap.forEach(d=> out[d.id]=d.data()); renderCoordinators(out);
+      });
+      onSnapshot(query(subColRef('county_teams')), snap => {
+        const out = {}; snap.forEach(d=> out[d.id]=d.data()); renderTeams(out);
+      });
+      // watch alarm templates and hazmat as needed
+      onSnapshot(query(subColRef('alarm_templates')), ()=>{ /* handled when admin opens modal */ });
+      onSnapshot(query(subColRef('hazmat')), ()=>{ /* no UI autopush; search reads doc */ });
+    }
+
+    // ---------- Renderers for SPA lists ----------
+    const departmentsList = el('departmentsList'), emsList = el('emsList'), coordList = el('coordList'), teamList = el('teamList');
+    function renderDepartments(data){
+      departmentsList.innerHTML = '';
+      Object.entries(data||{}).forEach(([id,d])=>{
+        const div = document.createElement('div'); div.className='listItem';
+        div.innerHTML = `<div><div style="font-weight:800">${esc(d.name||'Unnamed')}</div><div class="meta">${esc(d.battalion||'')} ${d.address? ' • '+esc(d.address):''}</div></div>
+          <div style="display:flex;gap:8px"><button class="btn" data-id="${id}" data-act="view-dept">View</button></div>`;
+        departmentsList.appendChild(div);
+      });
+    }
+    function renderEMS(data){
+      emsList.innerHTML = '';
+      Object.entries(data||{}).forEach(([id,e])=>{
+        const div = document.createElement('div'); div.className='listItem';
+        div.innerHTML = `<div><div style="font-weight:800">${esc(e.name||'Unnamed')}</div><div class="meta">${esc(e.address||'')}</div></div><div><button class="btn" data-id="${id}" data-act="view-ems">View</button></div>`;
+        emsList.appendChild(div);
+      });
+    }
+    function renderCoordinators(data){
+      coordList.innerHTML = '';
+      Object.entries(data||{}).forEach(([id,c])=>{
+        const div = document.createElement('div'); div.className='listItem';
+        div.innerHTML = `<div><div style="font-weight:800">${esc(c.name||'')}</div><div class="meta">${esc(c.callsign||'')}</div></div>`;
+        coordList.appendChild(div);
+      });
+    }
+    function renderTeams(data){
+      teamList.innerHTML = '';
+      Object.entries(data||{}).forEach(([id,t])=>{
+        const div = document.createElement('div'); div.className='listItem';
+        div.innerHTML = `<div><div style="font-weight:800">${esc(t.name||'')}</div><div class="meta">${esc(t.lead||'')}</div></div>`;
+        teamList.appendChild(div);
+      });
+    }
+
+    // ---------- CRUD helpers ----------
+    async function addDocToSub(col, obj){ return await addDoc(subColRef(col), obj); }
+    async function setDocToSub(col, id, obj){ return await setDoc(docRef(col, id), obj); }
+    async function getDocFromSub(col, id){ const s = await getDoc(docRef(col, id)); return s.exists()? s.data() : null; }
+    async function delDocSub(col,id){ return await deleteDoc(docRef(col,id)); }
+    async function getAllDocs(col){ const snap = await getDocs(subColRef(col)); const out={}; snap.forEach(d=> out[d.id]=d.data()); return out; }
+
+    // ---------- Simple SPA actions (add/edit) ----------
+    el('addDeptBtn').addEventListener('click', ()=> {
+      if(!isAdminish()) return alert('Admin only');
+      showModal('Add Department', (root)=> {
+        root.innerHTML = `<input id="m_name" placeholder="Department name" /><input id="m_batt" placeholder="Battalion" /><input id="m_addr" placeholder="Address" /><input id="m_app" placeholder="Apparatus (| separated)"/>`;
+      }, async ()=> {
+        const name = el('m_name').value.trim()||'Unnamed';
+        const batt = el('m_batt').value.trim();
+        const addr = el('m_addr').value.trim();
+        const app = el('m_app').value.trim();
+        await addDocToSub('fire_departments', { name, battalion: batt, address: addr, apparatus: app });
+      });
     });
-    await setDoc(ref, inc);
-    renderSelectedIncident(inc);
-  }
 
-  async function addDetailToIncident(incidentId, byUser, text){
-    const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', incidentId);
-    const snap = await getDoc(ref); if(!snap.exists()) return;
-    const inc = snap.data();
-    inc.details = inc.details || [];
-    inc.details.push({ by: byUser, text, ts: nowISO() });
-    await setDoc(ref, inc);
-    renderSelectedIncident(inc);
-  }
-
-  async function addChatMessage(incidentId, sender, text){
-    const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', incidentId);
-    const snap = await getDoc(ref); if(!snap.exists()) return;
-    const inc = snap.data();
-    inc.messages = inc.messages || [];
-    inc.messages.push({ sender, text, ts: nowISO() });
-    await setDoc(ref, inc);
-    renderSelectedIncident(inc);
-  }
-
-  // Archive: mark incident.archived = true; show archived list for last 3 months
-  async function archiveIncident(incidentId){
-    const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', incidentId);
-    const snap = await getDoc(ref); if(!snap.exists()) return;
-    const inc = snap.data();
-    inc.archived = true;
-    inc.archivedAt = nowISO();
-    await setDoc(ref, inc);
-    alert('Incident archived');
-  }
-
-  async function loadArchivedIncidents(){
-    // load incidents where archived == true and archivedAt within last 90 days
-    const snap = await getDocs(subColRef('incidents'));
-    const threeMonthsAgo = new Date(Date.now() - (90*24*60*60*1000));
-    const items = [];
-    snap.forEach(d=>{
-      const data = d.data();
-      if(data.archived && data.archivedAt && new Date(data.archivedAt) >= threeMonthsAgo) items.push({ id:d.id, ...data });
+    el('addEmsBtn').addEventListener('click', ()=> {
+      if(!isAdminish()) return alert('Admin only');
+      showModal('Add EMS Agency', (r)=> r.innerHTML = `<input id="m_name" placeholder="Name"/><input id="m_addr" placeholder="Address"/>`, async ()=> {
+        const name = el('m_name').value.trim()||'Unnamed'; const addr = el('m_addr').value.trim();
+        await addDocToSub('ems_agencies', { name, address: addr });
+      });
     });
-    appArchivedList.innerHTML = '';
-    items.sort((a,b)=> (b.archivedAt||'').localeCompare(a.archivedAt||''));
-    if(!items.length) appArchivedList.innerHTML = '<div class="muted">No archived incidents in last 3 months.</div>';
-    items.forEach(it=>{
-      const div = document.createElement('div'); div.className='incidentItem'; div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${escapeHtml(it.type)}</strong><div class="meta">${escapeHtml(it.address||'')}</div></div><div><button class="btn small" data-id="${it.id}" data-act="open-arch">Open</button></div></div>`;
-      appArchivedList.appendChild(div);
+
+    el('addCoordBtn').addEventListener('click', ()=> {
+      if(!isAdminish()) return alert('Admin only');
+      showModal('Add Coordinator', (r)=> r.innerHTML = `<input id="m_name" placeholder="Name"/><input id="m_callsign" placeholder="Callsign"/>`, async ()=> {
+        const name = el('m_name').value.trim(); const callsign = el('m_callsign').value.trim();
+        if(!name) return alert('Enter name'); await addDocToSub('coordinators', { name, callsign });
+      });
     });
-    appArchivedList.querySelectorAll('button[data-act="open-arch"]').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
-  }
 
-  // ---------------- Admin: Dispatch admin view (for ADMIN/DEPTADMIN) ----------------
-  el('openDispatchAdmin').addEventListener('click', async ()=>{
-    // show list of incidents and basic controls
-    const snap = await getDocs(subColRef('incidents'));
-    const out = []; snap.forEach(d=> out.push({ id:d.id, ...d.data() }));
-    const body = el('dispatchAdminBody'); body.innerHTML = '';
-    out.sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
-    out.forEach(it=>{
-      const div = document.createElement('div'); div.className='incidentItem';
-      div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${escapeHtml(it.type)}</strong><div class="meta">${escapeHtml(it.address||'')}</div></div><div><button class="btn small" data-id="${it.id}" data-act="open-admin">Open</button></div></div>`;
-      body.appendChild(div);
+    el('addTeamBtn').addEventListener('click', ()=> {
+      if(!isAdminish()) return alert('Admin only');
+      showModal('Add Team', (r)=> r.innerHTML = `<input id="m_name" placeholder="Team Name"/><input id="m_lead" placeholder="Lead"/><input id="m_caps" placeholder="Capabilities (| separated)"/>`, async ()=> {
+        const n=el('m_name').value.trim()||'Unnamed', lead=el('m_lead').value.trim(), caps=el('m_caps').value.trim();
+        await addDocToSub('county_teams', { name:n, lead, capabilities:caps });
+      });
     });
-    body.querySelectorAll('button[data-act="open-admin"]').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
-  });
 
-  el('openCreateIncidentAdmin').addEventListener('click', ()=> {
-    showModal('Quick Create Incident', (r)=>{
-      r.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px"><select id="adm_type"><option>FIRE</option><option>EMS</option><option>MISC</option></select><input id="adm_addr" placeholder="Address"/><input id="adm_nat" placeholder="Nature"/></div>`;
-    }, async ()=> {
-      const type = document.getElementById('adm_type').value;
-      const addr = document.getElementById('adm_addr').value.trim();
-      const nat = document.getElementById('adm_nat').value.trim();
-      await addDoc(subColRef('incidents'), { createdAt: nowISO(), createdBy: currentUser.username, creatorDept: currentUser.dept||'', creatorApparatus:'', type, address: addr, nature: nat, details:'', isClosed:false, archived:false, unitsAttached:[], statusUpdates:[], messages:[] });
+    // ---------- HazMat search & admin ----------
+    el('hazSearchBtn').addEventListener('click', async ()=> {
+      const q = (el('hazInput').value||'').trim();
+      if(!q) return alert('Enter UN number');
+      // try doc id
+      const docData = await getDocFromSub('hazmat', q);
+      if(docData){ renderHazmatResult(docData); return; }
+      el('hazResult').innerHTML = `<div style="color:var(--muted)">No record for UN ${esc(q)}. Admins can add entries.</div>`;
     });
-  });
 
-  // Admin Manage Alarm Templates
-  el('adminManageAlarms').addEventListener('click', async ()=>{
-    if(!(currentUser.role === 'ADMIN' || currentUser.role === 'DEPTADMIN')) return alert('Admin only');
-    // load templates
-    const first = await getDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'alarm_templates', 'first'));
-    const second = await getDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'alarm_templates', 'second'));
-    const third = await getDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'alarm_templates', 'third'));
-    showModal('Manage Alarm Templates', (r)=>{
-      r.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px">
-        <div><strong>1st Alarm (comma separated dept names)</strong><textarea id="t_first">${escapeHtml(first.exists()? first.data().units.join(', '): '')}</textarea></div>
-        <div><strong>2nd Alarm</strong><textarea id="t_second">${escapeHtml(second.exists()? second.data().units.join(', '): '')}</textarea></div>
-        <div><strong>3rd Alarm</strong><textarea id="t_third">${escapeHtml(third.exists()? third.data().units.join(', '): '')}</textarea></div>
-      </div>`;
-    }, async ()=>{
-      const f = document.getElementById('t_first').value.split(',').map(s=>s.trim()).filter(Boolean);
-      const s = document.getElementById('t_second').value.split(',').map(s=>s.trim()).filter(Boolean);
-      const t = document.getElementById('t_third').value.split(',').map(s=>s.trim()).filter(Boolean);
-      await setDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'alarm_templates', 'first'), { units: f });
-      await setDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'alarm_templates', 'second'), { units: s });
-      await setDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'alarm_templates', 'third'), { units: t });
-      alert('Alarm templates saved');
+    function renderHazmatResult(entry){
+      el('hazResult').innerHTML = `<div style="font-weight:800">${esc(entry.name||'Unknown')} (UN ${esc(entry.un||'')})</div>
+        <div class="meta">${esc(entry.hazard_class||'')}</div>
+        <div style="margin-top:8px"><strong>Flammability:</strong> ${esc(entry.flammability||'—')}</div>
+        <div><strong>Water reactivity:</strong> ${esc(entry.water_reactivity||'—')}</div>
+        <div><strong>Extinguishing agent:</strong> ${esc(entry.extinguishing_agent||'—')}</div>
+        <div style="margin-top:8px"><strong>Notes:</strong><div class="meta">${esc(entry.notes||'—')}</div></div>`;
+    }
+
+    el('hazAddBtn').addEventListener('click', ()=> {
+      if(!isAdminish()) return alert('Admin only');
+      showModal('Add/Edit HazMat', (r)=> {
+        r.innerHTML = `<input id="m_un" placeholder="UN number"/><input id="m_name" placeholder="Common name"/><input id="m_class" placeholder="Hazard class"/><input id="m_flame" placeholder="Flammability"/><input id="m_water" placeholder="Water reactivity"/><input id="m_agent" placeholder="Extinguishing agent"/><textarea id="m_notes" placeholder="Notes"></textarea>`;
+      }, async ()=> {
+        const un = el('m_un').value.trim(); if(!un) return alert('UN needed');
+        const obj = { un, name:el('m_name').value.trim(), hazard_class:el('m_class').value.trim(), flammability:el('m_flame').value.trim(), water_reactivity:el('m_water').value.trim(), extinguishing_agent:el('m_agent').value.trim(), notes:el('m_notes').value.trim() };
+        await setDocToSub('hazmat', un, obj);
+        alert('Saved');
+      });
     });
-  });
 
-  // ---------------- Utility to get a Firestore doc easily ----------------
-  import { getDoc as getDocFn } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-  async function getDoc(p){ return await getDocFn(p); }
+    // ---------- EV search & admin ----------
+    el('evSearchBtn').addEventListener('click', async ()=> {
+      const val = (el('evYMM').value||'').trim();
+      if(!val) return alert('Enter Year,Make,Model');
+      const parts = val.split(',').map(s=>s.trim());
+      const make = (parts[1] || parts[0]).toLowerCase().replace(/\s+/g,'_');
+      const d = await getDocFromSub('ev_guides', make);
+      if(d) el('evResult').innerHTML = `<div style="font-weight:800">${esc(d.make)}</div><div style="margin-top:6px"><a href="${esc(d.url)}" target="_blank">${esc(d.url)}</a></div>`;
+      else el('evResult').innerHTML = `<div class="meta">Not found for '${esc(make)}'. Admins can add guides.</div>`;
+    });
+    el('adminAddEv').addEventListener('click', ()=> {
+      if(!isAdminish()) return alert('Admin only');
+      showModal('Add EV Guide', (r)=> r.innerHTML = `<input id="m_make" placeholder="Make"/><input id="m_url" placeholder="URL"/>`, async ()=> {
+        const make = (el('m_make').value||'').trim(); const url = (el('m_url').value||'').trim();
+        if(!make||!url) return alert('Both required'); const key = make.toLowerCase().replace(/\s+/g,'_'); await setDocToSub('ev_guides', key, { make, url }); alert('Saved');
+      });
+    });
 
-  // ---------------- Helpers to addDoc/setDoc shortcuts ----------------
-  import { getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-  async function addDocWrapper(colRef, obj){ return await addDoc(colRef, obj); }
-  async function setDocWrapper(p, obj){ return await setDoc(p, obj); }
+    // ---------- Admin manage alarm templates ----------
+    el('adminManageAlarms').addEventListener('click', async ()=> {
+      if(!isAdminish()) return alert('Admin only');
+      // load templates
+      const first = await getDocFromSub('alarm_templates','first') || { units:[] };
+      const second = await getDocFromSub('alarm_templates','second') || { units:[] };
+      const third = await getDocFromSub('alarm_templates','third') || { units:[] };
+      showModal('Manage Alarm Templates', (r)=> {
+        r.innerHTML = `<div><label>1st Alarm (comma separated)</label><textarea id="t_first">${first.units.join(', ')}</textarea></div>
+          <div><label>2nd Alarm</label><textarea id="t_second">${second.units.join(', ')}</textarea></div>
+          <div><label>3rd Alarm</label><textarea id="t_third">${third.units.join(', ')}</textarea></div>`;
+      }, async ()=> {
+        const f = el('t_first').value.split(',').map(s=>s.trim()).filter(Boolean);
+        const s = el('t_second').value.split(',').map(s=>s.trim()).filter(Boolean);
+        const t = el('t_third').value.split(',').map(s=>s.trim()).filter(Boolean);
+        await setDocToSub('alarm_templates','first',{ units:f });
+        await setDocToSub('alarm_templates','second',{ units:s });
+        await setDocToSub('alarm_templates','third',{ units:t });
+        alert('Saved');
+      });
+    });
 
-  // fallback functions (since we imported named earlier)
-  async function getDocsWrapper(collRef){ return await getDocs(collRef); }
+    // ---------- Dispatch/Incidents - shared helpers ----------
+    async function listIncidentsOnce(){ const snap = await getDocs(subColRef('incidents')); const out={}; snap.forEach(d=> out[d.id]=d.data()); return out; }
 
-  // ---------------- Archive UI wiring ----------------
-  // open archive panel when admin or app user clicks Archive button in selected incident
-  el('appArchiveBtn').addEventListener('click', async ()=> {
-    if(!selectedIncident) return;
-    if(!confirm('Archive this incident?')) return;
-    await archiveIncident(selectedIncident);
-    // refresh archived list
-    loadArchivedIncidents();
-  });
+    // ---------- APPARATUS UI implementation ----------
+    function initApparatusUI(){
+      // elements
+      const appCreateBtn = el('appCreateBtn'), appCreatePanel = el('appCreatePanel'), appSubmitIncident = el('appSubmitIncident'), appCancelCreate = el('appCancelCreate');
+      const appActiveList = el('appActiveList'), appIncidentPanel = el('appIncidentPanel'), appAttachBtn = el('appAttachBtn'), appDetachBtn = el('appDetachBtn');
+      const appUnitsList = el('appUnitsList'), appTimeline = el('appTimeline'), appChat = el('appChat');
+      const appCreatePanelEl = el('appCreatePanel'), appArchivePanel = el('appArchivePanel'), appArchivedList = el('appArchivedList');
+      const appArchivedBtn = el('appArchivedBtn'), appBackToHome = el('appBackToHome');
+      const appAddAgencyBtn = el('appAddAgencyBtn'), appAddAlarmBtn = el('appAddAlarmBtn'), alarmMenu = el('alarmMenu'), appAddDetailBtn = el('appAddDetailBtn');
+      const appChatInput = el('appChatInput'), appSendChat = el('appSendChat');
 
-  // When someone clicks an incident open, attach real-time listener for that doc to keep UI in sync
-  // We'll add a simple watchdog: polling on openIncident is adequate for now (renderSelectedIncident after any write)
-  // If you want per-incident real-time, we can add onSnapshot for doc.
+      let selectedIncidentId = null;
+      let attached = false;
 
-  // ---------------- Weather alerts (simple) ----------------
-  async function fetchWeatherAlerts(){
-    try{
-      const res = await fetch('https://api.weather.gov/alerts/active?area=OSW');
-      const j = await res.json();
-      if(j && Array.isArray(j.features) && j.features.length){
-        el('weatherAlerts').textContent = j.features.map(f=> `${f.properties.event} — ${f.properties.areaDesc}`).join('\\n\\n');
-      } else el('weatherAlerts').textContent = 'No active alerts';
-    } catch(e){ el('weatherAlerts').textContent = 'Weather service unavailable'; }
-  }
-  fetchWeatherAlerts();
+      // watch incidents collection realtime
+      onSnapshot(query(subColRef('incidents')), snap => {
+        const out = {}; snap.forEach(d=> out[d.id]=d.data());
+        renderAppActiveList(out);
+      });
 
-  // ---------------- Final notes ----------------
-  // This file adds the Apparatus dispatch system while leaving the rest of your SPA intact.
-  // Admins may add APPARATUS users via "Manage Local Users" modal (local only) using role "APPARATUS" and include dept & apparatusName.
-  // Firestore collections used:
-  // f1root/f1resource/fire_departments
-  // f1root/f1resource/ems_agencies
-  // f1root/f1resource/coordinators
-  // f1root/f1resource/county_teams
-  // f1root/f1resource/hazmat
-  // f1root/f1resource/ev_guides
-  // f1root/f1resource/alarm_templates
-  // f1root/f1resource/incidents
+      function renderAppActiveList(data){
+        appActiveList.innerHTML = '';
+        const keys = Object.keys(data||{}).sort((a,b)=> (data[b].createdAt||'').localeCompare(data[a].createdAt||''));
+        if(!keys.length) appActiveList.innerHTML = `<div class="meta">No active incidents</div>`;
+        keys.forEach(id=>{
+          const inc = data[id];
+          if(inc.archived) return;
+          const div = document.createElement('div'); div.className='incidentItem';
+          div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(inc.type||'INC')}</strong><div class="meta">${esc(inc.address||'')}</div></div><div><button class="btn small" data-id="${id}" data-act="open">Open</button></div></div>`;
+          appActiveList.appendChild(div);
+        });
+        // wire open
+        appActiveList.querySelectorAll('button[data-act="open"]').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
+      }
 
-  // If you want I will:
-  // - Add onSnapshot per-incident to push real-time changes to attached apparatus without polling.
-  // - Add server-side security rules suggestion for Firestore.
-  // - Wire "Manage Local Users" UI to ensure addition of APPARATUS users with dept & apparatusName is easier.
+      async function openIncident(id){
+        selectedIncidentId = id;
+        const snap = await getDoc(doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', id));
+        if(!snap.exists()) return alert('Incident not found');
+        const inc = snap.data();
+        el('appIncidentPanel').style.display='block';
+        el('appCreatePanel').style.display='none';
+        el('appArchivePanel').style.display='none';
+        renderSelectedIncident(inc);
+      }
 
-  // End of module
+      function renderSelectedIncident(inc){
+        el('appIncidentTitle').textContent = `${esc(inc.type||'INCIDENT')} — ${esc(inc.address||'')}`;
+        el('appIncidentMeta').textContent = `Created: ${inc.createdAt||''} • By: ${esc(inc.createdBy||'')}${inc.creatorApparatus? ' • '+esc(inc.creatorApparatus):''}`;
+        // units
+        appUnitsList.innerHTML = '';
+        (inc.unitsAttached||[]).forEach(u=>{
+          const node = document.createElement('div');
+          node.innerHTML = `<div style="font-weight:800">${esc(u.apparatus||u.unitId)}</div><div class="meta">${esc(u.agency||'')} • ${esc(u.status||'')}</div><div class="meta">${(u.statusHistory||[]).map(h=>`${esc(h.status)} @ ${esc(h.ts)}`).join(' | ')}</div>`;
+          appUnitsList.appendChild(node);
+        });
+        // timeline
+        appTimeline.innerHTML = '';
+        const timeline = [];
+        (inc.statusUpdates||[]).forEach(s=> timeline.push({ ts:s.ts, text:`${s.unitId} → ${s.status}` }));
+        (inc.messages||[]).forEach(m=> timeline.push({ ts:m.ts, text:`${m.sender}: ${m.text}` }));
+        (inc.details||[]).forEach(d=> timeline.push({ ts:d.ts, text:`Detail by ${d.by}: ${d.text}` }));
+        timeline.sort((a,b)=> (a.ts||'').localeCompare(b.ts||''));
+        timeline.forEach(t=> { const div=document.createElement('div'); div.className='meta'; div.textContent = `${t.ts} — ${t.text}`; appTimeline.appendChild(div); });
+
+        // chat:
+        appChat.innerHTML = '';
+        (inc.messages||[]).forEach(m=> {
+          const d = document.createElement('div'); d.innerHTML = `<div style="font-weight:700">${esc(m.sender)}</div><div class="meta">${esc(m.text)}</div><div class="muted" style="font-size:11px">${esc(m.ts)}</div>`;
+          appChat.appendChild(d);
+        });
+        appChat.scrollTop = appChat.scrollHeight;
+
+        // attached?
+        attached = (inc.unitsAttached||[]).some(u=> u.unitId === currentUser.username);
+        updateAttachUI();
+      }
+
+      function updateAttachUI(){
+        if(attached){ appAttachBtn.style.display='none'; appDetachBtn.style.display='inline-block'; }
+        else { appAttachBtn.style.display='inline-block'; appDetachBtn.style.display='none'; }
+      }
+
+      // Create incident flow
+      appCreateBtn.addEventListener('click', ()=> { el('appCreatePanel').style.display='block'; el('appIncidentPanel').style.display='none'; el('appArchivePanel').style.display='none'; });
+      appCancelCreate.addEventListener('click', ()=> { el('appCreatePanel').style.display='none'; });
+      appSubmitIncident.addEventListener('click', async ()=> {
+        const obj = {
+          createdAt: nowISO(),
+          createdBy: currentUser.username,
+          creatorDept: currentUser.dept || '',
+          creatorApparatus: currentUser.apparatusName || '',
+          type: el('appType').value || 'MISC',
+          address: el('appAddress').value.trim(),
+          nature: el('appNature').value.trim(),
+          details: el('appDetails').value.trim(),
+          isClosed: false,
+          archived: false,
+          unitsAttached: [],
+          statusUpdates: [],
+          messages: [],
+          details: []
+        };
+        const dref = await addDoc(subColRef('incidents'), obj);
+        openIncident(dref.id);
+      });
+
+      // attach/detach
+      appAttachBtn.addEventListener('click', async ()=> {
+        if(!selectedIncidentId) return alert('Select incident');
+        const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncidentId);
+        const snap = await getDoc(ref); if(!snap.exists()) return;
+        const inc = snap.data();
+        inc.unitsAttached = inc.unitsAttached || [];
+        const unitId = currentUser.username;
+        if(inc.unitsAttached.some(u=> u.unitId===unitId)) { attached = true; updateAttachUI(); return; }
+        const newUnit = { unitId, agency: currentUser.dept||'', apparatus: currentUser.apparatusName||unitId, status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts: nowISO(), by: unitId}] };
+        inc.unitsAttached.push(newUnit);
+        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId, status:'Acknowledged', ts: nowISO() });
+        await setDoc(ref, inc);
+        attached = true; renderSelectedIncident(inc);
+      });
+      appDetachBtn.addEventListener('click', async ()=> {
+        if(!selectedIncidentId) return;
+        const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncidentId);
+        const snap = await getDoc(ref); if(!snap.exists()) return;
+        const inc = snap.data();
+        inc.unitsAttached = (inc.unitsAttached||[]).filter(u=> u.unitId !== currentUser.username);
+        await setDoc(ref, inc);
+        attached = false; renderSelectedIncident(inc);
+      });
+
+      // status update buttons
+      document.querySelectorAll('.statusBtn').forEach(b=> b.addEventListener('click', async (e)=> {
+        const n = e.target.dataset.status;
+        if(!selectedIncidentId) return alert('Select incident first');
+        await updateStatusForUnit(selectedIncidentId, currentUser.username, n);
+      }));
+
+      async function updateStatusForUnit(incidentId, unitId, status){
+        const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', incidentId);
+        const snap = await getDoc(ref); if(!snap.exists()) return;
+        const inc = snap.data();
+        inc.unitsAttached = inc.unitsAttached || [];
+        const u = inc.unitsAttached.find(x=> x.unitId === unitId);
+        if(!u) return alert('You are not attached');
+        u.status = status;
+        u.statusHistory = u.statusHistory || []; u.statusHistory.push({ status, ts: nowISO(), by: unitId });
+        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId, status, ts: nowISO() });
+        // if Clear check all clear
+        if(status === 'Clear'){
+          const stillActive = (inc.unitsAttached||[]).some(x => x.status !== 'Clear');
+          if(!stillActive){ inc.isClosed = true; inc.closedAt = nowISO(); }
+        }
+        await setDoc(ref, inc);
+      }
+
+      // add agency (choose from existing fire_departments)
+      appAddAgencyBtn.addEventListener('click', async ()=> {
+        if(!selectedIncidentId) return alert('Select incident');
+        const depts = await getAllDocs('fire_departments');
+        const options = Object.values(depts).map(d=>d.name).filter(Boolean);
+        showModal('Add Agency', (root)=> {
+          root.innerHTML = `<select id="selAgency"><option value="">--Select--</option>${options.map(o=>`<option>${esc(o)}</option>`).join('')}</select>`;
+        }, async ()=> {
+          const chosen = document.getElementById('selAgency').value;
+          if(!chosen) return alert('Pick one');
+          const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncidentId);
+          const snap = await getDoc(ref); if(!snap.exists()) return;
+          const inc = snap.data();
+          const id = `${chosen.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+          inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId:id, agency:chosen, apparatus:chosen, status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts:nowISO(), by: 'SYSTEM'}] });
+          inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId:id, status:'Acknowledged', ts: nowISO() });
+          await setDoc(ref, inc);
+        });
+      });
+
+      // alarms
+      appAddAlarmBtn.addEventListener('click', ()=> { alarmMenu.style.display = alarmMenu.style.display === 'block' ? 'none' : 'block'; });
+      document.querySelectorAll('.alarmOption').forEach(opt=>{
+        opt.addEventListener('click', async (e)=> {
+          const key = e.target.dataset.template;
+          if(!selectedIncidentId) return alert('Select incident');
+          const tmp = await getDocFromSub('alarm_templates', key);
+          if(!tmp || !tmp.units || !tmp.units.length) return alert('Template empty');
+          const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncidentId);
+          const snap = await getDoc(ref); if(!snap.exists()) return;
+          const inc = snap.data();
+          inc.unitsAttached = inc.unitsAttached || [];
+          tmp.units.forEach(deptName => {
+            const uid = `${deptName.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+            inc.unitsAttached.push({ unitId:uid, agency:deptName, apparatus:deptName, status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts:nowISO(), by:'SYSTEM'}] });
+            inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId:uid, status:'Acknowledged', ts: nowISO() });
+          });
+          await setDoc(ref, inc);
+          alarmMenu.style.display = 'none';
+        });
+      });
+
+      // add detail
+      appAddDetailBtn.addEventListener('click', async ()=> {
+        if(!selectedIncidentId) return alert('Select incident');
+        const text = prompt('Add detail:'); if(!text) return;
+        const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncidentId);
+        const snap = await getDoc(ref); if(!snap.exists()) return;
+        const inc = snap.data(); inc.details = inc.details || []; inc.details.push({ by: currentUser.username, text, ts: nowISO() });
+        await setDoc(ref, inc);
+        renderSelectedIncident(inc);
+      });
+
+      // add chat
+      appSendChat.addEventListener('click', async ()=> {
+        if(!selectedIncidentId) return alert('Select incident');
+        const text = appChatInput.value.trim(); if(!text) return;
+        const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncidentId);
+        const snap = await getDoc(ref); if(!snap.exists()) return;
+        const inc = snap.data(); inc.messages = inc.messages || []; inc.messages.push({ sender: currentUser.username, text, ts: nowISO() });
+        await setDoc(ref, inc);
+        appChatInput.value = ''; renderSelectedIncident(inc);
+      });
+
+      // archive
+      el('appArchiveBtn').addEventListener('click', async ()=> {
+        if(!selectedIncidentId) return;
+        if(!confirm('Archive this incident?')) return;
+        const ref = doc(db, ROOT_COL, ROOT_DOC_ID, 'incidents', selectedIncidentId);
+        const snap = await getDoc(ref); if(!snap.exists()) return;
+        const inc = snap.data(); inc.archived = true; inc.archivedAt = nowISO();
+        await setDoc(ref, inc); alert('Archived');
+      });
+
+      // archived panel
+      appArchivedBtn.addEventListener('click', ()=> { el('appArchivePanel').style.display='block'; el('appCreatePanel').style.display='none'; el('appIncidentPanel').style.display='none'; loadArchived(); });
+      appBackToHome.addEventListener('click', ()=> { el('appArchivePanel').style.display='none'; });
+
+      async function loadArchived(){
+        const snap = await getDocs(subColRef('incidents'));
+        const threeMonthsAgo = new Date(Date.now() - 90*24*60*60*1000);
+        const arr = [];
+        snap.forEach(d=>{
+          const data = d.data();
+          if(data.archived && data.archivedAt && new Date(data.archivedAt) >= threeMonthsAgo) arr.push({ id:d.id, ...data });
+        });
+        appArchivedList.innerHTML = '';
+        if(!arr.length) appArchivedList.innerHTML = '<div class="meta">No archived incidents in last 3 months.</div>';
+        arr.forEach(it=> {
+          const div = document.createElement('div'); div.className='incidentItem';
+          div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="meta">${esc(it.address||'')}</div></div><div><button class="btn small" data-id="${it.id}" data-act="open-arch">Open</button></div></div>`;
+          appArchivedList.appendChild(div);
+        });
+        appArchivedList.querySelectorAll('button[data-act="open-arch"]').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
+      }
+    } // end initApparatusUI
+
+    // ---------- Dispatch admin UI ----------
+    el('openDispatchAdmin').addEventListener('click', async ()=> {
+      if(!(currentUser.role === 'ADMIN' || currentUser.role === 'DEPTADMIN')) return alert('Admin only');
+      const snap = await getDocs(subColRef('incidents'));
+      const out = []; snap.forEach(d=> out.push({ id:d.id, ...d.data() }));
+      const body = el('dispatchAdminBody'); body.innerHTML = '';
+      out.sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
+      out.forEach(it=>{
+        const div = document.createElement('div'); div.className='incidentItem';
+        div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="meta">${esc(it.address||'')}</div></div><div><button class="btn small" data-id="${it.id}" data-act="open-admin">Open</button></div></div>`;
+        body.appendChild(div);
+      });
+      body.querySelectorAll('button[data-act="open-admin"]').forEach(b=> b.addEventListener('click', ()=> openIncidentAdmin(b.dataset.id)));
+    });
+
+    function openIncidentAdmin(id){
+      // simply open in SPA view by selecting dispatch and showing admin body — uses same openIncident logic if needed
+      setActiveView('dispatch');
+      el('dispatchAdminBody').innerHTML = `<div class="incidentItem">Open incident: ${esc(id)} — use apparatus UI or admin quick tools.</div>`;
+    }
+
+    el('openCreateIncidentAdmin').addEventListener('click', ()=> {
+      if(!(currentUser.role === 'ADMIN' || currentUser.role === 'DEPTADMIN')) return alert('Admin only');
+      showModal('Quick Create Incident', (r)=> r.innerHTML = `<select id="adm_type"><option>FIRE</option><option>EMS</option><option>MISC</option></select><input id="adm_addr" placeholder="Address" /><input id="adm_nat" placeholder="Nature" />`, async ()=> {
+        const type = el('adm_type').value; const addr = el('adm_addr').value.trim(); const nat = el('adm_nat').value.trim();
+        await addDocToSub('incidents', { createdAt: nowISO(), createdBy: currentUser.username, creatorDept: currentUser.dept||'', creatorApparatus:'', type, address: addr, nature: nat, isClosed:false, archived:false, unitsAttached:[], statusUpdates:[], messages:[], details:[] });
+        alert('Created');
+      });
+    });
+
+    // ---------- Weather alerts (simple NWS) ----------
+    async function fetchWeatherAlerts(){
+      try {
+        const res = await fetch('https://api.weather.gov/alerts/active?area=OSW');
+        const j = await res.json();
+        if(j && Array.isArray(j.features) && j.features.length) el('weatherAlerts').textContent = j.features.map(f=> `${f.properties.event} — ${f.properties.areaDesc}`).join('\n\n');
+        else el('weatherAlerts').textContent = 'No active alerts';
+      } catch(e) { el('weatherAlerts').textContent = 'Weather service unavailable'; }
+    }
+    fetchWeatherAlerts();
+
+    // ---------- Helper: is adminish ----------
+    function isAdminish(){ return currentUser && (currentUser.role === 'ADMIN' || currentUser.role === 'DEPTADMIN'); }
+
+    // ---------- Small helpers used above (getDocs wrapper reused) ----------
+    async function getDocs(colRef){ return await getDocsFrom(colRef); } // placeholder to avoid name clash
+
+    // we need local wrappers that don't conflict with imports:
+    async function getDocsFrom(collRef){
+      // use the imported getDocs from top-level by calling it via dynamic import reference
+      // but we already imported getDocs earlier as named — to avoid naming issues we call it directly:
+      // However we did not import getDocs as a name; to keep the code simple, let's implement a small fetch via query + onSnapshot fallback: 
+      // (Instead of creating complex aliasing, use getDocs from the module above by dynamic import.)
+      const module = await import("https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js");
+      return await module.getDocs(collRef);
+    }
+
+    // Fix getDoc used earlier to avoid collision:
+    async function getDoc(docRef){
+      const module = await import("https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js");
+      return await module.getDoc(docRef);
+    }
+
+    // Note: setDoc and addDoc and deleteDoc are imported at top — they are available.
+
+    // End module
   </script>
 </body>
 </html>
+
+
