@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>F1 Resource — Main App</title>
   <style>
-    /* Design A - dark left sidebar */
     :root{
       --bg:#031026; --panel:#081727; --card:#0f1b2b;
       --accent:#0b5fff; --accent2:#7b5cff; --muted:#9aa6bd;
@@ -43,27 +42,34 @@
       .drawer{position:fixed;left:0;top:0;height:100%;width:260px;background:linear-gradient(180deg,var(--panel),#071323);box-shadow:8px 0 30px rgba(0,0,0,0.6);transform:translateX(-120%);transition:transform .22s;z-index:1000;padding:20px}
       .drawer.open{transform:translateX(0)}
     }
+
+    /* small */
+    .small{padding:6px 8px;font-size:13px}
   </style>
 </head>
 <body>
   <!-- LOGIN SCREEN -->
   <div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
-    <div class="card" style="max-width:880px;width:100%;display:flex;gap:18px;align-items:center">
-      <div style="flex:0 0 88px"><img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="logo" style="height:80px;border-radius:10px"></div>
+    <div class="card" style="max-width:920px;width:100%;display:flex;gap:18px;align-items:center">
+      <div style="flex:0 0 88px">
+        <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="logo" style="height:80px;border-radius:10px">
+      </div>
       <div style="flex:1">
         <h2 style="margin:0 0 6px">F1 Resource — Login</h2>
-        <div class="muted-block"></div>
+        <div class="muted-block">Local login (stored in your browser). App data stored in Firestore. Default admin: <strong>ADMIN / ADMIN</strong>.</div>
+
         <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <input id="loginUser" placeholder="Username" />
-          <input id="loginPass" placeholder="Password" type="password" />
+          <input id="loginUser" placeholder="Username" autocomplete="off" />
+          <input id="loginPass" placeholder="Password" type="password" autocomplete="off" />
         </div>
+
         <div style="display:flex;gap:8px;margin-top:12px">
           <button id="btnLogin" class="btn primary">Login</button>
           <button id="btnFill" class="btn ghost">Demo Fill</button>
-          <button id="btnMobileApp" class="btn ghost" style="margin-left:auto">Mobile Apparatus</button>
+          <button id="btnMobileApp" class="btn ghost" style="margin-left:auto">Apparatus Login</button>
         </div>
+
         <div id="loginMsg" style="color:#ff9b9b;margin-top:8px"></div>
-        <div style="margin-top:12px;color:var(--muted)"><strong></strong></div>
       </div>
     </div>
   </div>
@@ -86,6 +92,7 @@
         <button data-view="ev">EV Safety</button>
         <button data-view="risks">Fire & Driving Risk</button>
         <button data-view="weather">Weather</button>
+        <button data-view="apparatus_control">Apparatus Control</button>
         <button data-view="admin">Admin</button>
         <button id="btnLogout" class="btn ghost" style="margin-top:12px">Logout</button>
       </nav>
@@ -170,10 +177,20 @@
         <pre id="weatherBlock" style="white-space:pre-wrap;margin-top:8px;color:var(--muted)"></pre>
       </section>
 
+      <section id="apparatus_control" class="view card">
+        <h3>Apparatus Control Center</h3>
+        <div class="muted-block">Create apparatus, assign to departments, define apparatus display name.</div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="addApp" class="btn primary">+ Add Apparatus</button>
+          <button id="refreshApp" class="btn ghost">Refresh List</button>
+        </div>
+        <div id="appList" class="list" style="margin-top:12px"></div>
+      </section>
+
       <section id="admin" class="view card">
         <h3>Admin</h3>
         <div style="margin-top:12px;display:flex;gap:8px">
-          <button id="manageData" class="btn primary">Manage Data</button>
+          <button id="manageUsers" class="btn primary">Manage Local Users</button>
           <button id="manageHaz" class="btn ghost">HazMat Import</button>
         </div>
       </section>
@@ -184,17 +201,11 @@
   <!-- Modal -->
   <div id="modalBackdrop" class="modal-backdrop"><div class="modal"><h3 id="modalTitle"></h3><div id="modalBody"></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="modalCancel" class="btn ghost">Cancel</button><button id="modalSave" class="btn primary">Save</button></div></div></div>
 
-  <!-- SCRIPT -->
   <script type="module">
-    // Firebase imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import {
-      getFirestore, collection, doc, getDoc, getDocs,
-      addDoc, setDoc, deleteDoc,
-      onSnapshot, query
-    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-    // Firebase config (your config)
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
       authDomain: "f1resource-8fedc.firebaseapp.com",
@@ -203,19 +214,25 @@
       messagingSenderId: "182745701982",
       appId: "1:182745701982:web:9f4f3836b41b450987decf"
     };
-    const fb = initializeApp(firebaseConfig);
-    const db = getFirestore(fb);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    // helpers
+    // Helpers
     const $ = id => document.getElementById(id);
     const ROOT_COL='f1root', ROOT_DOC='f1resource';
     const subCol = (name) => collection(db, ROOT_COL, ROOT_DOC, name);
     const docRef = (col,id) => doc(db, ROOT_COL, ROOT_DOC, col, id);
+    function esc(s){ return s? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;') : ''; }
 
-    // local login (only ADMIN initially)
-    const LOCAL_USERS = { "ADMIN": { password: "ADMIN", role: "ADMIN" } };
-    const LOCAL_USERS = { "STA1.NOVELIS": { password: "STA1.NOVELIS", role: "DEPARTMENT_ADMIN" } };
+    // Local users stored in localStorage (so login is local)
+    const LOCAL_USERS_KEY = 'f1_local_users_v1';
+    function loadLocalUsers(){ try{ return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}'); }catch(e){ return {}; } }
+    function saveLocalUsers(obj){ localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(obj)); }
+    // ensure initial admin exists
+    let localUsers = loadLocalUsers();
+    if(!localUsers.ADMIN){ localUsers.ADMIN = { password:'ADMIN', role:'ADMIN', dept:'' }; saveLocalUsers(localUsers); }
 
+    // UI helpers
     function showLogin(){ $('loginScreen').style.display='flex'; $('spa').style.display='none'; }
     function showSpa(){ $('loginScreen').style.display='none'; $('spa').style.display='flex'; }
 
@@ -227,11 +244,11 @@
       const u = ($('loginUser').value||'').trim().toUpperCase();
       const p = ($('loginPass').value||'').trim();
       if(!u||!p){ $('loginMsg').textContent = 'Enter username & password'; return; }
-      const user = LOCAL_USERS[u];
+      localUsers = loadLocalUsers();
+      const user = localUsers[u];
       if(!user || user.password !== p){ $('loginMsg').textContent='Invalid credentials'; return; }
       $('loginMsg').textContent='';
-      // boot SPA
-      CURRENT_USER = { username:u, role:user.role };
+      CURRENT_USER = { username:u, role:user.role, dept:user.dept||'' };
       $('userBadge').textContent = `${u} • ${user.role}`;
       showSpa();
       setupNav();
@@ -241,12 +258,15 @@
     // logout
     $('btnLogout').addEventListener('click', ()=>{ location.reload(); });
 
-    // nav
+    // navigation
     function setupNav(){
       document.querySelectorAll('.nav button[data-view]').forEach(b=>{
         b.addEventListener('click', ()=> setView(b.dataset.view));
       });
       setView('home');
+      // hide apparatus_control if not admin or dept_admin
+      const btn = document.querySelector('button[data-view="apparatus_control"]');
+      if(CURRENT_USER.role !== 'ADMIN' && CURRENT_USER.role !== 'DEPT_ADMIN'){ btn.style.display='none'; } else { btn.style.display='block'; }
     }
     function setView(id){
       document.querySelectorAll('.view').forEach(v=> v.classList.remove('active'));
@@ -263,10 +283,9 @@
       modalCancel.onclick = ()=>{ modal.style.display='none'; modalBody.innerHTML=''; modalSave.onclick=null; };
     }
 
-    // realtime start
+    // start realtime listeners
     let CURRENT_USER = null;
     function startRealtime(){
-      // fire_departments
       onSnapshot(query(subCol('fire_departments')), snap => {
         const out = {}; snap.forEach(d=> out[d.id] = d.data()); renderDepartments(out);
       });
@@ -279,7 +298,10 @@
       onSnapshot(query(subCol('county_teams')), snap => {
         const out = {}; snap.forEach(d=> out[d.id] = d.data()); renderTeams(out);
       });
-      // weather
+      onSnapshot(query(subCol('apparatus')), snap => {
+        const out = {}; snap.forEach(d=> out[d.id] = d.data()); renderApparatus(out);
+      });
+      // initial weather fetch
       fetchWeather();
     }
 
@@ -287,8 +309,8 @@
     function renderDepartments(data){
       const t=$('deptList'); t.innerHTML=''; Object.entries(data||{}).forEach(([id,d])=>{
         const div=document.createElement('div'); div.className='listItem';
-        div.innerHTML = `<div><div style="font-weight:800">${escapeHTML(d.name||'')}</div><div class="meta">${escapeHTML(d.battalion||'')} ${d.address? ' • '+escapeHTML(d.address):''}</div></div>
-          <div style="display:flex;gap:8px"><button class="btn small" data-id="${id}" data-act="view-dept">View</button>${CURRENT_USER.role==='ADMIN'?`<button class="btn small" data-id="${id}" data-act="edit-dept">Edit</button>`:''}</div>`;
+        div.innerHTML = `<div><div style="font-weight:800">${esc(d.name||'')}</div><div class="meta">${esc(d.battalion||'')} ${d.address? ' • '+esc(d.address):''}</div></div>
+          <div style="display:flex;gap:8px"><button class="btn small" data-id="${id}" data-act="view-dept">View</button>${CURRENT_USER.role==='ADMIN'||(CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept===d.name)?`<button class="btn small" data-id="${id}" data-act="edit-dept">Edit</button>`:''}</div>`;
         t.appendChild(div);
       });
       t.querySelectorAll('button[data-act="view-dept"]').forEach(b=> b.addEventListener('click', ()=> viewDept(b.dataset.id)));
@@ -297,7 +319,7 @@
     function renderEMS(data){
       const t=$('emsList'); t.innerHTML=''; Object.entries(data||{}).forEach(([id,e])=>{
         const div=document.createElement('div'); div.className='listItem';
-        div.innerHTML=`<div><div style="font-weight:800">${escapeHTML(e.name||'')}</div><div class="meta">${escapeHTML(e.address||'')}</div></div><div><button class="btn small" data-id="${id}" data-act="view-ems">View</button></div>`;
+        div.innerHTML=`<div><div style="font-weight:800">${esc(e.name||'')}</div><div class="meta">${esc(e.address||'')}</div></div><div><button class="btn small" data-id="${id}" data-act="view-ems">View</button></div>`;
         t.appendChild(div);
       });
       t.querySelectorAll('button[data-act="view-ems"]').forEach(b=> b.addEventListener('click', ()=> viewEms(b.dataset.id)));
@@ -305,16 +327,28 @@
     function renderCoordinators(data){
       const t=$('coordList'); t.innerHTML=''; Object.entries(data||{}).forEach(([id,c])=>{
         const div=document.createElement('div'); div.className='listItem';
-        div.innerHTML=`<div><div style="font-weight:800">${escapeHTML(c.name||'')}</div><div class="meta">${escapeHTML(c.callsign||'')}</div></div>`;
+        div.innerHTML=`<div><div style="font-weight:800">${esc(c.name||'')}</div><div class="meta">${esc(c.callsign||'')}</div></div>`;
         t.appendChild(div);
       });
     }
     function renderTeams(data){
       const t=$('teamList'); t.innerHTML=''; Object.entries(data||{}).forEach(([id,tm])=>{
         const div=document.createElement('div'); div.className='listItem';
-        div.innerHTML=`<div><div style="font-weight:800">${escapeHTML(tm.name||'')}</div><div class="meta">${escapeHTML(tm.lead||'')}</div></div>`;
+        div.innerHTML=`<div><div style="font-weight:800">${esc(tm.name||'')}</div><div class="meta">${esc(tm.lead||'')}</div></div>`;
         t.appendChild(div);
       });
+    }
+
+    // apparatus render + admin actions
+    function renderApparatus(data){
+      const t=$('appList'); t.innerHTML=''; Object.entries(data||{}).forEach(([id,a])=>{
+        const div=document.createElement('div'); div.className='listItem';
+        div.innerHTML = `<div><div style="font-weight:800">${esc(a.username||id)} — ${esc(a.apparatusName||'')}</div><div class="meta">${esc(a.department||'Unassigned')}</div></div>
+          <div style="display:flex;gap:8px"><button class="btn small" data-id="${id}" data-act="edit-app">Edit</button><button class="btn small" data-id="${id}" data-act="del-app">Delete</button></div>`;
+        t.appendChild(div);
+      });
+      t.querySelectorAll('button[data-act="edit-app"]').forEach(b=> b.addEventListener('click', ()=> editApp(b.dataset.id)));
+      t.querySelectorAll('button[data-act="del-app"]').forEach(b=> b.addEventListener('click', ()=> deleteApp(b.dataset.id)));
     }
 
     // add/edit actions (Admin only)
@@ -349,21 +383,51 @@
       });
     });
 
+    // apparatus admin
+    $('addApp').addEventListener('click', ()=> {
+      if(CURRENT_USER.role !== 'ADMIN' && CURRENT_USER.role !== 'DEPT_ADMIN'){ alert('Admin only'); return; }
+      showModal('Add Apparatus', (root)=> {
+        root.innerHTML = `<input id="ap_username" placeholder="Login username (eg ENGINE511)"/><input id="ap_name" placeholder="Apparatus display name (eg Engine 511)"/><input id="ap_dept" placeholder="Assigned department (exact name)"/>`;
+      }, async ()=> {
+        const username = $('ap_username').value.trim().toUpperCase(); if(!username) return alert('Username required');
+        const apron = $('ap_name').value.trim(); const dept = $('ap_dept').value.trim();
+        await setDoc(docRef('apparatus', username), { username, apparatusName:apron, department:dept });
+      });
+    });
+
+    $('refreshApp').addEventListener('click', ()=> { /* refresh handled by realtime */ alert('Refreshed'); });
+
+    async function editApp(id){
+      if(CURRENT_USER.role !== 'ADMIN' && CURRENT_USER.role !== 'DEPT_ADMIN'){ alert('Admin only'); return; }
+      const s = await getDoc(docRef('apparatus', id)); if(!s.exists()) return alert('Not found');
+      const d = s.data();
+      showModal('Edit Apparatus', (root)=> {
+        root.innerHTML = `<input id="ea_name" value="${esc(d.apparatusName||'')}" /><input id="ea_dept" value="${esc(d.department||'')}" />`;
+      }, async ()=> {
+        const obj = { username:id, apparatusName:$('ea_name').value.trim(), department:$('ea_dept').value.trim() };
+        await setDoc(docRef('apparatus', id), obj); alert('Saved');
+      });
+    }
+    async function deleteApp(id){
+      if(!confirm('Delete apparatus '+id+'?')) return;
+      await deleteDoc(docRef('apparatus', id));
+    }
+
     // view / edit dept
     async function viewDept(id){
       const s = await getDoc(docRef('fire_departments', id));
       if(!s.exists()) return alert('Not found');
       const d = s.data();
       showModal('Department', (root)=> {
-        root.innerHTML = `<div><strong>${escapeHTML(d.name||'')}</strong><div class="meta">${escapeHTML(d.address||'')}</div><div style="margin-top:8px"><strong>Apparatus</strong><ul>${(d.apparatus||'').split('|').map(x=>`<li>${escapeHTML(x.trim())}</li>`).join('')}</ul></div></div>`;
+        root.innerHTML = `<div><strong>${esc(d.name||'')}</strong><div class="meta">${esc(d.address||'')}</div><div style="margin-top:8px"><strong>Apparatus</strong><ul>${(d.apparatus||'').split('|').map(x=>`<li>${esc(x.trim())}</li>`).join('')}</ul></div></div>`;
       }, async ()=> {});
     }
     async function editDept(id){
-      if(CURRENT_USER.role !== 'ADMIN'){ alert('Admin only'); return; }
+      if(CURRENT_USER.role !== 'ADMIN' && !(CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept)){ alert('Admin only'); return; }
       const s = await getDoc(docRef('fire_departments', id)); if(!s.exists()) return alert('Not found');
       const d = s.data();
       showModal('Edit Department', (root)=> {
-        root.innerHTML = `<input id="ed_name" value="${escapeHTML(d.name||'')}" /><input id="ed_batt" value="${escapeHTML(d.battalion||'')}" /><input id="ed_addr" value="${escapeHTML(d.address||'')}" /><input id="ed_apps" value="${escapeHTML(d.apparatus||'')}" />`;
+        root.innerHTML = `<input id="ed_name" value="${esc(d.name||'')}" /><input id="ed_batt" value="${esc(d.battalion||'')}" /><input id="ed_addr" value="${esc(d.address||'')}" /><input id="ed_apps" value="${esc(d.apparatus||'')}" />`;
       }, async ()=> {
         const obj = { name:$('ed_name').value.trim(), battalion:$('ed_batt').value.trim(), address:$('ed_addr').value.trim(), apparatus:$('ed_apps').value.trim() };
         await setDoc(docRef('fire_departments', id), obj);
@@ -371,15 +435,15 @@
       });
     }
 
-    // HazMat search + admin
+    // HazMat
     $('btnHazSearch').addEventListener('click', async ()=> {
       const q = ($('hazQuery').value||'').trim(); if(!q) return alert('Enter UN number');
       const s = await getDoc(docRef('hazmat', q));
       if(s.exists()){
         const e = s.data();
-        $('hazResult').innerHTML = `<div style="font-weight:800">${escapeHTML(e.name||'')}</div><div class="meta">Class: ${escapeHTML(e.hazard_class||'')}</div><div style="margin-top:8px"><strong>Flammability:</strong> ${escapeHTML(e.flammability||'—')}</div><div><strong>Water reactivity:</strong> ${escapeHTML(e.water_reactivity||'—')}</div><div style="margin-top:8px"><strong>Evacuation (small):</strong> ${escapeHTML(e.evac_small||e.evacuation_small||'—')}</div><div><strong>Evacuation (large):</strong> ${escapeHTML(e.evac_large||e.evacuation_large||'—')}</div><div style="margin-top:8px">${escapeHTML(e.notes||'')}</div>`;
+        $('hazResult').innerHTML = `<div style="font-weight:800">${esc(e.name||'')}</div><div class="meta">Class: ${esc(e.hazard_class||'')}</div><div style="margin-top:8px"><strong>Flammability:</strong> ${esc(e.flammability||'—')}</div><div><strong>Water reactivity:</strong> ${esc(e.water_reactivity||'—')}</div><div style="margin-top:8px"><strong>Evacuation (small):</strong> ${esc(e.evac_small||e.evacuation_small||'—')}</div><div><strong>Evacuation (large):</strong> ${esc(e.evac_large||e.evacuation_large||'—')}</div><div style="margin-top:8px">${esc(e.notes||'')}</div>`;
       } else {
-        $('hazResult').innerHTML = `<div class="meta">No record for UN ${escapeHTML(q)}. Admins can add entries.</div>`;
+        $('hazResult').innerHTML = `<div class="meta">No record for UN ${esc(q)}. Admins can add entries.</div>`;
       }
     });
 
@@ -400,17 +464,40 @@
       const key = v.split(',')[1] ? v.split(',')[1].trim().toLowerCase().replace(/\s+/g,'_') : v.trim().toLowerCase().replace(/\s+/g,'_');
       const s = await getDoc(docRef('ev_guides', key));
       if(s.exists()){
-        const d = s.data(); $('evResult').innerHTML = `<div style="font-weight:800">${escapeHTML(d.make||key)}</div><div style="margin-top:6px"><a href="${escapeHTML(d.url)}" target="_blank">${escapeHTML(d.url)}</a></div>`;
-      } else $('evResult').innerHTML = `<div class="meta">No guide for "${escapeHTML(key)}". Admins can add guides.</div>`;
+        const d = s.data(); $('evResult').innerHTML = `<div style="font-weight:800">${esc(d.make||key)}</div><div style="margin-top:6px"><a href="${esc(d.url)}" target="_blank">${esc(d.url)}</a></div>`;
+      } else $('evResult').innerHTML = `<div class="meta">No guide for "${esc(key)}". Admins can add guides.</div>`;
     });
 
-    // admin manage data (simple)
-    $('manageData').addEventListener('click', ()=> {
+    // admin manage local users (stored in localStorage)
+    $('manageUsers').addEventListener('click', ()=> {
       if(CURRENT_USER.role !== 'ADMIN'){ alert('Admin only'); return; }
-      alert('Use the Add buttons on each page to manage data. HazMat import available under Manage Haz.');
+      showModal('Manage Local Users', (root)=>{
+        const users = loadLocalUsers();
+        let html = `<div style="max-height:260px;overflow:auto">`;
+        Object.keys(users).forEach(u => { html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><div><strong>${esc(u)}</strong><div class="meta">Role: ${esc(users[u].role||'')}</div></div><div><button class="btn small" data-user="${esc(u)}" data-act="editLocal">Edit</button> <button class="btn small" data-user="${esc(u)}" data-act="delLocal">Delete</button></div></div>`});
+        html += `</div><div style="margin-top:8px"><button id="createLocal" class="btn primary">Create User</button></div>`;
+        root.innerHTML = html;
+        root.querySelectorAll('button[data-act="editLocal"]').forEach(btn=> btn.addEventListener('click', ()=> editLocalUser(btn.dataset.user)));
+        root.querySelectorAll('button[data-act="delLocal"]').forEach(btn=> btn.addEventListener('click', ()=> { if(confirm('Delete '+btn.dataset.user+'?')){ const u=btn.dataset.user; const obj = loadLocalUsers(); delete obj[u]; saveLocalUsers(obj); alert('Deleted'); modal.style.display='none'; } }));
+        root.querySelector('#createLocal').addEventListener('click', ()=> {
+          showModal('Create Local User', (r)=> r.innerHTML=`<input id="lu_name" placeholder="Username"/><input id="lu_pass" placeholder="Password"/><select id="lu_role"><option>ADMIN</option><option>DEPT_ADMIN</option><option>DEPT_USER</option></select><input id="lu_dept" placeholder="Department (for DEPT_ADMIN/DEPT_USER)"/>`, async ()=> {
+            const un = $('lu_name').value.trim().toUpperCase(); if(!un) return alert('Username required'); const pw = $('lu_pass').value.trim(); const role = $('lu_role').value; const dept = $('lu_dept').value.trim();
+            const obj = loadLocalUsers(); obj[un] = { password: pw||'changeme', role, dept }; saveLocalUsers(obj); alert('Saved');
+          });
+        });
+      }, async ()=> {});
     });
 
-    // weather (NWS)
+    function editLocalUser(username){
+      const users = loadLocalUsers();
+      const u = users[username];
+      showModal('Edit Local User', (r)=> r.innerHTML = `<div><strong>${esc(username)}</strong></div><input id="lu_pass" placeholder="Password" value="${esc(u.password||'')}" /><select id="lu_role"><option${u.role==='ADMIN'?' selected':''}>ADMIN</option><option${u.role==='DEPT_ADMIN'?' selected':''}>DEPT_ADMIN</option><option${u.role==='DEPT_USER'?' selected':''}>DEPT_USER</option></select><input id="lu_dept" placeholder="Department" value="${esc(u.dept||'')}" />`, async ()=> {
+        const pw = $('lu_pass').value.trim(); const role = $('lu_role').value; const dept = $('lu_dept').value.trim();
+        const obj = loadLocalUsers(); obj[username] = { password: pw||obj[username].password, role, dept }; saveLocalUsers(obj); alert('Saved');
+      });
+    }
+
+    // weather
     async function fetchWeather(){
       try{
         const r = await fetch('https://api.weather.gov/alerts/active?area=OSW');
@@ -420,13 +507,10 @@
       } catch(e){ $('weatherBlock').textContent = 'Weather service unavailable'; }
     }
 
-    // small util
-    function escapeHTML(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+    // small util + initial UI
+    function escapeHTML(s){ return esc(s); }
+    window.addEventListener('DOMContentLoaded', ()=> { showLogin(); });
 
-    // done
   </script>
 </body>
 </html>
-
-
-
