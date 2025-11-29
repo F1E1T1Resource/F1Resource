@@ -1,210 +1,235 @@
-<!-- PART 1/6 -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>F1 Resource — Main App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>F1 Resource — Dispatch (Apparatus Mobile)</title>
   <style>
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#021023,#04182b);color:#e6eef9}
+    .wrap{max-width:980px;margin:18px auto;padding:12px}
+    .card{background:linear-gradient(180deg,#0b1624,#08121a);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#e6eef9;margin:6px 0}
     :root{
-      --bg:#031026; --panel:#081727; --card:#0f1b2b;
-      --accent:#0b5fff; --accent2:#7b5cff; --muted:#9aa6bd;
+      --bg-top:#041428;
+      --bg-bottom:#021023;
+      --card:#071422;
+      --muted:#9aa6bd;
+      --accent1:#0b5fff;
+      --accent2:#7b5cff;
+      --glass: rgba(255,255,255,0.04);
       --radius:12px;
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#021023,var(--bg));color:#e6eef9}
-    .app{display:flex;min-height:100vh}
-    .sidebar{width:240px;padding:18px;background:linear-gradient(180deg,var(--panel),#071323);flex-shrink:0;display:flex;flex-direction:column;gap:12px;border-right:1px solid rgba(255,255,255,0.03)}
-    .logo{display:flex;gap:12px;align-items:center}
-    .logo img{height:56px;border-radius:8px}
-    .brand{font-weight:800}
-    .nav{display:flex;flex-direction:column;gap:6px;margin-top:12px}
-    .nav button{background:transparent;border:none;color:var(--muted);text-align:left;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:700}
-    .nav button:hover,.nav button.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001020;transform:translateX(6px)}
-    .main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px}
-    .topbar{display:flex;justify-content:space-between;align-items:center}
-    .card{background:linear-gradient(180deg,#0b1624,#08121a);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-    .view{display:none}
-    .view.active{display:block}
-    .list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-    .listItem{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
-    .meta{color:var(--muted);font-size:13px}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));color:#eaf3ff;min-height:100vh}
+    .header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:linear-gradient(90deg,#021427, #041a2a);border-bottom:1px solid rgba(255,255,255,0.03)}
+    .header img{height:56px;border-radius:8px}
+    .header h1{margin:0;font-size:18px}
+    .container{max-width:980px;margin:18px auto;padding:12px}
+    .card{background:linear-gradient(180deg,#071726,#06121a);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .loginWrap{display:flex;gap:14px;align-items:center}
+    .loginCard{flex:1;max-width:760px;padding:16px;border-radius:12px;background:linear-gradient(180deg,#081a24,#05121a);border:1px solid var(--glass)}
+    input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#eaf3ff;margin:8px 0}
     .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
-    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001020}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted)}
-    input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#e6eef9;margin:6px 0}
-    .muted-block{color:var(--muted);font-size:13px}
-    .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9999;background:rgba(0,0,0,0.6)}
-    .modal-backdrop.show{display:flex}
-    .modal{background:linear-gradient(180deg,#0b1624,#08121a);padding:18px;border-radius:12px;max-width:720px;width:96%;border:1px solid rgba(255,255,255,0.03)}
-    .draggable-list [draggable="true"]{cursor:grab}
+    .btn.primary{background:linear-gradient(90deg,#0b5fff,#7b5cff);color:#001020}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#9aa6bd}
+    .incidentItem{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-bottom:8px}
+    .chatBox{min-height:120px;max-height:260px;overflow:auto;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
+    .muted{color:#9aa6bd}
+    .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#041427}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    .muted{color:var(--muted)}
+    .incidentItem{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-bottom:8px;background:linear-gradient(180deg,rgba(255,255,255,0.015),transparent)}
+    .chatBox{min-height:120px;max-height:260px;overflow:auto;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.06)}
+    .small{padding:6px 8px;font-size:13px}
+    .row{display:flex;gap:8px}
     @media (max-width:900px){
-      .sidebar{display:none}
-      .mobileHeader{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:linear-gradient(180deg,#041028,#051428);border-bottom:1px solid rgba(255,255,255,0.03)}
-      .drawer{position:fixed;left:0;top:0;height:100%;width:260px;background:linear-gradient(180deg,var(--panel),#071323);box-shadow:8px 0 30px rgba(0,0,0,0.6);transform:translateX(-120%);transition:transform .22s;z-index:1000;padding:20px}
-      .drawer.open{transform:translateX(0)}
+      .header img{height:44px}
+      .loginWrap{flex-direction:column}
+      .row{flex-direction:column}
     }
   </style>
 </head>
 <body>
-  <!-- LOGIN SCREEN -->
-  <div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
-    <div class="card" style="max-width:920px;width:100%;display:flex;gap:18px;align-items:center">
-      <div style="flex:0 0 88px">
-        <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="logo" style="height:80px;border-radius:10px">
+  <div class="wrap">
+    <div class="card" id="loginCard">
+      <div style="display:flex;align-items:center;gap:12px">
+        <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:56px;border-radius:8px">
+  <header class="header">
+    <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="F1 Resource logo">
+    <div>
+      <h1>Apparatus Mobile — Dispatch</h1>
+      <div class="muted">Field users — create incidents, attach, update status, chat, archive.</div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button id="backMain" class="btn ghost">Back to Main App</button>
+      <button id="logoutBtn" class="btn ghost" style="display:none">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Login Card -->
+    <div id="loginCard" class="card loginCard">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div>
+          <h2 style="margin:0">Apparatus Mobile Login</h2>
+          <div class="muted" style="margin-top:6px">Local apparatus accounts for field units. Admin can manage apparatus assignments in the main app (Apparatus Control).</div>
+          <h2 style="margin:0 0 6px">Apparatus Login</h2>
+          <div class="muted">Local apparatus accounts — stays logged in until you press Logout.</div>
+        </div>
+        <div style="min-width:220px;text-align:right">
+          <div class="muted" style="font-size:13px">Demo units:</div>
+          <div style="margin-top:6px" class="muted">ENGINE511 / ENGINE511</div>
+        </div>
       </div>
-      <div style="flex:1">
-        <h2 style="margin:0 0 6px">F1 Resource — Login</h2>
-        <div class="muted-block">Local login (stored in your browser). App data stored in Firestore. Default admin: <strong>ADMIN / ADMIN</strong>.</div>
 
-        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <input id="loginUser" placeholder="Username" autocomplete="off" />
-          <input id="loginPass" placeholder="Password" type="password" autocomplete="off" />
+      <div style="margin-top:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <input id="apUser" placeholder="Username"/>
+          <input id="apPass" placeholder="Password" type="password"/>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <input id="apUser" placeholder="Username (eg ENGINE511)" autocomplete="off" />
+          <input id="apPass" placeholder="Password" type="password" autocomplete="off" />
         </div>
-
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button id="btnLogin" class="btn primary">Login</button>
-          <button id="btnFill" class="btn ghost">Demo Fill</button>
-          <button id="btnMobileApp" class="btn ghost" style="margin-left:auto">Apparatus Login</button>
+        <div style="display:flex;gap:8px;margin-top:8px">
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+          <button id="apLogin" class="btn primary">Login</button>
+          <button id="apFill" class="btn ghost">Demo Fill</button>
+          <button id="toMain" class="btn ghost" style="margin-left:auto">Back to Main App</button>
+          <div style="margin-left:auto" class="muted">Logged-in user: <span id="currentUserLabel">—</span></div>
         </div>
-
-        <div id="loginMsg" style="color:#ff9b9b;margin-top:8px"></div>
+        <div id="apMsg" style="color:#ff9b9b;margin-top:8px"></div>
       </div>
     </div>
-  </div>
-<!-- PART 2/6 -->
-  <!-- SPA -->
-  <div id="spa" class="app" style="display:none">
-    <aside class="sidebar" role="navigation" aria-label="Main navigation">
-      <div class="logo">
-        <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="logo"/>
-        <div><div class="brand">F1 Resource</div><div class="muted-block">Oswego County</div></div>
-      </div>
 
-      <nav class="nav" aria-label="Pages">
-        <button data-view="home" class="active">Home</button>
-        <button data-view="departments">Fire Departments</button>
-        <button data-view="ems">EMS Agencies</button>
-        <button data-view="coordinators">County Coordinators</button>
-        <button data-view="teams">County Teams</button>
-        <button data-view="hazmat">HazMat Search</button>
-        <button data-view="ev">EV Safety</button>
-        <button data-view="risks">Fire & Driving Risk</button>
-        <button data-view="weather">Weather</button>
-        <button data-view="apparatus_control">Apparatus Control</button>
-        <button data-view="admin">Admin</button>
-        <button id="btnLogout" class="btn ghost" style="margin-top:12px">Logout</button>
-      </nav>
+    <!-- Apparatus UI -->
+    <div id="appUI" style="display:none">
+      <div class="card" style="margin-top:12px">
+    <!-- App UI -->
+    <div id="appUI" style="display:none; margin-top:14px">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:44px;border-radius:6px"><div class="muted" id="appUserLabel"></div></div>
+          <div><button id="apLogout" class="btn ghost">Logout</button></div>
+        </div>
 
-      <div style="margin-top:auto;color:var(--muted)">&copy; F1 Resource</div>
-    </aside>
-
-    <main class="main">
-      <div class="topbar">
-        <div style="display:flex;gap:12px;align-items:center">
-          <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:56px;border-radius:8px" />
+        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Incidents</strong><div class="muted">Create or attach to incidents</div></div>
+          <div style="display:flex;gap:8px"><button id="createBtn" class="btn primary">Create Incident</button><button id="archiveBtn" class="btn ghost">Archived</button></div>
           <div>
-            <div style="font-weight:800">WELCOME</div>
-            <div class="muted-block">F1 Resource — your all inclusive application for Oswego County.</div>
+            <div style="display:flex;gap:12px;align-items:center">
+              <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:44px;border-radius:6px" alt="logo">
+              <div>
+                <div style="font-weight:800" id="appUserLabel">Unit</div>
+                <div class="muted" id="appUserMeta">Dept • Apparatus</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="createBtn" class="btn primary">Create Incident</button>
+            <button id="archiveBtn" class="btn ghost">Archived</button>
           </div>
         </div>
-        <div id="userBadge" class="muted-block"></div>
+
+        <div id="incidentList" style="margin-top:12px"></div>
       </div>
 
-      <!-- Views -->
-      <section id="home" class="view active card"><h3 style="margin:0">Home</h3><div class="muted-block" style="margin-top:8px">Use the navigation to access modules.</div></section>
+      <!-- Create Panel -->
+      <div id="createPanel" class="card" style="margin-top:12px;display:none">
+        <h3 style="margin:0">Create Incident</h3>
+        <select id="incType"><option>FIRE</option><option>EMS</option><option>MISC</option></select>
+        <input id="incAddress" placeholder="Address"/>
+        <input id="incNature" placeholder="Nature"/>
+        <textarea id="incDetails" placeholder="Details"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px"><button id="submitInc" class="btn primary">Submit</button><button id="cancelInc" class="btn ghost">Cancel</button></div>
+        <h3 style="margin:0 0 6px">Create Incident</h3>
+        <div style="display:grid;gap:8px">
+          <select id="incType"><option>FIRE</option><option>EMS</option><option>MISC</option></select>
+          <input id="incAddress" placeholder="Address" />
+          <input id="incNature" placeholder="Nature / Type" />
+          <textarea id="incDetails" placeholder="Details (optional)"></textarea>
+          <div style="display:flex;gap:8px">
+            <button id="submitInc" class="btn primary">Submit</button>
+            <button id="cancelInc" class="btn ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
 
-      <section id="departments" class="view card">
+      <!-- Incident Panel -->
+      <div id="incidentPanel" class="card" style="margin-top:12px;display:none">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>Fire Departments</strong><div class="muted-block">Manage departments</div></div>
-          <div><button id="addDept" class="btn primary">+ Add</button></div>
+          <div><div id="incTitle" style="font-weight:800"></div><div id="incMeta" class="muted" style="margin-top:6px"></div></div>
+          <div>
+            <div id="incTitle" style="font-weight:800"></div>
+            <div id="incMeta" class="muted" style="margin-top:6px"></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button id="attachBtn" class="btn primary">Attach</button>
+            <button id="detachBtn" class="btn ghost" style="display:none">Detach</button>
+            <button id="archiveIncBtn" class="btn ghost">Archive</button>
+          </div>
         </div>
-        <div id="deptList" class="list"></div>
-      </section>
 
-      <section id="ems" class="view card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>EMS Agencies</strong></div>
-          <div><button id="addEms" class="btn primary">+ Add</button></div>
+        <div style="margin-top:12px">
+          <div><strong>Units & Status</strong><div id="unitsBlock" style="margin-top:8px"></div></div>
+
+          <div style="margin-top:12px"><strong>Update Status</strong>
+            <div style="display:flex;gap:8px;margin-top:8px">
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <button class="btn small statusBtn" data-status="Acknowledged">Acknowledged</button>
+              <button class="btn small statusBtn" data-status="Responding">Responding</button>
+              <button class="btn small statusBtn" data-status="Staged">Staged</button>
+              <button class="btn small statusBtn" data-status="Arrived">Arrived</button>
+              <button class="btn small statusBtn" data-status="Returning">Returning</button>
+              <button class="btn small statusBtn" data-status="Clear">Clear</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+          <div style="margin-top:12px;display:flex;gap:8px;align-items:flex-start">
+            <button id="addAgencyBtn" class="btn ghost">Add Agency</button>
+            <div style="position:relative">
+              <button id="alarmBtn" class="btn ghost">Add Alarm ▾</button>
+              <div id="alarmMenu" style="display:none;position:absolute;left:0;top:36px;background:#081727;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)">
+              <div id="alarmMenu" style="display:none;position:absolute;left:0;top:36px;background:rgba(6,12,20,0.9);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)">
+                <div><button class="btn small alarmOpt" data-temp="first">1st Alarm</button></div>
+                <div><button class="btn small alarmOpt" data-temp="second">2nd Alarm</button></div>
+                <div><button class="btn small alarmOpt" data-temp="third">3rd Alarm</button></div>
+              </div>
+            </div>
+            <button id="addDetailBtn" class="btn ghost">Add Detail</button>
+          </div>
+
+          <div style="margin-top:12px"><strong>Timeline</strong><div id="timelineBlock" class="muted" style="margin-top:6px"></div></div>
+
+          <div style="margin-top:12px"><strong>Chat</strong>
+            <div id="chatBox" class="chatBox" style="margin-top:8px"></div>
+            <div style="display:flex;gap:8px;margin-top:8px"><input id="chatInput" placeholder="Message..."/><button id="sendChat" class="btn primary">Send</button></div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="chatInput" placeholder="Message..." />
+              <button id="sendChat" class="btn primary">Send</button>
+            </div>
+          </div>
         </div>
-        <div id="emsList" class="list"></div>
-      </section>
+      </div>
+    </div> <!-- end appUI -->
 
-      <section id="coordinators" class="view card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>County Coordinators</strong></div>
-          <div><button id="addCoord" class="btn primary">+ Add</button></div>
-        </div>
-        <div id="coordList" class="list"></div>
-      </section>
-
-      <section id="teams" class="view card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>County Teams</strong></div>
-          <div><button id="addTeam" class="btn primary">+ Add Team</button></div>
-        </div>
-        <div id="teamList" class="list"></div>
-      </section>
-<!-- PART 3/6 -->
-      <section id="hazmat" class="view card">
-        <h3 style="margin:0 0 8px">HazMat Search</h3>
-        <div style="display:flex;gap:8px;">
-          <input id="hazQuery" placeholder="UN/NA number (e.g. 1203)" />
-          <button id="btnHazSearch" class="btn primary">Search</button>
-          <button id="btnHazAdmin" class="btn ghost">Add/Edit</button>
-        </div>
-        <div id="hazResult" style="margin-top:12px"></div>
-      </section>
-
-      <section id="ev" class="view card">
-        <h3 style="margin:0 0 8px">EV Safety</h3>
-        <div style="display:flex;gap:8px">
-          <input id="evQuery" placeholder="Year,Make,Model or VIN" />
-          <button id="btnEvSearch" class="btn primary">Find</button>
-        </div>
-        <div id="evResult" style="margin-top:12px"></div>
-      </section>
-
-      <section id="risks" class="view card">
-        <h3>Fire & Driving Risk</h3>
-        <div id="riskBody" class="muted-block" style="margin-top:8px"></div>
-      </section>
-
-      <section id="weather" class="view card">
-        <h3>Weather</h3>
-        <div class="muted-block" style="margin-top:8px">Active weather alerts for Oswego County</div>
-        <pre id="weatherBlock" style="white-space:pre-wrap;margin-top:8px;color:var(--muted)"></pre>
-      </section>
-
-      <section id="apparatus_control" class="view card">
-        <h3>Apparatus Control Center</h3>
-        <div class="muted-block">Create apparatus, assign to departments, define apparatus display name.</div>
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button id="addApp" class="btn primary">+ Add Apparatus</button>
-          <button id="refreshApp" class="btn ghost">Refresh List</button>
-        </div>
-        <div id="appList" class="list" style="margin-top:12px"></div>
-      </section>
-
-      <section id="admin" class="view card">
-        <h3>Admin</h3>
-        <div style="margin-top:12px;display:flex;gap:8px">
-          <button id="manageUsers" class="btn primary">Manage Local Users</button>
-          <button id="manageHaz" class="btn ghost">HazMat Import</button>
-        </div>
-      </section>
-
-    </main>
+    </div>
   </div>
-
-  <!-- Modal -->
-  <div id="modalBackdrop" class="modal-backdrop"><div class="modal"><h3 id="modalTitle"></h3><div id="modalBody"></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="modalCancel" class="btn ghost">Cancel</button><button id="modalSave" class="btn primary">Save</button></div></div></div>
+  </main>
 
   <script type="module">
+    // Firebase imports (Firestore used for incidents)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import {
+      getFirestore, collection, doc, getDoc, getDocs,
+      addDoc, setDoc, onSnapshot, query
+    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-    // Firebase config
+    // Firebase config (same)
+    // ====== Config - your Firebase project ======
     const firebaseConfig = {
       apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
       authDomain: "f1resource-8fedc.firebaseapp.com",
@@ -213,431 +238,597 @@
       messagingSenderId: "182745701982",
       appId: "1:182745701982:web:9f4f3836b41b450987decf"
     };
+    const fb = initializeApp(firebaseConfig);
+    const db = getFirestore(fb);
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
-    // Helpers
-    const $ = id => document.getElementById(id);
     const ROOT_COL='f1root', ROOT_DOC='f1resource';
     const subCol = (name) => collection(db, ROOT_COL, ROOT_DOC, name);
+    const subCol = name => collection(db, ROOT_COL, ROOT_DOC, name);
     const docRef = (col,id) => doc(db, ROOT_COL, ROOT_DOC, col, id);
+
+    // Local apparatus accounts (edit in code or keep defaults)
+    // ====== Local apparatus users (edit here to add more) ======
+    const APP_USERS = {
+      "ENGINE511": { password: "ENGINE511", label: "Engine 511" },
+      "ENGINE512": { password: "ENGINE512", label: "Engine 512" },
+      "LADDER701": { password: "LADDER701", label: "Ladder 701" }
+    };
+
+    // ====== DOM helpers ======
+    const $ = id => document.getElementById(id);
+    function now(){ return new Date().toISOString(); }
     function esc(s){ return s? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;') : ''; }
 
-    // Local users stored in localStorage (local login)
-    const LOCAL_USERS_KEY = 'f1_local_users_v1';
-    function loadLocalUsers(){ try{ return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}'); }catch(e){ return {}; } }
-    function saveLocalUsers(obj){ localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(obj)); }
-    // ensure initial admin exists
-    let localUsers = loadLocalUsers();
-    if(!localUsers.ADMIN){ localUsers.ADMIN = { password:'ADMIN', role:'ADMIN', dept:'' }; saveLocalUsers(localUsers); }
+    // login
+    $('apFill').addEventListener('click', ()=>{ $('apUser').value='ENGINE511'; $('apPass').value='ENGINE511'; });
+    $('toMain').addEventListener('click', ()=>{ window.location.href='index.html'; });
+    $('apLogin').addEventListener('click', async ()=> {
+      const u = ($('apUser').value||'').trim().toUpperCase();
+      const p = ($('apPass').value||'').trim();
+      if(!u||!p){ $('apMsg').textContent='Enter credentials'; return; }
 
-    // App state
-    let CURRENT_USER = null;
-    function showLogin(){ $('loginScreen').style.display='flex'; $('spa').style.display='none'; }
-    function showSpa(){ $('loginScreen').style.display='none'; $('spa').style.display='flex'; }
-<!-- PART 4/6 -->
-    // login handlers
-    $('btnFill').addEventListener('click', ()=>{ $('loginUser').value='ADMIN'; $('loginPass').value='ADMIN'; });
-    $('btnMobileApp').addEventListener('click', ()=>{ window.location.href = 'dispatch.html'; });
+    // persistent login key
+    const STORAGE_KEY = 'f1_apparatus_user';
 
-    $('btnLogin').addEventListener('click', ()=>{
-      const u = ($('loginUser').value||'').trim().toUpperCase();
-      const p = ($('loginPass').value||'').trim();
-      if(!u||!p){ $('loginMsg').textContent = 'Enter username and password'; return; }
-      localUsers = loadLocalUsers();
-      const user = localUsers[u];
-      if(!user || user.password !== p){ $('loginMsg').textContent='Invalid credentials'; return; }
-      $('loginMsg').textContent='';
-      CURRENT_USER = {username:u, role:user.role, dept:user.dept||''};
-      $('userBadge').textContent = `${u} • ${user.role}`;
-      showSpa();
-      setupNav();
-      startRealtime();
-    });
+    // state
+    let CURRENT = null;      // { username, label, dept, apparatus }
+    let INCIDENTS = {};      // cached incidents map
+    let SELECTED = null;     // selected incident id
 
-    // logout
-    $('btnLogout').addEventListener('click', ()=>{ location.reload(); });
+    // init
+    window.addEventListener('DOMContentLoaded', async () => {
+      // setup UI bindings
+      $('apFill').addEventListener('click', ()=> { $('apUser').value='ENGINE511'; $('apPass').value='ENGINE511'; });
+      $('backMain').addEventListener('click', ()=> { window.location.href = 'index.html'; });
+      $('apLogin').addEventListener('click', loginHandler);
+      $('logoutBtn').addEventListener('click', logoutHandler);
 
-    // navigation
-    function setupNav(){
-      document.querySelectorAll('.nav button[data-view]').forEach(b=>{
-        b.addEventListener('click', ()=> setView(b.dataset.view));
-      });
-      setView('home');
-      const btn = document.querySelector('button[data-view="apparatus_control"]');
-      if(CURRENT_USER.role !== 'ADMIN' && CURRENT_USER.role !== 'DEPT_ADMIN'){ btn.style.display='none'; } else { btn.style.display='block'; }
-    }
-    function setView(id){
-      document.querySelectorAll('.view').forEach(v=> v.classList.remove('active'));
-      const el = document.getElementById(id); if(el) el.classList.add('active');
-      document.querySelectorAll('.nav button[data-view]').forEach(b=> b.classList.toggle('active', b.dataset.view===id));
-    }
+      $('createBtn').addEventListener('click', ()=> { $('createPanel').style.display='block'; $('incidentPanel').style.display='none'; });
+      $('cancelInc').addEventListener('click', ()=> { $('createPanel').style.display='none'; });
+      $('submitInc').addEventListener('click', submitIncident);
+      $('archiveBtn').addEventListener('click', showArchived);
 
-    // modal helpers
-    const modal = $('modalBackdrop'), modalTitle=$('modalTitle'), modalBody=$('modalBody'), modalSave=$('modalSave'), modalCancel=$('modalCancel');
-    function showModal(title, buildFn, onSave){
-      modalTitle.textContent = title; modalBody.innerHTML=''; buildFn(modalBody);
-      modal.classList.add('show'); modal.style.display='flex';
-      modalSave.onclick = async ()=>{ await onSave(); modal.style.display='none'; modalBody.innerHTML=''; modalSave.onclick=null; };
-      modalCancel.onclick = ()=>{ modal.style.display='none'; modalBody.innerHTML=''; modalSave.onclick=null; };
-    }
+      $('addAgencyBtn').addEventListener('click', addAgencyToIncident);
+      $('addDetailBtn').addEventListener('click', addDetailPrompt);
+      $('alarmBtn').addEventListener('click', ()=> { $('alarmMenu').style.display = $('alarmMenu').style.display === 'block' ? 'none' : 'block'; });
+      document.querySelectorAll('.alarmOpt').forEach(b => b.addEventListener('click', applyAlarmTemplate));
+      document.querySelectorAll('.statusBtn').forEach(b => b.addEventListener('click', statusUpdateHandler));
+      $('sendChat').addEventListener('click', sendChatMessage);
+      $('attachBtn').addEventListener('click', attachToIncident);
 
-    // start realtime listeners
-    function startRealtime(){
-      // Firestore realtime snapshots; renderers will handle ordering
-      onSnapshot(query(subCol('fire_departments')), snap => {
-        const out = {}; snap.forEach(d=> out[d.id] = d.data()); renderDepartmentsOrdered(out);
-      });
-      onSnapshot(query(subCol('ems_agencies')), snap => {
-        const out = {}; snap.forEach(d=> out[d.id] = d.data()); renderEMSOrdered(out);
-      });
-      onSnapshot(query(subCol('coordinators')), snap => {
-        const out = {}; snap.forEach(d=> out[d.id] = d.data()); renderCoordinatorsOrdered(out);
-      });
-      onSnapshot(query(subCol('county_teams')), snap => {
-        const out = {}; snap.forEach(d=> out[d.id] = d.data()); renderTeamsOrdered(out);
-      });
-      onSnapshot(query(subCol('apparatus')), snap => {
-        const out = {}; snap.forEach(d=> out[d.id] = d.data()); renderApparatus(out);
-      });
-      // re-render local users ordered
-      renderUsersOrdered(loadLocalUsers());
-      // initial weather fetch
-      fetchWeather();
-    }
-
-    // renderers (basic non-ordered placeholders kept for compatibility)
-    function renderApparatus(data){
-      const t=$('appList'); t.innerHTML='';
-      Object.entries(data||{}).forEach(([id,a])=>{
-        const div=document.createElement('div'); div.className='listItem';
-        div.innerHTML = `<div><div style="font-weight:800">${esc(a.apparatusName||id)}</div><div class='meta'>${esc(a.department||'Unassigned')}</div></div><div style="display:flex;gap:8px"><button class='btn small' data-id="${id}" data-act="edit-app">Edit</button><button class='btn small' data-id="${id}" data-act="del-app">Delete</button></div>`;
-        t.appendChild(div);
-      });
-      t.querySelectorAll('button[data-act="edit-app"]').forEach(b=> b.addEventListener('click', ()=> editApp(b.dataset.id)));
-      t.querySelectorAll('button[data-act="del-app"]').forEach(b=> b.addEventListener('click', ()=> deleteApp(b.dataset.id)));
-    }
-
-    // legacy renderUsers() kept for compatibility
-    function renderUsers(){ renderUsersOrdered(loadLocalUsers()); }
-<!-- PART 5/6 -->
-    /**********************
-     Drag & Drop ordering
-     - Persists order for Firestore collections by writing an `order` number to each document.
-     - Persists order for local users in localStorage key: 'f1_local_users_order'
-    **********************/
-    const LOCAL_USERS_ORDER_KEY = 'f1_local_users_order';
-    function loadLocalUsersOrder(){ try{ return JSON.parse(localStorage.getItem(LOCAL_USERS_ORDER_KEY) || '[]'); }catch(e){ return []; } }
-    function saveLocalUsersOrder(arr){ localStorage.setItem(LOCAL_USERS_ORDER_KEY, JSON.stringify(arr)); }
-
-    function enableDragReorder(containerEl, persistFn){
-      if(!containerEl) return;
-      containerEl.classList.add('draggable-list');
-      let dragEl = null;
-      containerEl.addEventListener('dragstart', (e)=>{
-        const item = e.target.closest('[draggable="true"]');
-        if(!item) return;
-        dragEl = item;
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', item.dataset.id || '');
-        item.style.opacity = '0.5';
-      });
-      containerEl.addEventListener('dragend', (e)=>{
-        if(dragEl) dragEl.style.opacity = '';
-        dragEl = null;
-      });
-      containerEl.addEventListener('dragover', (e)=>{
-        e.preventDefault();
-        const after = getDragAfterElement(containerEl, e.clientY);
-        const dragging = dragEl;
-        if(!dragging) return;
-        if(after == null){
-          containerEl.appendChild(dragging);
-        } else {
-          containerEl.insertBefore(dragging, after);
+      // try auto-login from localStorage
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if(saved){
+        try {
+          const username = saved.toUpperCase();
+          const user = APP_USERS[username];
+          if(user){
+            // user exists in local APP_USERS — set CURRENT and boot
+            CURRENT = { username, label: user.label || username };
+            // try to fetch assignment from Firestore
+            await fetchApparatusAssignment(username);
+            bootApp();
+            return;
+          } else {
+            // saved username no longer in APP_USERS: clear
+            localStorage.removeItem(STORAGE_KEY);
+          }
+        } catch(e){
+          console.warn('Auto-login error', e);
+          localStorage.removeItem(STORAGE_KEY);
         }
-      });
-      containerEl.addEventListener('drop', async (e)=>{
-        e.preventDefault();
-        const ids = Array.from(containerEl.children).map(ch => ch.dataset && ch.dataset.id ? ch.dataset.id : null).filter(Boolean);
-        try{ await persistFn(ids); containerEl.style.opacity='0.95'; setTimeout(()=> containerEl.style.opacity='',220); }catch(err){ console.error('persist order failed', err); alert('Save order failed: ' + (err.message || err)); }
-      });
-      function getDragAfterElement(container, y){
-        const draggableElements = [...container.querySelectorAll('[draggable="true"]')].filter(el => el !== dragEl);
-        let closest = null; let closestOffset = Number.NEGATIVE_INFINITY;
-        for(const child of draggableElements){
-          const box = child.getBoundingClientRect();
-          const offset = y - box.top - box.height/2;
-          if(offset > closestOffset){ closestOffset = offset; closest = child; }
-        }
-        return closest;
       }
-    }
-
-    function makeFirestorePersistFunc(collectionName){
-      return async function(ids){
-        for(let i=0;i<ids.length;i++){
-          const id = ids[i];
-          const ref = doc(db, ROOT_COL, ROOT_DOC, collectionName, id);
-          try{ await setDoc(ref, { order: i }, { merge: true }); }catch(e){ console.error('setDoc order failed', e); throw e; }
-        }
-      };
-    }
-
-    async function persistLocalUsersOrder(ids){
-      saveLocalUsersOrder(ids);
-      renderUsersOrdered(loadLocalUsers());
-    }
-
-    function sortFirestoreMapByOrder(map){
-      return Object.entries(map||{})
-        .map(([id,data]) => ({ id, ...(data||{}) }))
-        .sort((a,b) => {
-          const ao = (typeof a.order === 'number') ? a.order : Number.MAX_SAFE_INTEGER;
-          const bo = (typeof b.order === 'number') ? b.order : Number.MAX_SAFE_INTEGER;
-          if(ao !== bo) return ao - bo;
-          return (a.name||'').localeCompare(b.name||'');
-        });
-    }
-
-    // Departments
-    async function renderDepartmentsOrdered(fireDeptMap){
-      const t=$('deptList'); t.innerHTML='';
-      const items = sortFirestoreMapByOrder(fireDeptMap);
-      items.forEach(d=>{
-        const div=document.createElement('div'); div.className='listItem';
-        div.draggable = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? true : false;
-        div.dataset.id = d.id;
-        const dragHandle = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? '<span style="margin-right:8px;cursor:grab">≡</span>' : '';
-        div.innerHTML = `<div><div style="font-weight:800">${dragHandle}${esc(d.name||'')}</div><div class='meta'>${esc(d.battalion||'')} ${d.address? ' • '+esc(d.address):''}</div></div>
-          <div style="display:flex;gap:8px"><button class="btn small" data-id="${d.id}" data-act="view-dept">View</button>${(CURRENT_USER && (CURRENT_USER.role==='ADMIN' || (CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept===d.name)))?`<button class="btn small" data-id="${d.id}" data-act="edit-dept">Edit</button>`:''}</div>`;
-        t.appendChild(div);
-      });
-      t.querySelectorAll('button[data-act="view-dept"]').forEach(b=> b.addEventListener('click', ()=> viewDept(b.dataset.id)));
-      t.querySelectorAll('button[data-act="edit-dept"]').forEach(b=> b.addEventListener('click', ()=> editDept(b.dataset.id)));
-      if(CURRENT_USER && CURRENT_USER.role === 'ADMIN'){ enableDragReorder(t, makeFirestorePersistFunc('fire_departments')); }
-    }
-
-    // EMS
-    async function renderEMSOrdered(emsMap){
-      const t=$('emsList'); t.innerHTML='';
-      const items = sortFirestoreMapByOrder(emsMap);
-      items.forEach(e=>{
-        const div=document.createElement('div'); div.className='listItem';
-        div.draggable = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? true : false;
-        div.dataset.id = e.id;
-        const dragHandle = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? '<span style="margin-right:8px;cursor:grab">≡</span>' : '';
-        div.innerHTML=`<div><div style="font-weight:800">${dragHandle}${esc(e.name||'')}</div><div class='meta'>${esc(e.address||'')}</div></div><div><button class='btn small' data-id="${e.id}" data-act="view-ems">View</button></div>`;
-        t.appendChild(div);
-      });
-      t.querySelectorAll('button[data-act="view-ems"]').forEach(b=> b.addEventListener('click', ()=> viewEms(b.dataset.id)));
-      if(CURRENT_USER && CURRENT_USER.role === 'ADMIN'){ enableDragReorder(t, makeFirestorePersistFunc('ems_agencies')); }
-    }
-
-    // Coordinators
-    async function renderCoordinatorsOrdered(coordMap){
-      const t=$('coordList'); t.innerHTML='';
-      const items = sortFirestoreMapByOrder(coordMap);
-      items.forEach(c=>{
-        const div=document.createElement('div'); div.className='listItem';
-        div.draggable = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? true : false;
-        div.dataset.id = c.id;
-        const dragHandle = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? '<span style="margin-right:8px;cursor:grab">≡</span>' : '';
-        div.innerHTML=`<div><div style="font-weight:800">${dragHandle}${esc(c.name||'')}</div><div class='meta'>Callsign: ${esc(c.callsign||'')}</div></div><div style="display:flex;gap:8px">${(CURRENT_USER && CURRENT_USER.role==='ADMIN')?`<button class='btn small' data-id="${c.id}" data-act="edit-coord">Edit</button>`:''}</div>`;
-        t.appendChild(div);
-      });
-      t.querySelectorAll('button[data-act="edit-coord"]').forEach(b=> b.addEventListener('click', ()=> editCoordinator(b.dataset.id)));
-      if(CURRENT_USER && CURRENT_USER.role === 'ADMIN'){ enableDragReorder(t, makeFirestorePersistFunc('coordinators')); }
-    }
-<!-- PART 6/6 -->
-    // Teams
-    async function renderTeamsOrdered(teamMap){
-      const t=$('teamList'); t.innerHTML='';
-      const items = sortFirestoreMapByOrder(teamMap);
-      items.forEach(tm=>{
-        const div=document.createElement('div'); div.className='listItem';
-        div.draggable = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? true : false;
-        div.dataset.id = tm.id;
-        const dragHandle = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? '<span style="margin-right:8px;cursor:grab">≡</span>' : '';
-        div.innerHTML=`<div><div style="font-weight:800">${dragHandle}${esc(tm.name||'')}</div><div class="meta">${esc(tm.lead||'')}</div></div><div></div>`;
-        t.appendChild(div);
-      });
-      if(CURRENT_USER && CURRENT_USER.role === 'ADMIN'){ enableDragReorder(t, makeFirestorePersistFunc('county_teams')); }
-    }
-
-    // Users (local)
-    function renderUsersOrdered(localUsersObj){
-      const target = $('userList');
-      target.innerHTML = '';
-      const order = loadLocalUsersOrder();
-      let keys = Object.keys(localUsersObj || {});
-      if(order && order.length){
-        const ordered = order.filter(u => keys.includes(u));
-        const missing = keys.filter(k=> !ordered.includes(k));
-        keys = [...ordered, ...missing];
-      } else { keys.sort(); }
-      keys.forEach(u=>{
-        const user = localUsersObj[u];
-        const div = document.createElement('div'); div.className='listItem';
-        div.draggable = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? true : false;
-        div.dataset.id = u;
-        const dragHandle = (CURRENT_USER && CURRENT_USER.role === 'ADMIN') ? '<span style="margin-right:8px;cursor:grab">≡</span>' : '';
-        div.innerHTML = `<div><strong>${dragHandle}${u}</strong><div class="muted">Role: ${user.role}</div></div><div style="display:flex;gap:8px"><button class='small btn' onclick="editUser('${u}')">Edit</button><button class='small btn' onclick="deleteUser('${u}')">Delete</button></div>`;
-        target.appendChild(div);
-      });
-      if(CURRENT_USER && CURRENT_USER.role === 'ADMIN'){
-        enableDragReorder(target, async (ids) => { await persistLocalUsersOrder(ids); });
-      }
-    }
-
-    // Aliases & legacy compatibility
-    function renderUsers(){ renderUsersOrdered(loadLocalUsers()); }
-
-    // --------------------------
-    // CRUD + Admin actions (kept similar to prior implementation)
-    // For brevity, many of the existing add/edit/delete functions are similar
-    // to the versions you already have. We'll include the core ones needed.
-    // --------------------------
-
-    // Add Department
-    $('addDept').addEventListener('click', ()=> {
-      if(!isAdmin()) return;
-      showModal('Add Department', (root)=> {
-        root.innerHTML = `<input id="md_name" placeholder="Name"/><input id="md_batt" placeholder="Battalion"/><input id="md_addr" placeholder="Address"/><input id="md_apps" placeholder="Apparatus (| separated)"/>`;
-      }, async ()=> {
-        const name=$('md_name').value.trim()||'Unnamed', batt=$('md_batt').value.trim(), addr=$('md_addr').value.trim(), apps=$('md_apps').value.trim();
-        await addDoc(subCol('fire_departments'), { name, battalion: batt, address: addr, apparatus: apps });
-      });
+      // show login form if not auto-logged in
+      showLogin();
     });
 
-    // Add EMS
-    $('addEms').addEventListener('click', ()=> {
-      if(!isAdmin()) return;
-      showModal('Add EMS', (r)=> r.innerHTML=`<input id="me_name" placeholder="Name"/><input id="me_addr" placeholder="Address"/>`, async ()=> {
-        const name=$('me_name').value.trim()||'Unnamed', addr=$('me_addr').value.trim(); await addDoc(subCol('ems_agencies'), { name, address: addr });
-      });
-    });
-
-    // Add Coordinator
-    $('addCoord').addEventListener('click', ()=> {
-      if(!isAdmin()) return;
-      showModal('Add Coordinator', (r)=> r.innerHTML=`<input id="mc_name" placeholder="Name"/><input id="mc_callsign" placeholder="Callsign"/>`, async ()=> {
-        const name=$('mc_name').value.trim(); const calls=$('mc_callsign').value.trim(); if(!name) return alert('Name required'); await addDoc(subCol('coordinators'), { name, callsign: calls });
-      });
-    });
-
-    // Add Team
-    $('addTeam').addEventListener('click', ()=> {
-      if(!isAdmin()) return;
-      showModal('Add Team', (r)=> r.innerHTML=`<input id="mt_name" placeholder="Team Name"/><input id="mt_lead" placeholder="Lead"/><input id="mt_caps" placeholder="Capabilities (| separated)"/>`, async ()=> {
-        const n=$('mt_name').value.trim()||'Unnamed', lead=$('mt_lead').value.trim(), caps=$('mt_caps').value.trim(); await addDoc(subCol('county_teams'), { name:n, lead, capabilities: caps });
-      });
-    });
-
-    // Apparatus control add/edit/delete
-    $('addApp').addEventListener('click', ()=> {
-      if(!isAdmin()) return;
-      showModal('Add Apparatus', (root)=> {
-        root.innerHTML = `<input id="ap_username" placeholder="Login username (eg ENGINE511)"/><input id="ap_name" placeholder="Apparatus display name (eg Engine 511)"/><input id="ap_dept" placeholder="Assigned department (exact name)"/>`;
-      }, async ()=> {
-        const username = ($('ap_username').value.trim()||'').toUpperCase(); if(!username) return alert('Username required');
-        const apron = $('ap_name').value.trim(); const dept = $('ap_dept').value.trim();
-        await setDoc(docRef('apparatus', username), { username, apparatusName:apron, department:dept });
-      });
-    });
-
-    async function editApp(id){
-      if(!isAdmin()) return;
-      const s = await getDoc(docRef('apparatus', id)); if(!s.exists()) return alert('Not found');
-      const d = s.data();
-      showModal('Edit Apparatus', (root)=> {
-        root.innerHTML = `<input id="ea_name" value="${esc(d.apparatusName||'')}" /><input id="ea_dept" value="${esc(d.department||'')}" />`;
-      }, async ()=> {
-        const obj = { username:id, apparatusName:$('ea_name').value.trim(), department:$('ea_dept').value.trim() };
-        await setDoc(docRef('apparatus', id), obj); alert('Saved');
-      });
+    // ====== UI: show/hide login & app ======
+    function showLogin(){
+      $('loginCard').style.display = 'block';
+      $('appUI').style.display = 'none';
+      $('logoutBtn').style.display = 'none';
+      $('currentUserLabel').textContent = '—';
     }
-    async function deleteApp(id){
-      if(!confirm('Delete apparatus '+id+'?')) return;
-      await deleteDoc(docRef('apparatus', id));
+    function showApp(){
+      $('loginCard').style.display = 'none';
+      $('appUI').style.display = 'block';
+      $('logoutBtn').style.display = 'inline-block';
+      $('currentUserLabel').textContent = CURRENT.username;
+      $('appUserLabel').textContent = `${CURRENT.username} • ${CURRENT.apparatus || CURRENT.label || ''}`;
+      $('appUserMeta').textContent = `${CURRENT.dept || 'Unassigned'}`;
     }
 
-    // HazMat search / admin (as before)
-    $('btnHazSearch').addEventListener('click', async ()=> {
-      const q = ($('hazQuery').value||'').trim(); if(!q) return alert('Enter UN number');
-      const s = await getDoc(docRef('hazmat', q));
-      if(s.exists()){
-        const e = s.data();
-        $('hazResult').innerHTML = `<div style="font-weight:800">${esc(e.name||'')}</div><div class="meta">Class: ${esc(e.hazard_class||'')}</div><div style="margin-top:8px"><strong>Flammability:</strong> ${esc(e.flammability||'—')}</div><div><strong>Water reactivity:</strong> ${esc(e.water_reactivity||'—')}</div><div style="margin-top:8px"><strong>Evacuation (small):</strong> ${esc(e.evac_small||e.evacuation_small||'—')}</div><div><strong>Evacuation (large):</strong> ${esc(e.evac_large||e.evacuation_large||'—')}</div><div style="margin-top:8px">${esc(e.notes||'')}</div>`;
-      } else {
-        $('hazResult').innerHTML = `<div class="meta">No record for UN ${esc(q)}. Admins can add entries.</div>`;
-      }
-    });
-
-    $('btnHazAdmin').addEventListener('click', ()=> {
-      if(!isAdmin()) return;
-      showModal('Add/Edit HazMat', (root)=> {
-        root.innerHTML = `<input id="hz_un" placeholder="UN number"/><input id="hz_name" placeholder="Common name"/><input id="hz_class" placeholder="Hazard class"/><input id="hz_flame" placeholder="Flammability"/><input id="hz_water" placeholder="Water reactivity"/><input id="hz_agent" placeholder="Extinguishing agent"/><textarea id="hz_notes" placeholder="Notes"></textarea>`;
-      }, async ()=> {
-        const un = $('hz_un').value.trim(); if(!un) return alert('UN required');
-        const obj = { un, name:$('hz_name').value.trim(), hazard_class:$('hz_class').value.trim(), flammability:$('hz_flame').value.trim(), water_reactivity:$('hz_water').value.trim(), extinguishing_agent:$('hz_agent').value.trim(), notes:$('hz_notes').value.trim() };
-        await setDoc(docRef('hazmat', un), obj); alert('Saved');
-      });
-    });
-
-    // EV search
-    $('btnEvSearch').addEventListener('click', async ()=> {
-      const v = ($('evQuery').value||'').trim(); if(!v) return alert('Enter YMM or Make');
-      const key = v.split(',')[1] ? v.split(',')[1].trim().toLowerCase().replace(/\s+/g,'_') : v.trim().toLowerCase().replace(/\s+/g,'_');
-      const s = await getDoc(docRef('ev_guides', key));
-      if(s.exists()){
-        const d = s.data(); $('evResult').innerHTML = `<div style="font-weight:800">${esc(d.make||key)}</div><div style="margin-top:6px"><a href="${esc(d.url)}" target="_blank">${esc(d.url)}</a></div>`;
-      } else $('evResult').innerHTML = `<div class="meta">No guide for "${esc(key)}". Admins can add guides.</div>`;
-    });
-
-    // Admin Manage Local Users (modal UI)
-    $('manageUsers').addEventListener('click', ()=> {
-      if(!isAdmin()) return;
-      showModal('Manage Local Users', (root)=>{
-        const users = loadLocalUsers();
-        let html = `<div style="max-height:260px;overflow:auto">`;
-        Object.keys(users).forEach(u => { html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><div><strong>${esc(u)}</strong><div class="meta">Role: ${esc(users[u].role||'')}</div></div><div><button class="btn small" data-user="${esc(u)}" data-act="editLocal">Edit</button> <button class="btn small" data-user="${esc(u)}" data-act="delLocal">Delete</button></div></div>`});
-        html += `</div><div style="margin-top:8px"><button id="createLocal" class="btn primary">Create User</button></div>`;
-        root.innerHTML = html;
-        root.querySelectorAll('button[data-act="editLocal"]').forEach(btn=> btn.addEventListener('click', ()=> editLocalUser(btn.dataset.user)));
-        root.querySelectorAll('button[data-act="delLocal"]').forEach(btn=> btn.addEventListener('click', ()=> { if(confirm('Delete '+btn.dataset.user+'?')){ const u=btn.dataset.user; const obj = loadLocalUsers(); delete obj[u]; saveLocalUsers(obj); alert('Deleted'); modal.style.display='none'; } }));
-        root.querySelector('#createLocal').addEventListener('click', ()=> {
-          showModal('Create Local User', (r)=> r.innerHTML=`<input id="lu_name" placeholder="Username"/><input id="lu_pass" placeholder="Password"/><select id="lu_role"><option>ADMIN</option><option>DEPT_ADMIN</option><option>DEPT_USER</option></select><input id="lu_dept" placeholder="Department (for DEPT_ADMIN/DEPT_USER)"/>`, async ()=> {
-            const un = ($('lu_name').value||'').trim().toUpperCase(); if(!un) return alert('Username required'); const pw = $('lu_pass').value.trim(); const role = $('lu_role').value; const dept = $('lu_dept').value.trim();
-            const obj = loadLocalUsers(); obj[un] = { password: pw||'changeme', role, dept }; saveLocalUsers(obj); alert('Saved');
-          });
-        });
-      }, async ()=> {});
-    });
-
-    function editLocalUser(username){
-      const users = loadLocalUsers();
-      const u = users[username];
-      showModal('Edit Local User', (r)=> r.innerHTML = `<div><strong>${esc(username)}</strong></div><input id="lu_pass" placeholder="Password" value="${esc(u.password||'')}" /><select id="lu_role"><option${u.role==='ADMIN'?' selected':''}>ADMIN</option><option${u.role==='DEPT_ADMIN'?' selected':''}>DEPT_ADMIN</option><option${u.role==='DEPT_USER'?' selected':''}>DEPT_USER</option></select><input id="lu_dept" placeholder="Department" value="${esc(u.dept||'')}" />`, async ()=> {
-      const pw = $('lu_pass').value.trim(); const role = $('lu_role').value; const dept = $('lu_dept').value.trim();
-      const obj = loadLocalUsers(); obj[username] = { password: pw||obj[username].password, role, dept }; saveLocalUsers(obj); alert('Saved');
-    });
-
-    // Utility & helpers
-    function isAdmin(){ if(!CURRENT_USER){ alert('Please log in as admin'); return false; } if(CURRENT_USER.role!=='ADMIN'){ alert('Admin privileges required'); return false; } return true; }
-
-    // Weather
-    async function fetchWeather(){
+    // ====== Login / Logout ======
+    async function loginHandler(){
+      const u = ($('apUser').value || '').trim().toUpperCase();
+      const p = ($('apPass').value || '').trim();
+      if(!u || !p){ $('apMsg').textContent = 'Enter username & password'; return; }
+      const user = APP_USERS[u];
+      if(!user || user.password !== p){ $('apMsg').textContent='Invalid credentials'; return; }
+      $('apMsg').textContent='';
+      CURRENT = { username:u, label:user.label };
+      // try to fetch apparatus assignment from Firestore (admin should create in main app)
       try{
-        const r = await fetch('https://api.weather.gov/alerts/active?area=OSW');
-        const j = await r.json();
-        if(j && Array.isArray(j.features) && j.features.length) $('weatherBlock').textContent = j.features.map(f=> `${f.properties.event} — ${f.properties.areaDesc}`).join('\\n\\n');
-        else $('weatherBlock').textContent = 'No active alerts';
-      } catch(e){ $('weatherBlock').textContent = 'Weather service unavailable'; }
+        const snap = await getDoc(docRef('apparatus', u));
+        if(snap.exists()){
+      if(!user || user.password !== p){ $('apMsg').textContent = 'Invalid credentials'; return; }
+      // success
+      $('apMsg').textContent = '';
+      CURRENT = { username: u, label: user.label || u };
+      // persist SSO token (just store username — passwords remain local in APP_USERS)
+      localStorage.setItem(STORAGE_KEY, u);
+      // fetch assignment from Firestore (if present)
+      await fetchApparatusAssignment(u);
+      bootApp();
     }
 
-    // initial show
-    window.addEventListener('DOMContentLoaded', ()=> { showLogin(); });
+    function logoutHandler(){
+      localStorage.removeItem(STORAGE_KEY);
+      CURRENT = null;
+      // stop any listeners by reloading (keeps code simple)
+      location.reload();
+    }
+
+    // fetch apparatus assignment from Firestore
+    async function fetchApparatusAssignment(username){
+      try {
+        const snap = await getDoc(docRef('apparatus', username));
+        if(snap && snap.exists && snap.exists()){
+          const d = snap.data();
+          CURRENT.dept = d.department || 'Unassigned';
+          CURRENT.apparatus = d.apparatusName || user.label || u;
+          CURRENT.apparatus = d.apparatusName || d.username || CURRENT.label;
+        } else {
+          CURRENT.dept = 'Unassigned';
+          CURRENT.apparatus = user.label || u;
+          CURRENT.apparatus = CURRENT.label || username;
+        }
+      }catch(e){
+        CURRENT.dept='Unassigned'; CURRENT.apparatus = user.label || u;
+      } catch(e){
+        console.warn('fetchApparatusAssignment error', e);
+        CURRENT.dept = 'Unassigned';
+        CURRENT.apparatus = CURRENT.label || username;
+      }
+      bootApparatus();
+    });
+
+    $('apLogout').addEventListener('click', ()=> location.reload());
+    }
+
+    let CURRENT = null;
+    function bootApparatus(){
+      $('loginCard').style.display='none';
+      $('appUI').style.display='block';
+      $('appUserLabel').textContent = `${CURRENT.username} • ${CURRENT.apparatus} • ${CURRENT.dept}`;
+      // watch incidents
+      onSnapshot(query(subCol('incidents')), snap=> {
+        const data = {}; snap.forEach(d=> data[d.id] = d.data()); renderIncidentsList(data);
+    // boot the app UI and start listening to incidents
+    function bootApp(){
+      showApp();
+      // subscribe to incidents collection for live updates
+      onSnapshot(query(subCol('incidents')), snap => {
+        INCIDENTS = {};
+        snap.forEach(d => INCIDENTS[d.id] = { id: d.id, ...d.data() });
+        renderIncidentList();
+        // update currently opened incident if any
+        if(SELECTED) renderOpenIncident(SELECTED);
+      }, err => {
+        console.error('Incidents snapshot error', err);
+        // still render cached if present
+        renderIncidentList();
+      });
+    }
+
+    function renderIncidentsList(data){
+      const t = $('incidentList'); t.innerHTML='';
+      const keys = Object.keys(data).sort((a,b)=> (data[b].createdAt||'').localeCompare(data[a].createdAt||''));
+      if(!keys.length) t.innerHTML = '<div class="muted">No active incidents</div>';
+      keys.forEach(id=>{
+        const it = data[id]; if(it.archived) return;
+        const div = document.createElement('div'); div.className='incidentItem';
+        div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="muted">${esc(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${id}">Open</button></div></div>`;
+    // ====== Incident list UI ======
+    function renderIncidentList(){
+      const t = $('incidentList'); t.innerHTML = '';
+      const arr = Object.values(INCIDENTS).sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
+      if(!arr.length){ t.innerHTML = '<div class="muted">No active incidents</div>'; return; }
+      arr.forEach(it=>{
+        if(it.archived) return;
+        const div = document.createElement('div'); div.className = 'incidentItem';
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>${escapeHtml(it.type||'')}</strong><div class="muted">${escapeHtml(it.address||'')}</div></div>
+            <div><button class="btn small openBtn" data-id="${it.id || it.id}">Open</button></div>
+          </div>`;
+        t.appendChild(div);
+      });
+      t.querySelectorAll('.openBtn').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
+      t.querySelectorAll('.openBtn').forEach(b => b.addEventListener('click', (ev) => openIncident(ev.currentTarget.dataset.id)));
+    }
+
+    // create incident flow
+    $('createBtn').addEventListener('click', ()=> { $('createPanel').style.display='block'; $('incidentPanel').style.display='none'; });
+    $('cancelInc').addEventListener('click', ()=> { $('createPanel').style.display='none'; });
+    $('submitInc').addEventListener('click', async ()=>{
+      const obj = { createdAt: now(), createdBy: CURRENT.username, creatorDept: CURRENT.dept, creatorApparatus: CURRENT.apparatus, type: $('incType').value, address: $('incAddress').value.trim(), nature: $('incNature').value.trim(), details: $('incDetails').value.trim(), isClosed:false, archived:false, unitsAttached: [], statusUpdates: [], messages: [], details: [] };
+      const ref = await addDoc(subCol('incidents'), obj);
+      $('createPanel').style.display='none';
+      openIncident(ref.id);
+    });
+    // ====== Create incident ======
+    async function submitIncident(){
+      const obj = {
+        createdAt: new Date().toISOString(),
+        createdBy: CURRENT.username,
+        creatorDept: CURRENT.dept || 'Unassigned',
+        creatorApparatus: CURRENT.apparatus || CURRENT.label,
+        type: $('incType').value,
+        address: $('incAddress').value.trim(),
+        nature: $('incNature').value.trim(),
+        details: $('incDetails').value.trim(),
+        isClosed: false,
+        archived: false,
+        unitsAttached: [],
+        statusUpdates: [],
+        messages: [],
+        details: []
+      };
+      try {
+        await addDoc(subCol('incidents'), obj);
+        $('createPanel').style.display = 'none';
+      } catch(e){
+        alert('Error creating incident: ' + (e.message || e));
+      }
+    }
+
+    let SELECTED = null;
+    // ====== Open incident ======
+    async function openIncident(id){
+      SELECTED = id;
+      const snap = await getDoc(docRef('incidents', id));
+      if(!snap.exists()) return alert('Not found');
+      if(!snap || !snap.exists || !snap.exists()) { alert('Incident not found'); return; }
+      const it = snap.data();
+      $('incidentPanel').style.display='block';
+      $('createPanel').style.display='none';
+      $('incTitle').textContent = `${it.type} — ${it.address || ''}`;
+      $('incMeta').textContent = `Created: ${it.createdAt || ''} • By: ${it.createdBy || ''}`;
+      renderUnits(it);
+      renderTimeline(it);
+      renderChat(it);
+      renderOpenIncident(id);
+    }
+
+    async function renderUnits(it){
+      const out = $('unitsBlock'); out.innerHTML='';
+      (it.unitsAttached||[]).forEach(u=>{
+        const div = document.createElement('div'); div.style.marginBottom='6px';
+        div.innerHTML = `<div style="font-weight:700">${esc(u.apparatus||u.unitId)}</div><div class="muted">${esc(u.agency||'')} • ${esc(u.status||'')}</div><div class="muted">${(u.statusHistory||[]).map(h=> `${esc(h.status)} @ ${esc(h.ts)}`).join(' | ')}</div>`;
+        out.appendChild(div);
+    function renderOpenIncident(id){
+      const it = INCIDENTS[id];
+      if(!it){ alert('Incident not available yet'); return; }
+      $('incidentPanel').style.display = 'block';
+      $('createPanel').style.display = 'none';
+      $('incTitle').textContent = `${it.type || ''} — ${it.address || ''}`;
+      $('incMeta').textContent = `Created: ${it.createdAt || ''} • By: ${it.createdBy || ''}`;
+      // units
+      const ub = $('unitsBlock'); ub.innerHTML = '';
+      (it.unitsAttached || []).forEach(u => {
+        const el = document.createElement('div');
+        el.innerHTML = `<div style="font-weight:700">${escapeHtml(u.apparatus || u.unitId || '')}</div><div class="muted">${escapeHtml(u.agency || '')} • ${escapeHtml(u.status || '')}</div><div class="muted">${(u.statusHistory||[]).map(h => `${escapeHtml(h.status)} @ ${escapeHtml(h.ts)}`).join(' | ')}</div>`;
+        ub.appendChild(el);
+      });
+    }
+    function renderTimeline(it){
+      const t = $('timelineBlock'); t.innerHTML='';
+      // timeline
+      const timeline = [];
+      (it.statusUpdates||[]).forEach(s=> timeline.push({ts:s.ts,txt:`${s.unitId} → ${s.status}`}));
+      (it.details||[]).forEach(d=> timeline.push({ts:d.ts,txt:`Detail by ${d.by}: ${d.text}`}));
+      (it.messages||[]).forEach(m=> timeline.push({ts:m.ts,txt:`${m.sender}: ${m.text}`}));
+      (it.statusUpdates || []).forEach(s => timeline.push({ ts: s.ts, txt: `${s.unitId} → ${s.status}` }));
+      (it.details || []).forEach(d => timeline.push({ ts: d.ts, txt: `Detail by ${d.by}: ${d.text}` }));
+      (it.messages || []).forEach(m => timeline.push({ ts: m.ts, txt: `${m.sender}: ${m.text}` }));
+      timeline.sort((a,b)=> (a.ts||'').localeCompare(b.ts||''));
+      timeline.forEach(item=> { const div=document.createElement('div'); div.className='muted'; div.textContent = `${item.ts} — ${item.txt}`; t.appendChild(div); });
+    }
+    function renderChat(it){
+      const c = $('chatBox'); c.innerHTML='';
+      (it.messages||[]).forEach(m=> { const d=document.createElement('div'); d.innerHTML = `<div style="font-weight:700">${esc(m.sender)}</div><div class="muted">${esc(m.text)}</div><div class="muted" style="font-size:11px">${esc(m.ts)}</div>`; c.appendChild(d); });
+      c.scrollTop = c.scrollHeight;
+      const tb = $('timelineBlock'); tb.innerHTML = '';
+      timeline.forEach(item => {
+        const d = document.createElement('div'); d.className = 'muted'; d.textContent = `${item.ts} — ${item.txt}`; tb.appendChild(d);
+      });
+      // chat
+      const cb = $('chatBox'); cb.innerHTML = '';
+      (it.messages || []).forEach(m => {
+        const d = document.createElement('div'); d.innerHTML = `<div style="font-weight:700">${escapeHtml(m.sender)}</div><div class="muted">${escapeHtml(m.text)}</div><div class="muted" style="font-size:11px">${escapeHtml(m.ts)}</div>`; cb.appendChild(d);
+      });
+      cb.scrollTop = cb.scrollHeight;
+    }
+
+    // attach/detach
+    $('attachBtn').addEventListener('click', async ()=> {
+      if(!SELECTED) return alert('Select incident');
+      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
+      const snap = await getDoc(ref); if(!snap.exists()) return;
+      const inc = snap.data();
+      inc.unitsAttached = inc.unitsAttached || [];
+      const unitId = CURRENT.username;
+      if(inc.unitsAttached.some(u=> u.unitId === unitId)) { alert('Already attached'); return; }
+      const newUnit = { unitId, agency: CURRENT.dept, apparatus: CURRENT.apparatus, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: now(), by: unitId }] };
+      inc.unitsAttached.push(newUnit);
+      inc.statusUpdates.push({ unitId, status:'Acknowledged', ts: now() });
+      await setDoc(ref, inc);
+      openIncident(SELECTED);
+    });
+    // ====== Attach unit to incident ======
+    async function attachToIncident(){
+      if(!SELECTED) return alert('Select an incident');
+      try {
+        const ref = docRef('incidents', SELECTED);
+        const snap = await getDoc(ref);
+        if(!snap || !snap.exists || !snap.exists()) return alert('Incident missing');
+        const inc = snap.data();
+        inc.unitsAttached = inc.unitsAttached || [];
+        const unitId = CURRENT.username;
+        if(inc.unitsAttached.some(u => u.unitId === unitId)) { alert('Already attached'); return; }
+        const newUnit = { unitId, agency: CURRENT.dept || 'Unassigned', apparatus: CURRENT.apparatus || CURRENT.label, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: new Date().toISOString(), by: unitId }] };
+        inc.unitsAttached.push(newUnit);
+        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId, status:'Acknowledged', ts: new Date().toISOString() });
+        await setDoc(ref, inc);
+      } catch(e){
+        alert('Attach failed: ' + (e.message || e));
+      }
+    }
+
+    // status update buttons
+    document.querySelectorAll('.statusBtn').forEach(b=> b.addEventListener('click', async (e)=> {
+      if(!SELECTED) return alert('Select incident');
+    // ====== Status update handler ======
+    async function statusUpdateHandler(e){
+      if(!SELECTED) return alert('Select an incident');
+      const status = e.currentTarget.dataset.status;
+      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
+      const snap = await getDoc(ref); if(!snap.exists()) return;
+      const inc = snap.data();
+      const u = (inc.unitsAttached||[]).find(x=> x.unitId === CURRENT.username);
+      if(!u) return alert('You are not attached');
+      u.status = status; u.statusHistory = u.statusHistory || []; u.statusHistory.push({ status, ts: now(), by: CURRENT.username });
+      inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: CURRENT.username, status, ts: now() });
+      if(status === 'Clear'){
+        const stillActive = (inc.unitsAttached||[]).some(x=> x.status !== 'Clear');
+        if(!stillActive){ inc.isClosed = true; inc.closedAt = now(); }
+      try {
+        const ref = docRef('incidents', SELECTED);
+        const snap = await getDoc(ref);
+        if(!snap || !snap.exists || !snap.exists()) return alert('Incident missing');
+        const inc = snap.data();
+        const unit = (inc.unitsAttached || []).find(u => u.unitId === CURRENT.username);
+        if(!unit) return alert('You must attach to the incident first');
+        unit.status = status;
+        unit.statusHistory = unit.statusHistory || []; unit.statusHistory.push({ status, ts: new Date().toISOString(), by: CURRENT.username });
+        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: CURRENT.username, status, ts: new Date().toISOString() });
+        if(status === 'Clear'){
+          const stillActive = (inc.unitsAttached || []).some(x => x.status !== 'Clear');
+          if(!stillActive){ inc.isClosed = true; inc.closedAt = new Date().toISOString(); }
+        }
+        await setDoc(ref, inc);
+      } catch(e){
+        alert('Status update failed: ' + (e.message || e));
+      }
+      await setDoc(ref, inc);
+      openIncident(SELECTED);
+    }));
+
+    // add agency (from fire_departments names)
+    $('addAgencyBtn').addEventListener('click', async ()=> {
+      if(!SELECTED) return alert('Select incident');
+      const snap = await getDocs(subCol('fire_departments'));
+      const options = []; snap.forEach(d=> options.push(d.data().name));
+      const choice = prompt('Enter agency name (choose from list):\\n' + options.join('\\n'));
+      if(!choice) return;
+      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
+      const s = await getDoc(ref); if(!s.exists()) return;
+      const inc = s.data(); const uid = `${choice.replace(/\\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+      inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId: uid, agency: choice, apparatus: choice, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: now(), by:'SYSTEM' }] });
+      inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: now() });
+      await setDoc(ref, inc); openIncident(SELECTED);
+    });
+    }
+
+    // alarm templates
+    $('alarmBtn').addEventListener('click', ()=> { $('alarmMenu').style.display = $('alarmMenu').style.display === 'block' ? 'none' : 'block'; });
+    document.querySelectorAll('.alarmOpt').forEach(btn=> btn.addEventListener('click', async (e)=> {
+      const key = e.currentTarget.dataset.temp;
+      if(!SELECTED) return alert('Select incident');
+      const tmpDoc = await getDoc(docRef('alarm_templates', key));
+      if(!tmpDoc.exists()) return alert('Template empty');
+      const units = tmpDoc.data().units || [];
+      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
+      const s = await getDoc(ref); if(!s.exists()) return;
+      const inc = s.data();
+      units.forEach(deptName => {
+        const uid = `${deptName.replace(/\\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+        inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId:uid, agency:deptName, apparatus:deptName, status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts: now(), by:'SYSTEM'}] });
+        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: now() });
+      });
+      await setDoc(ref, inc); openIncident(SELECTED); $('alarmMenu').style.display='none';
+    }));
+
+    // add detail
+    $('addDetailBtn').addEventListener('click', async ()=> {
+      if(!SELECTED) return alert('Select incident');
+      const txt = prompt('Enter detail:'); if(!txt) return;
+      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
+      const s = await getDoc(ref); if(!s.exists()) return;
+      const inc = s.data(); inc.details = inc.details || []; inc.details.push({ by: CURRENT.username, text: txt, ts: now() });
+      await setDoc(ref, inc); openIncident(SELECTED);
+    });
+    // ====== Add agency (admin-created department names used) ======
+    async function addAgencyToIncident(){
+      if(!SELECTED) return alert('Select an incident');
+      try {
+        // fetch list of departments from Firestore
+        const snap = await getDocs(subCol('fire_departments'));
+        const options = [];
+        snap.forEach(d => options.push(d.data().name));
+        const choice = prompt('Enter agency name (choose from list):\n' + options.join('\n'));
+        if(!choice) return;
+        const ref = docRef('incidents', SELECTED);
+        const s = await getDoc(ref);
+        if(!s || !s.exists || !s.exists()) return;
+        const inc = s.data();
+        const uid = `${choice.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+        inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId: uid, agency: choice, apparatus: choice, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: new Date().toISOString(), by:'SYSTEM' }] });
+        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: new Date().toISOString() });
+        await setDoc(ref, inc);
+      } catch(e){
+        alert('Add agency failed: ' + (e.message || e));
+      }
+    }
+
+    // send chat
+    $('sendChat').addEventListener('click', async ()=> {
+      if(!SELECTED) return alert('Select incident');
+      const txt = $('chatInput').value.trim(); if(!txt) return;
+      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
+      const s = await getDoc(ref); if(!s.exists()) return;
+      const inc = s.data(); inc.messages = inc.messages || []; inc.messages.push({ sender: CURRENT.username, text: txt, ts: now() });
+      await setDoc(ref, inc); $('chatInput').value=''; openIncident(SELECTED);
+    });
+    // ====== Apply alarm template ======
+    async function applyAlarmTemplate(e){
+      if(!SELECTED) return alert('Select an incident');
+      const templateKey = e.currentTarget.dataset.temp; // first / second / third
+      try {
+        const tmp = await getDoc(docRef('alarm_templates', templateKey));
+        if(!tmp || !tmp.exists || !tmp.exists()) return alert('Template empty');
+        const units = tmp.data().units || [];
+        const ref = docRef('incidents', SELECTED);
+        const s = await getDoc(ref);
+        if(!s || !s.exists || !s.exists()) return;
+        const inc = s.data();
+        inc.unitsAttached = inc.unitsAttached || [];
+        units.forEach(deptName => {
+          const uid = `${deptName.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+          inc.unitsAttached.push({ unitId: uid, agency: deptName, apparatus: deptName, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: new Date().toISOString(), by:'SYSTEM' }] });
+          inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: new Date().toISOString() });
+        });
+        await setDoc(ref, inc);
+        $('alarmMenu').style.display = 'none';
+      } catch(err){
+        alert('Alarm template error: ' + (err.message || err));
+      }
+    }
+
+    // archive
+    $('archiveIncBtn').addEventListener('click', async ()=> {
+      if(!SELECTED) return alert('Select incident');
+    // ====== Add detail ======
+    async function addDetailPrompt(){
+      if(!SELECTED) return alert('Select an incident');
+      const txt = prompt('Enter detail:');
+      if(!txt) return;
+      try {
+        const ref = docRef('incidents', SELECTED);
+        const s = await getDoc(ref);
+        if(!s || !s.exists || !s.exists()) return;
+        const inc = s.data();
+        inc.details = inc.details || []; inc.details.push({ by: CURRENT.username, text: txt, ts: new Date().toISOString() });
+        await setDoc(ref, inc);
+      } catch(e){
+        alert('Add detail failed: ' + (e.message || e));
+      }
+    }
+
+    // ====== Chat ======
+    async function sendChatMessage(){
+      if(!SELECTED) return alert('Select an incident');
+      const txt = $('chatInput').value.trim();
+      if(!txt) return;
+      try {
+        const ref = docRef('incidents', SELECTED);
+        const s = await getDoc(ref);
+        if(!s || !s.exists || !s.exists()) return;
+        const inc = s.data();
+        inc.messages = inc.messages || []; inc.messages.push({ sender: CURRENT.username, text: txt, ts: new Date().toISOString() });
+        await setDoc(ref, inc);
+        $('chatInput').value = '';
+      } catch(e){
+        alert('Send chat failed: ' + (e.message || e));
+      }
+    }
+
+    // ====== Archive incident (manual) ======
+    async function archiveCurrentIncident(){
+      if(!SELECTED) return alert('Select an incident');
+      if(!confirm('Archive incident?')) return;
+      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
+      const s = await getDoc(ref); if(!s.exists()) return;
+      const inc = s.data(); inc.archived = true; inc.archivedAt = now();
+      await setDoc(ref, inc); alert('Archived'); location.reload();
+    });
+      try {
+        const ref = docRef('incidents', SELECTED);
+        const s = await getDoc(ref);
+        if(!s || !s.exists || !s.exists()) return;
+        const inc = s.data(); inc.archived = true; inc.archivedAt = new Date().toISOString();
+        await setDoc(ref, inc);
+        alert('Archived');
+        SELECTED = null;
+      } catch(e){
+        alert('Archive failed: ' + (e.message || e));
+      }
+    }
+    $('archiveIncBtn')?.addEventListener('click', archiveCurrentIncident);
+
+    // ====== Show archived (past 90 days) ======
+    async function showArchived(){
+      try {
+        const snap = await getDocs(subCol('incidents'));
+        const threeMonths = Date.now() - 90*24*60*60*1000;
+        const arr = [];
+        snap.forEach(d => {
+          const val = d.data();
+          if(val.archived && (new Date(val.archivedAt || 0).getTime() >= threeMonths)) arr.push({ id: d.id, ...val });
+        });
+        $('incidentList').innerHTML = '';
+        if(!arr.length) { $('incidentList').innerHTML = '<div class="muted">No archived incidents</div>'; return; }
+        arr.forEach(it => {
+          const div = document.createElement('div'); div.className = 'incidentItem';
+          div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${escapeHtml(it.type)}</strong><div class="muted">${escapeHtml(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${it.id}">Open</button></div></div>`;
+          $('incidentList').appendChild(div);
+        });
+        $('incidentList').querySelectorAll('.openBtn').forEach(b => b.addEventListener('click', ev => openIncident(ev.currentTarget.dataset.id)));
+      } catch(e){
+        alert('Archive view failed: ' + (e.message || e));
+      }
+    }
+
+    // archive view
+    $('archiveBtn').addEventListener('click', async ()=> {
+      const snap = await getDocs(subCol('incidents'));
+      const arr = []; const three = Date.now() - 90*24*60*60*1000;
+      snap.forEach(d=> { const val = d.data(); if(val.archived && new Date(val.archivedAt||0).getTime() >= three) arr.push({ id:d.id, ...val }); });
+      $('incidentList').innerHTML=''; if(!arr.length) $('incidentList').innerHTML='<div class="muted">No archived incidents</div>';
+      arr.forEach(it=> { const div=document.createElement('div'); div.className='incidentItem'; div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="muted">${esc(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${it.id}">Open</button></div></div>`; $('incidentList').appendChild(div); });
+      $('incidentList').querySelectorAll('.openBtn').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
+    });
+    // ====== Utility ======
+    function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+    // wrappers
+    // small wrappers to avoid mixing named imports
+    import { getDoc as getDocRaw, getDocs as getDocsRaw } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    async function getDoc(r){ return await getDocRaw(r); }
+    async function getDocs(r){ return await getDocsRaw(r); }
+
   </script>
 </body>
 </html>
