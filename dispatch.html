@@ -46,7 +46,10 @@
     <div id="appUI" style="display:none">
       <div class="card" style="margin-top:12px">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:44px;border-radius:6px"><div class="muted" id="appUserLabel"></div></div>
+          <div>
+            <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:44px;border-radius:6px">
+            <div class="muted" id="appUserLabel"></div>
+          </div>
           <div><button id="apLogout" class="btn ghost">Logout</button></div>
         </div>
 
@@ -140,9 +143,22 @@
 
     // Local apparatus accounts (Option A) - you can edit these later in the file if you want more
     const APP_USERS = {
+      // existing example users preserved
       "ENGINE511": { password: "ENGINE511", dept: "Central Sq FD", apparatus: "Engine 511" },
       "ENGINE512": { password: "ENGINE512", dept: "Central Sq FD", apparatus: "Engine 512" },
-      "LADDER701": { password: "LADDER701", dept: "West Oswego FD", apparatus: "Ladder 701" }
+      "LADDER701": { password: "LADDER701", dept: "West Oswego FD", apparatus: "Ladder 701" },
+
+      // your requested internal accounts
+      "CSQENG511": {
+        password: "CSQENG511",
+        dept: "STA5CSQ",
+        apparatus: "511"
+      },
+      "WMNENG3311": {
+        password: "WMNENG3311",
+        dept: "STA33WMN",
+        apparatus: "3311"
+      }
     };
 
     const $ = id => document.getElementById(id);
@@ -150,7 +166,7 @@
     function esc(s){ return s? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;') : ''; }
 
     // login
-    $('apFill').addEventListener('click', ()=>{ $('apUser').value='ENGINE511'; $('apPass').value='ENGINE511'; });
+    $('apFill').addEventListener('click', ()=>{ $('apUser').value='CSQENG511'; $('apPass').value='CSQENG511'; });
     $('toMain').addEventListener('click', ()=>{ window.location.href='index.html'; });
     $('apLogin').addEventListener('click', ()=> {
       const u = ($('apUser').value||'').trim().toUpperCase();
@@ -183,7 +199,15 @@
       keys.forEach(id=>{
         const it = data[id]; if(it.archived) return;
         const div = document.createElement('div'); div.className='incidentItem';
-        div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="muted">${esc(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${id}">Open</button></div></div>`;
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between">
+            <div>
+              <strong>${esc(it.type)}</strong>
+              <div class="muted">${esc(it.address||'')}</div>
+            </div>
+            <div><button class="btn small openBtn" data-id="${id}">Open</button></div>
+          </div>
+        `;
         t.appendChild(div);
       });
       t.querySelectorAll('.openBtn').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
@@ -218,7 +242,11 @@
       const out = $('unitsBlock'); out.innerHTML='';
       (it.unitsAttached||[]).forEach(u=>{
         const div = document.createElement('div'); div.style.marginBottom='6px';
-        div.innerHTML = `<div style="font-weight:700">${esc(u.apparatus||u.unitId)}</div><div class="muted">${esc(u.agency||'')} • ${esc(u.status||'')}</div><div class="muted">${(u.statusHistory||[]).map(h=> `${esc(h.status)} @ ${esc(h.ts)}`).join(' | ')}</div>`;
+        div.innerHTML = `
+          <div style="font-weight:700">${esc(u.apparatus||u.unitId)}</div>
+          <div class="muted">${esc(u.agency||'')} • ${esc(u.status||'')}</div>
+          <div class="muted">${(u.statusHistory||[]).map(h=> `${esc(h.status)} @ ${esc(h.ts)}`).join(' | ')}</div>
+        `;
         out.appendChild(div);
       });
     }
@@ -233,7 +261,11 @@
     }
     function renderChat(it){
       const c = $('chatBox'); c.innerHTML='';
-      (it.messages||[]).forEach(m=> { const d=document.createElement('div'); d.innerHTML = `<div style="font-weight:700">${esc(m.sender)}</div><div class="muted">${esc(m.text)}</div><div class="muted" style="font-size:11px">${esc(m.ts)}</div>`; c.appendChild(d); });
+      (it.messages||[]).forEach(m=> { const d=document.createElement('div'); d.innerHTML = `
+        <div style="font-weight:700">${esc(m.sender)}</div>
+        <div class="muted">${esc(m.text)}</div>
+        <div class="muted" style="font-size:11px">${esc(m.ts)}</div>
+      `; c.appendChild(d); });
       c.scrollTop = c.scrollHeight;
     }
 
@@ -342,15 +374,24 @@
       const arr = []; const three = Date.now() - 90*24*60*60*1000;
       snap.forEach(d=> { const val = d.data(); if(val.archived && new Date(val.archivedAt||0).getTime() >= three) arr.push({ id:d.id, ...val }); });
       $('incidentList').innerHTML=''; if(!arr.length) $('incidentList').innerHTML='<div class="muted">No archived incidents</div>';
-      arr.forEach(it=> { const div=document.createElement('div'); div.className='incidentItem'; div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="muted">${esc(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${it.id}">Open</button></div></div>`; $('incidentList').appendChild(div); });
+      arr.forEach(it=> {
+        const div=document.createElement('div'); div.className='incidentItem';
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between">
+            <div>
+              <strong>${esc(it.type)}</strong>
+              <div class="muted">${esc(it.address||'')}</div>
+            </div>
+            <div><button class="btn small openBtn" data-id="${it.id}">Open</button></div>
+          </div>
+        `;
+        $('incidentList').appendChild(div);
+      });
       $('incidentList').querySelectorAll('.openBtn').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
     });
 
-    // helper wrappers to avoid name collisions
-    import { getDoc as getDocRaw, getDocs as getDocsRaw } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    async function getDoc(r){ return await getDocRaw(r); }
-    async function getDocs(r){ return await getDocsRaw(r); }
-
+    // (no extra helper re-imports needed)
   </script>
 </body>
 </html>
+
