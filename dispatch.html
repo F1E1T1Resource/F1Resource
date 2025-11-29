@@ -21,7 +21,7 @@
   <div class="wrap">
     <div class="card" id="loginCard">
       <div style="display:flex;align-items:center;gap:12px">
-        <img src="logo.png" style="height:56px;border-radius:8px">
+        <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:56px;border-radius:8px">
         <div>
           <h2 style="margin:0">Apparatus Mobile Login</h2>
           <div class="muted" style="margin-top:6px">Local apparatus accounts for field units.</div>
@@ -46,7 +46,7 @@
     <div id="appUI" style="display:none">
       <div class="card" style="margin-top:12px">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><img src="logo.png" style="height:44px;border-radius:6px"><div class="muted" id="appUserLabel"></div></div>
+          <div><img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:44px;border-radius:6px"><div class="muted" id="appUserLabel"></div></div>
           <div><button id="apLogout" class="btn ghost">Logout</button></div>
         </div>
 
@@ -238,7 +238,7 @@
     }
 
     // attach/detach
-    $('attachBtn').addEventListener('click', async ()=> {
+    $('attachBtn').addEventListener('click', async () => {
       if(!SELECTED) return alert('Select incident');
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
       const snap = await getDoc(ref); if(!snap.exists()) return;
@@ -273,22 +273,22 @@
     }));
 
     // add agency (from fire_departments names)
-    $('addAgencyBtn').addEventListener('click', async ()=> {
+    $('addAgencyBtn').addEventListener('click', async () => {
       if(!SELECTED) return alert('Select incident');
       const snap = await getDocs(subCol('fire_departments'));
       const options = []; snap.forEach(d=> options.push(d.data().name));
-      const choice = prompt('Enter agency name (choose from list):\\n' + options.join('\\n'));
+      const choice = prompt('Enter agency name (choose from list):\n' + options.join('\n'));
       if(!choice) return;
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
       const s = await getDoc(ref); if(!s.exists()) return;
-      const inc = s.data(); const uid = `${choice.replace(/\\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+      const inc = s.data(); const uid = `${choice.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
       inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId: uid, agency: choice, apparatus: choice, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: now(), by:'SYSTEM' }] });
       inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: now() });
       await setDoc(ref, inc); openIncident(SELECTED);
     });
 
     // alarm templates
-    $('alarmBtn').addEventListener('click', ()=> { $('alarmMenu').style.display = $('alarmMenu').style.display === 'block' ? 'none' : 'block'; });
+    $('alarmBtn').addEventListener('click', () => { $('alarmMenu').style.display = $('alarmMenu').style.display === 'block' ? 'none' : 'block'; });
     document.querySelectorAll('.alarmOpt').forEach(btn=> btn.addEventListener('click', async (e)=> {
       const key = e.currentTarget.dataset.temp;
       if(!SELECTED) return alert('Select incident');
@@ -299,7 +299,7 @@
       const s = await getDoc(ref); if(!s.exists()) return;
       const inc = s.data();
       units.forEach(deptName => {
-        const uid = `${deptName.replace(/\\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+        const uid = `${deptName.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
         inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId:uid, agency:deptName, apparatus:deptName, status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts: now(), by:'SYSTEM'}] });
         inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: now() });
       });
@@ -307,7 +307,7 @@
     }));
 
     // add detail
-    $('addDetailBtn').addEventListener('click', async ()=> {
+    $('addDetailBtn').addEventListener('click', async () => {
       if(!SELECTED) return alert('Select incident');
       const txt = prompt('Enter detail:'); if(!txt) return;
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
@@ -317,7 +317,7 @@
     });
 
     // send chat
-    $('sendChat').addEventListener('click', async ()=> {
+    $('sendChat').addEventListener('click', async () => {
       if(!SELECTED) return alert('Select incident');
       const txt = $('chatInput').value.trim(); if(!txt) return;
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
@@ -327,7 +327,7 @@
     });
 
     // archive
-    $('archiveIncBtn').addEventListener('click', async ()=> {
+    $('archiveIncBtn').addEventListener('click', async () => {
       if(!SELECTED) return alert('Select incident');
       if(!confirm('Archive incident?')) return;
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
@@ -337,7 +337,7 @@
     });
 
     // archive view
-    $('archiveBtn').addEventListener('click', async ()=> {
+    $('archiveBtn').addEventListener('click', async () => {
       const snap = await getDocs(subCol('incidents'));
       const arr = []; const three = Date.now() - 90*24*60*60*1000;
       snap.forEach(d=> { const val = d.data(); if(val.archived && new Date(val.archivedAt||0).getTime() >= three) arr.push({ id:d.id, ...val }); });
