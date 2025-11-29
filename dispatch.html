@@ -15,6 +15,7 @@
     .incidentItem{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-bottom:8px}
     .chatBox{min-height:120px;max-height:260px;overflow:auto;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
     .muted{color:#9aa6bd}
+    .small{padding:6px 8px;font-size:13px}
   </style>
 </head>
 <body>
@@ -24,7 +25,7 @@
         <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:56px;border-radius:8px">
         <div>
           <h2 style="margin:0">Apparatus Mobile Login</h2>
-          <div class="muted" style="margin-top:6px">Local apparatus accounts for field units.</div>
+          <div class="muted" style="margin-top:6px">Local apparatus accounts for field units. Admin can manage apparatus assignments in the main app (Apparatus Control).</div>
         </div>
       </div>
 
@@ -46,10 +47,7 @@
     <div id="appUI" style="display:none">
       <div class="card" style="margin-top:12px">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:44px;border-radius:6px">
-            <div class="muted" id="appUserLabel"></div>
-          </div>
+          <div><img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:44px;border-radius:6px"><div class="muted" id="appUserLabel"></div></div>
           <div><button id="apLogout" class="btn ghost">Logout</button></div>
         </div>
 
@@ -85,12 +83,12 @@
 
           <div style="margin-top:12px"><strong>Update Status</strong>
             <div style="display:flex;gap:8px;margin-top:8px">
-              <button class="btn ghost statusBtn" data-status="Acknowledged">Acknowledged</button>
-              <button class="btn ghost statusBtn" data-status="Responding">Responding</button>
-              <button class="btn ghost statusBtn" data-status="Staged">Staged</button>
-              <button class="btn ghost statusBtn" data-status="Arrived">Arrived</button>
-              <button class="btn ghost statusBtn" data-status="Returning">Returning</button>
-              <button class="btn ghost statusBtn" data-status="Clear">Clear</button>
+              <button class="btn small statusBtn" data-status="Acknowledged">Acknowledged</button>
+              <button class="btn small statusBtn" data-status="Responding">Responding</button>
+              <button class="btn small statusBtn" data-status="Staged">Staged</button>
+              <button class="btn small statusBtn" data-status="Arrived">Arrived</button>
+              <button class="btn small statusBtn" data-status="Returning">Returning</button>
+              <button class="btn small statusBtn" data-status="Clear">Clear</button>
             </div>
           </div>
 
@@ -121,12 +119,9 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import {
-      getFirestore, collection, doc, getDoc, getDocs,
-      addDoc, setDoc, onSnapshot, query
-    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-    // firebase config (same as main)
+    // Firebase config (same)
     const firebaseConfig = {
       apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
       authDomain: "f1resource-8fedc.firebaseapp.com",
@@ -141,24 +136,11 @@
     const subCol = (name) => collection(db, ROOT_COL, ROOT_DOC, name);
     const docRef = (col,id) => doc(db, ROOT_COL, ROOT_DOC, col, id);
 
-    // Local apparatus accounts (Option A) - you can edit these later in the file if you want more
+    // Local apparatus accounts (edit in code or keep defaults)
     const APP_USERS = {
-      // existing example users preserved
-      "ENGINE511": { password: "ENGINE511", dept: "Central Sq FD", apparatus: "Engine 511" },
-      "ENGINE512": { password: "ENGINE512", dept: "Central Sq FD", apparatus: "Engine 512" },
-      "LADDER701": { password: "LADDER701", dept: "West Oswego FD", apparatus: "Ladder 701" },
-
-      // your requested internal accounts
-      "CSQENG511": {
-        password: "CSQENG511",
-        dept: "STA5CSQ",
-        apparatus: "511"
-      },
-      "WMNENG3311": {
-        password: "WMNENG3311",
-        dept: "STA33WMN",
-        apparatus: "3311"
-      }
+      "ENGINE511": { password: "ENGINE511", label: "Engine 511" },
+      "ENGINE512": { password: "ENGINE512", label: "Engine 512" },
+      "LADDER701": { password: "LADDER701", label: "Ladder 701" }
     };
 
     const $ = id => document.getElementById(id);
@@ -166,16 +148,30 @@
     function esc(s){ return s? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;') : ''; }
 
     // login
-    $('apFill').addEventListener('click', ()=>{ $('apUser').value='CSQENG511'; $('apPass').value='CSQENG511'; });
+    $('apFill').addEventListener('click', ()=>{ $('apUser').value='ENGINE511'; $('apPass').value='ENGINE511'; });
     $('toMain').addEventListener('click', ()=>{ window.location.href='index.html'; });
-    $('apLogin').addEventListener('click', ()=> {
+    $('apLogin').addEventListener('click', async ()=> {
       const u = ($('apUser').value||'').trim().toUpperCase();
       const p = ($('apPass').value||'').trim();
       if(!u||!p){ $('apMsg').textContent='Enter credentials'; return; }
       const user = APP_USERS[u];
       if(!user || user.password !== p){ $('apMsg').textContent='Invalid credentials'; return; }
       $('apMsg').textContent='';
-      CURRENT = { username:u, dept:user.dept, apparatus:user.apparatus };
+      CURRENT = { username:u, label:user.label };
+      // try to fetch apparatus assignment from Firestore (admin should create in main app)
+      try{
+        const snap = await getDoc(docRef('apparatus', u));
+        if(snap.exists()){
+          const d = snap.data();
+          CURRENT.dept = d.department || 'Unassigned';
+          CURRENT.apparatus = d.apparatusName || user.label || u;
+        } else {
+          CURRENT.dept = 'Unassigned';
+          CURRENT.apparatus = user.label || u;
+        }
+      }catch(e){
+        CURRENT.dept='Unassigned'; CURRENT.apparatus = user.label || u;
+      }
       bootApparatus();
     });
 
@@ -185,7 +181,7 @@
     function bootApparatus(){
       $('loginCard').style.display='none';
       $('appUI').style.display='block';
-      $('appUserLabel').textContent = `${CURRENT.username} • ${CURRENT.apparatus}`;
+      $('appUserLabel').textContent = `${CURRENT.username} • ${CURRENT.apparatus} • ${CURRENT.dept}`;
       // watch incidents
       onSnapshot(query(subCol('incidents')), snap=> {
         const data = {}; snap.forEach(d=> data[d.id] = d.data()); renderIncidentsList(data);
@@ -199,15 +195,7 @@
       keys.forEach(id=>{
         const it = data[id]; if(it.archived) return;
         const div = document.createElement('div'); div.className='incidentItem';
-        div.innerHTML = `
-          <div style="display:flex;justify-content:space-between">
-            <div>
-              <strong>${esc(it.type)}</strong>
-              <div class="muted">${esc(it.address||'')}</div>
-            </div>
-            <div><button class="btn small openBtn" data-id="${id}">Open</button></div>
-          </div>
-        `;
+        div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="muted">${esc(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${id}">Open</button></div></div>`;
         t.appendChild(div);
       });
       t.querySelectorAll('.openBtn').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
@@ -242,11 +230,7 @@
       const out = $('unitsBlock'); out.innerHTML='';
       (it.unitsAttached||[]).forEach(u=>{
         const div = document.createElement('div'); div.style.marginBottom='6px';
-        div.innerHTML = `
-          <div style="font-weight:700">${esc(u.apparatus||u.unitId)}</div>
-          <div class="muted">${esc(u.agency||'')} • ${esc(u.status||'')}</div>
-          <div class="muted">${(u.statusHistory||[]).map(h=> `${esc(h.status)} @ ${esc(h.ts)}`).join(' | ')}</div>
-        `;
+        div.innerHTML = `<div style="font-weight:700">${esc(u.apparatus||u.unitId)}</div><div class="muted">${esc(u.agency||'')} • ${esc(u.status||'')}</div><div class="muted">${(u.statusHistory||[]).map(h=> `${esc(h.status)} @ ${esc(h.ts)}`).join(' | ')}</div>`;
         out.appendChild(div);
       });
     }
@@ -261,16 +245,12 @@
     }
     function renderChat(it){
       const c = $('chatBox'); c.innerHTML='';
-      (it.messages||[]).forEach(m=> { const d=document.createElement('div'); d.innerHTML = `
-        <div style="font-weight:700">${esc(m.sender)}</div>
-        <div class="muted">${esc(m.text)}</div>
-        <div class="muted" style="font-size:11px">${esc(m.ts)}</div>
-      `; c.appendChild(d); });
+      (it.messages||[]).forEach(m=> { const d=document.createElement('div'); d.innerHTML = `<div style="font-weight:700">${esc(m.sender)}</div><div class="muted">${esc(m.text)}</div><div class="muted" style="font-size:11px">${esc(m.ts)}</div>`; c.appendChild(d); });
       c.scrollTop = c.scrollHeight;
     }
 
     // attach/detach
-    $('attachBtn').addEventListener('click', async () => {
+    $('attachBtn').addEventListener('click', async ()=> {
       if(!SELECTED) return alert('Select incident');
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
       const snap = await getDoc(ref); if(!snap.exists()) return;
@@ -305,22 +285,22 @@
     }));
 
     // add agency (from fire_departments names)
-    $('addAgencyBtn').addEventListener('click', async () => {
+    $('addAgencyBtn').addEventListener('click', async ()=> {
       if(!SELECTED) return alert('Select incident');
       const snap = await getDocs(subCol('fire_departments'));
       const options = []; snap.forEach(d=> options.push(d.data().name));
-      const choice = prompt('Enter agency name (choose from list):\n' + options.join('\n'));
+      const choice = prompt('Enter agency name (choose from list):\\n' + options.join('\\n'));
       if(!choice) return;
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
       const s = await getDoc(ref); if(!s.exists()) return;
-      const inc = s.data(); const uid = `${choice.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+      const inc = s.data(); const uid = `${choice.replace(/\\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
       inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId: uid, agency: choice, apparatus: choice, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: now(), by:'SYSTEM' }] });
       inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: now() });
       await setDoc(ref, inc); openIncident(SELECTED);
     });
 
     // alarm templates
-    $('alarmBtn').addEventListener('click', () => { $('alarmMenu').style.display = $('alarmMenu').style.display === 'block' ? 'none' : 'block'; });
+    $('alarmBtn').addEventListener('click', ()=> { $('alarmMenu').style.display = $('alarmMenu').style.display === 'block' ? 'none' : 'block'; });
     document.querySelectorAll('.alarmOpt').forEach(btn=> btn.addEventListener('click', async (e)=> {
       const key = e.currentTarget.dataset.temp;
       if(!SELECTED) return alert('Select incident');
@@ -331,7 +311,7 @@
       const s = await getDoc(ref); if(!s.exists()) return;
       const inc = s.data();
       units.forEach(deptName => {
-        const uid = `${deptName.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
+        const uid = `${deptName.replace(/\\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
         inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId:uid, agency:deptName, apparatus:deptName, status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts: now(), by:'SYSTEM'}] });
         inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: now() });
       });
@@ -339,7 +319,7 @@
     }));
 
     // add detail
-    $('addDetailBtn').addEventListener('click', async () => {
+    $('addDetailBtn').addEventListener('click', async ()=> {
       if(!SELECTED) return alert('Select incident');
       const txt = prompt('Enter detail:'); if(!txt) return;
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
@@ -349,7 +329,7 @@
     });
 
     // send chat
-    $('sendChat').addEventListener('click', async () => {
+    $('sendChat').addEventListener('click', async ()=> {
       if(!SELECTED) return alert('Select incident');
       const txt = $('chatInput').value.trim(); if(!txt) return;
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
@@ -359,7 +339,7 @@
     });
 
     // archive
-    $('archiveIncBtn').addEventListener('click', async () => {
+    $('archiveIncBtn').addEventListener('click', async ()=> {
       if(!SELECTED) return alert('Select incident');
       if(!confirm('Archive incident?')) return;
       const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
@@ -369,29 +349,20 @@
     });
 
     // archive view
-    $('archiveBtn').addEventListener('click', async () => {
+    $('archiveBtn').addEventListener('click', async ()=> {
       const snap = await getDocs(subCol('incidents'));
       const arr = []; const three = Date.now() - 90*24*60*60*1000;
       snap.forEach(d=> { const val = d.data(); if(val.archived && new Date(val.archivedAt||0).getTime() >= three) arr.push({ id:d.id, ...val }); });
       $('incidentList').innerHTML=''; if(!arr.length) $('incidentList').innerHTML='<div class="muted">No archived incidents</div>';
-      arr.forEach(it=> {
-        const div=document.createElement('div'); div.className='incidentItem';
-        div.innerHTML = `
-          <div style="display:flex;justify-content:space-between">
-            <div>
-              <strong>${esc(it.type)}</strong>
-              <div class="muted">${esc(it.address||'')}</div>
-            </div>
-            <div><button class="btn small openBtn" data-id="${it.id}">Open</button></div>
-          </div>
-        `;
-        $('incidentList').appendChild(div);
-      });
+      arr.forEach(it=> { const div=document.createElement('div'); div.className='incidentItem'; div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="muted">${esc(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${it.id}">Open</button></div></div>`; $('incidentList').appendChild(div); });
       $('incidentList').querySelectorAll('.openBtn').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
     });
 
-    // (no extra helper re-imports needed)
+    // wrappers
+    import { getDoc as getDocRaw, getDocs as getDocsRaw } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    async function getDoc(r){ return await getDocRaw(r); }
+    async function getDocs(r){ return await getDocsRaw(r); }
+
   </script>
 </body>
 </html>
-
