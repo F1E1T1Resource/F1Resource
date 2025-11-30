@@ -1,834 +1,167 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>F1 Resource — Dispatch (Apparatus Mobile)</title>
-  <style>
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#021023,#04182b);color:#e6eef9}
-    .wrap{max-width:980px;margin:18px auto;padding:12px}
-    .card{background:linear-gradient(180deg,#0b1624,#08121a);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-    input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#e6eef9;margin:6px 0}
-    :root{
-      --bg-top:#041428;
-      --bg-bottom:#021023;
-      --card:#071422;
-      --muted:#9aa6bd;
-      --accent1:#0b5fff;
-      --accent2:#7b5cff;
-      --glass: rgba(255,255,255,0.04);
-      --radius:12px;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));color:#eaf3ff;min-height:100vh}
-    .header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:linear-gradient(90deg,#021427, #041a2a);border-bottom:1px solid rgba(255,255,255,0.03)}
-    .header img{height:56px;border-radius:8px}
-    .header h1{margin:0;font-size:18px}
-    .container{max-width:980px;margin:18px auto;padding:12px}
-    .card{background:linear-gradient(180deg,#071726,#06121a);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-    .loginWrap{display:flex;gap:14px;align-items:center}
-    .loginCard{flex:1;max-width:760px;padding:16px;border-radius:12px;background:linear-gradient(180deg,#081a24,#05121a);border:1px solid var(--glass)}
-    input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#eaf3ff;margin:8px 0}
-    .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
-    .btn.primary{background:linear-gradient(90deg,#0b5fff,#7b5cff);color:#001020}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#9aa6bd}
-    .incidentItem{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-bottom:8px}
-    .chatBox{min-height:120px;max-height:260px;overflow:auto;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
-    .muted{color:#9aa6bd}
-    .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#041427}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-    .muted{color:var(--muted)}
-    .incidentItem{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-bottom:8px;background:linear-gradient(180deg,rgba(255,255,255,0.015),transparent)}
-    .chatBox{min-height:120px;max-height:260px;overflow:auto;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.06)}
-    .small{padding:6px 8px;font-size:13px}
-    .row{display:flex;gap:8px}
-    @media (max-width:900px){
-      .header img{height:44px}
-      .loginWrap{flex-direction:column}
-      .row{flex-direction:column}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F1 Resource – Apparatus Mobile Login</title>
+
+<style>
+:root {
+  --bg:#021022;
+  --panel:#081727;
+  --card:#0d1a2b;
+  --accent:#0b5fff;
+  --accent2:#7b5cff;
+  --muted:#97a7c5;
+  --radius:14px;
+}
+
+body {
+  margin:0;
+  padding:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:linear-gradient(180deg,#020d1a,#031026,#041423);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#e9f1ff;
+}
+
+.login-box {
+  width:95%;
+  max-width:400px;
+  background:linear-gradient(180deg,#0b1624,#08121a);
+  padding:26px;
+  border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,0.05);
+  box-shadow:0 0 25px rgba(0,0,0,0.4);
+  text-align:center;
+}
+
+.logo img {
+  height:90px;
+  border-radius:14px;
+}
+
+h2 {
+  margin:14px 0 4px;
+  font-size:1.6rem;
+  font-weight:800;
+}
+
+.sub {
+  font-size:0.85rem;
+  color:var(--muted);
+}
+
+.input {
+  width:100%;
+  margin-top:12px;
+  padding:12px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;
+  color:#e9f1ff;
+  font-size:1rem;
+}
+
+.input:focus {
+  outline:2px solid var(--accent);
+}
+
+.btn {
+  width:100%;
+  margin-top:14px;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.primary {
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  color:#001020;
+}
+
+.secondary {
+  background:transparent;
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.err {
+  margin-top:10px;
+  color:#ff8a8a;
+  font-size:0.9rem;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="card" id="loginCard">
-      <div style="display:flex;align-items:center;gap:12px">
-        <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:56px;border-radius:8px">
-  <header class="header">
-    <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="F1 Resource logo">
-    <div>
-      <h1>Apparatus Mobile — Dispatch</h1>
-      <div class="muted">Field users — create incidents, attach, update status, chat, archive.</div>
-    </div>
-    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-      <button id="backMain" class="btn ghost">Back to Main App</button>
-      <button id="logoutBtn" class="btn ghost" style="display:none">Logout</button>
-    </div>
-  </header>
 
-  <main class="container">
-    <!-- Login Card -->
-    <div id="loginCard" class="card loginCard">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-        <div>
-          <h2 style="margin:0">Apparatus Mobile Login</h2>
-          <div class="muted" style="margin-top:6px">Local apparatus accounts for field units. Admin can manage apparatus assignments in the main app (Apparatus Control).</div>
-          <h2 style="margin:0 0 6px">Apparatus Login</h2>
-          <div class="muted">Local apparatus accounts — stays logged in until you press Logout.</div>
-        </div>
-        <div style="min-width:220px;text-align:right">
-          <div class="muted" style="font-size:13px">Demo units:</div>
-          <div style="margin-top:6px" class="muted">ENGINE511 / ENGINE511</div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <input id="apUser" placeholder="Username"/>
-          <input id="apPass" placeholder="Password" type="password"/>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <input id="apUser" placeholder="Username (eg ENGINE511)" autocomplete="off" />
-          <input id="apPass" placeholder="Password" type="password" autocomplete="off" />
-        </div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-        <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-          <button id="apLogin" class="btn primary">Login</button>
-          <button id="apFill" class="btn ghost">Demo Fill</button>
-          <button id="toMain" class="btn ghost" style="margin-left:auto">Back to Main App</button>
-          <div style="margin-left:auto" class="muted">Logged-in user: <span id="currentUserLabel">—</span></div>
-        </div>
-        <div id="apMsg" style="color:#ff9b9b;margin-top:8px"></div>
-      </div>
-    </div>
-
-    <!-- Apparatus UI -->
-    <div id="appUI" style="display:none">
-      <div class="card" style="margin-top:12px">
-    <!-- App UI -->
-    <div id="appUI" style="display:none; margin-top:14px">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:44px;border-radius:6px"><div class="muted" id="appUserLabel"></div></div>
-          <div><button id="apLogout" class="btn ghost">Logout</button></div>
-        </div>
-
-        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
-          <div><strong>Incidents</strong><div class="muted">Create or attach to incidents</div></div>
-          <div style="display:flex;gap:8px"><button id="createBtn" class="btn primary">Create Incident</button><button id="archiveBtn" class="btn ghost">Archived</button></div>
-          <div>
-            <div style="display:flex;gap:12px;align-items:center">
-              <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:44px;border-radius:6px" alt="logo">
-              <div>
-                <div style="font-weight:800" id="appUserLabel">Unit</div>
-                <div class="muted" id="appUserMeta">Dept • Apparatus</div>
-              </div>
-            </div>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <button id="createBtn" class="btn primary">Create Incident</button>
-            <button id="archiveBtn" class="btn ghost">Archived</button>
-          </div>
-        </div>
-
-        <div id="incidentList" style="margin-top:12px"></div>
-      </div>
-
-      <!-- Create Panel -->
-      <div id="createPanel" class="card" style="margin-top:12px;display:none">
-        <h3 style="margin:0">Create Incident</h3>
-        <select id="incType"><option>FIRE</option><option>EMS</option><option>MISC</option></select>
-        <input id="incAddress" placeholder="Address"/>
-        <input id="incNature" placeholder="Nature"/>
-        <textarea id="incDetails" placeholder="Details"></textarea>
-        <div style="display:flex;gap:8px;margin-top:8px"><button id="submitInc" class="btn primary">Submit</button><button id="cancelInc" class="btn ghost">Cancel</button></div>
-        <h3 style="margin:0 0 6px">Create Incident</h3>
-        <div style="display:grid;gap:8px">
-          <select id="incType"><option>FIRE</option><option>EMS</option><option>MISC</option></select>
-          <input id="incAddress" placeholder="Address" />
-          <input id="incNature" placeholder="Nature / Type" />
-          <textarea id="incDetails" placeholder="Details (optional)"></textarea>
-          <div style="display:flex;gap:8px">
-            <button id="submitInc" class="btn primary">Submit</button>
-            <button id="cancelInc" class="btn ghost">Cancel</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Incident Panel -->
-      <div id="incidentPanel" class="card" style="margin-top:12px;display:none">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><div id="incTitle" style="font-weight:800"></div><div id="incMeta" class="muted" style="margin-top:6px"></div></div>
-          <div>
-            <div id="incTitle" style="font-weight:800"></div>
-            <div id="incMeta" class="muted" style="margin-top:6px"></div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button id="attachBtn" class="btn primary">Attach</button>
-            <button id="detachBtn" class="btn ghost" style="display:none">Detach</button>
-            <button id="archiveIncBtn" class="btn ghost">Archive</button>
-          </div>
-        </div>
-
-        <div style="margin-top:12px">
-          <div><strong>Units & Status</strong><div id="unitsBlock" style="margin-top:8px"></div></div>
-
-          <div style="margin-top:12px"><strong>Update Status</strong>
-            <div style="display:flex;gap:8px;margin-top:8px">
-            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-              <button class="btn small statusBtn" data-status="Acknowledged">Acknowledged</button>
-              <button class="btn small statusBtn" data-status="Responding">Responding</button>
-              <button class="btn small statusBtn" data-status="Staged">Staged</button>
-              <button class="btn small statusBtn" data-status="Arrived">Arrived</button>
-              <button class="btn small statusBtn" data-status="Returning">Returning</button>
-              <button class="btn small statusBtn" data-status="Clear">Clear</button>
-            </div>
-          </div>
-
-          <div style="margin-top:12px;display:flex;gap:8px">
-          <div style="margin-top:12px;display:flex;gap:8px;align-items:flex-start">
-            <button id="addAgencyBtn" class="btn ghost">Add Agency</button>
-            <div style="position:relative">
-              <button id="alarmBtn" class="btn ghost">Add Alarm ▾</button>
-              <div id="alarmMenu" style="display:none;position:absolute;left:0;top:36px;background:#081727;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)">
-              <div id="alarmMenu" style="display:none;position:absolute;left:0;top:36px;background:rgba(6,12,20,0.9);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)">
-                <div><button class="btn small alarmOpt" data-temp="first">1st Alarm</button></div>
-                <div><button class="btn small alarmOpt" data-temp="second">2nd Alarm</button></div>
-                <div><button class="btn small alarmOpt" data-temp="third">3rd Alarm</button></div>
-              </div>
-            </div>
-            <button id="addDetailBtn" class="btn ghost">Add Detail</button>
-          </div>
-
-          <div style="margin-top:12px"><strong>Timeline</strong><div id="timelineBlock" class="muted" style="margin-top:6px"></div></div>
-
-          <div style="margin-top:12px"><strong>Chat</strong>
-            <div id="chatBox" class="chatBox" style="margin-top:8px"></div>
-            <div style="display:flex;gap:8px;margin-top:8px"><input id="chatInput" placeholder="Message..."/><button id="sendChat" class="btn primary">Send</button></div>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <input id="chatInput" placeholder="Message..." />
-              <button id="sendChat" class="btn primary">Send</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> <!-- end appUI -->
-
-    </div>
+<div class="login-box">
+  <div class="logo">
+    <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755">
   </div>
-  </main>
 
-  <script type="module">
-    // Firebase imports (Firestore used for incidents)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    import {
-      getFirestore, collection, doc, getDoc, getDocs,
-      addDoc, setDoc, onSnapshot, query
-    } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  <h2>Apparatus Login</h2>
+  <div class="sub">Sign in using your assigned unit credentials</div>
 
-    // Firebase config (same)
-    // ====== Config - your Firebase project ======
-    const firebaseConfig = {
-      apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
-      authDomain: "f1resource-8fedc.firebaseapp.com",
-      projectId: "f1resource-8fedc",
-      storageBucket: "f1resource-8fedc.firebasestorage.app",
-      messagingSenderId: "182745701982",
-      appId: "1:182745701982:web:9f4f3836b41b450987decf"
-    };
-    const fb = initializeApp(firebaseConfig);
-    const db = getFirestore(fb);
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const ROOT_COL='f1root', ROOT_DOC='f1resource';
-    const subCol = (name) => collection(db, ROOT_COL, ROOT_DOC, name);
-    const subCol = name => collection(db, ROOT_COL, ROOT_DOC, name);
-    const docRef = (col,id) => doc(db, ROOT_COL, ROOT_DOC, col, id);
+  <input id="apUser" class="input" placeholder="Unit Username (e.g., ENGINE511)">
+  <input id="apPass" class="input" type="password" placeholder="Password">
 
-    // Local apparatus accounts (edit in code or keep defaults)
-    // ====== Local apparatus users (edit here to add more) ======
-    const APP_USERS = {
-      "ENGINE511": { password: "ENGINE511", label: "Engine 511" },
-      "ENGINE512": { password: "ENGINE512", label: "Engine 512" },
-      "LADDER701": { password: "LADDER701", label: "Ladder 701" }
-    };
+  <button id="btnLogin" class="btn primary">Login</button>
+  <button id="btnBack" class="btn secondary">Back to Main Login</button>
 
-    // ====== DOM helpers ======
-    const $ = id => document.getElementById(id);
-    function now(){ return new Date().toISOString(); }
-    function esc(s){ return s? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;') : ''; }
+  <div id="msg" class="err"></div>
+</div>
 
-    // login
-    $('apFill').addEventListener('click', ()=>{ $('apUser').value='ENGINE511'; $('apPass').value='ENGINE511'; });
-    $('toMain').addEventListener('click', ()=>{ window.location.href='index.html'; });
-    $('apLogin').addEventListener('click', async ()=> {
-      const u = ($('apUser').value||'').trim().toUpperCase();
-      const p = ($('apPass').value||'').trim();
-      if(!u||!p){ $('apMsg').textContent='Enter credentials'; return; }
+<script>
+// Local apparatus accounts (Option A system)
+function loadAppUsers(){
+  try { return JSON.parse(localStorage.getItem("f1_apparatus_local_v1")||"{}"); }
+  catch(e){ return {}; }
+}
 
-    // persistent login key
-    const STORAGE_KEY = 'f1_apparatus_user';
+// Ensure demo units exist if empty
+let appUsers = loadAppUsers();
+if(Object.keys(appUsers).length === 0){
+  appUsers = {
+    "ENGINE511": { password:"ENGINE511", label:"Engine 511" },
+    "ENGINE512": { password:"ENGINE512", label:"Engine 512" }
+  };
+  localStorage.setItem("f1_apparatus_local_v1", JSON.stringify(appUsers));
+}
 
-    // state
-    let CURRENT = null;      // { username, label, dept, apparatus }
-    let INCIDENTS = {};      // cached incidents map
-    let SELECTED = null;     // selected incident id
+document.getElementById("btnBack").onclick = () => {
+  window.location.href = "index.html";
+};
 
-    // init
-    window.addEventListener('DOMContentLoaded', async () => {
-      // setup UI bindings
-      $('apFill').addEventListener('click', ()=> { $('apUser').value='ENGINE511'; $('apPass').value='ENGINE511'; });
-      $('backMain').addEventListener('click', ()=> { window.location.href = 'index.html'; });
-      $('apLogin').addEventListener('click', loginHandler);
-      $('logoutBtn').addEventListener('click', logoutHandler);
+document.getElementById("btnLogin").onclick = () => {
+  const u = document.getElementById("apUser").value.trim().toUpperCase();
+  const p = document.getElementById("apPass").value.trim();
 
-      $('createBtn').addEventListener('click', ()=> { $('createPanel').style.display='block'; $('incidentPanel').style.display='none'; });
-      $('cancelInc').addEventListener('click', ()=> { $('createPanel').style.display='none'; });
-      $('submitInc').addEventListener('click', submitIncident);
-      $('archiveBtn').addEventListener('click', showArchived);
+  if(!u || !p){
+    msg.textContent = "Please enter username and password";
+    return;
+  }
 
-      $('addAgencyBtn').addEventListener('click', addAgencyToIncident);
-      $('addDetailBtn').addEventListener('click', addDetailPrompt);
-      $('alarmBtn').addEventListener('click', ()=> { $('alarmMenu').style.display = $('alarmMenu').style.display === 'block' ? 'none' : 'block'; });
-      document.querySelectorAll('.alarmOpt').forEach(b => b.addEventListener('click', applyAlarmTemplate));
-      document.querySelectorAll('.statusBtn').forEach(b => b.addEventListener('click', statusUpdateHandler));
-      $('sendChat').addEventListener('click', sendChatMessage);
-      $('attachBtn').addEventListener('click', attachToIncident);
+  const users = loadAppUsers();
+  if(!users[u] || users[u].password !== p){
+    msg.textContent = "Invalid apparatus credentials";
+    return;
+  }
 
-      // try auto-login from localStorage
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if(saved){
-        try {
-          const username = saved.toUpperCase();
-          const user = APP_USERS[username];
-          if(user){
-            // user exists in local APP_USERS — set CURRENT and boot
-            CURRENT = { username, label: user.label || username };
-            // try to fetch assignment from Firestore
-            await fetchApparatusAssignment(username);
-            bootApp();
-            return;
-          } else {
-            // saved username no longer in APP_USERS: clear
-            localStorage.removeItem(STORAGE_KEY);
-          }
-        } catch(e){
-          console.warn('Auto-login error', e);
-          localStorage.removeItem(STORAGE_KEY);
-        }
-      }
-      // show login form if not auto-logged in
-      showLogin();
-    });
+  // Save session (SSO)
+  sessionStorage.setItem("f1_apparatus_user", u);
 
-    // ====== UI: show/hide login & app ======
-    function showLogin(){
-      $('loginCard').style.display = 'block';
-      $('appUI').style.display = 'none';
-      $('logoutBtn').style.display = 'none';
-      $('currentUserLabel').textContent = '—';
-    }
-    function showApp(){
-      $('loginCard').style.display = 'none';
-      $('appUI').style.display = 'block';
-      $('logoutBtn').style.display = 'inline-block';
-      $('currentUserLabel').textContent = CURRENT.username;
-      $('appUserLabel').textContent = `${CURRENT.username} • ${CURRENT.apparatus || CURRENT.label || ''}`;
-      $('appUserMeta').textContent = `${CURRENT.dept || 'Unassigned'}`;
-    }
+  // Redirect to dispatch main screen
+  window.location.href = "dispatch_main.html";
+};
+</script>
 
-    // ====== Login / Logout ======
-    async function loginHandler(){
-      const u = ($('apUser').value || '').trim().toUpperCase();
-      const p = ($('apPass').value || '').trim();
-      if(!u || !p){ $('apMsg').textContent = 'Enter username & password'; return; }
-      const user = APP_USERS[u];
-      if(!user || user.password !== p){ $('apMsg').textContent='Invalid credentials'; return; }
-      $('apMsg').textContent='';
-      CURRENT = { username:u, label:user.label };
-      // try to fetch apparatus assignment from Firestore (admin should create in main app)
-      try{
-        const snap = await getDoc(docRef('apparatus', u));
-        if(snap.exists()){
-      if(!user || user.password !== p){ $('apMsg').textContent = 'Invalid credentials'; return; }
-      // success
-      $('apMsg').textContent = '';
-      CURRENT = { username: u, label: user.label || u };
-      // persist SSO token (just store username — passwords remain local in APP_USERS)
-      localStorage.setItem(STORAGE_KEY, u);
-      // fetch assignment from Firestore (if present)
-      await fetchApparatusAssignment(u);
-      bootApp();
-    }
-
-    function logoutHandler(){
-      localStorage.removeItem(STORAGE_KEY);
-      CURRENT = null;
-      // stop any listeners by reloading (keeps code simple)
-      location.reload();
-    }
-
-    // fetch apparatus assignment from Firestore
-    async function fetchApparatusAssignment(username){
-      try {
-        const snap = await getDoc(docRef('apparatus', username));
-        if(snap && snap.exists && snap.exists()){
-          const d = snap.data();
-          CURRENT.dept = d.department || 'Unassigned';
-          CURRENT.apparatus = d.apparatusName || user.label || u;
-          CURRENT.apparatus = d.apparatusName || d.username || CURRENT.label;
-        } else {
-          CURRENT.dept = 'Unassigned';
-          CURRENT.apparatus = user.label || u;
-          CURRENT.apparatus = CURRENT.label || username;
-        }
-      }catch(e){
-        CURRENT.dept='Unassigned'; CURRENT.apparatus = user.label || u;
-      } catch(e){
-        console.warn('fetchApparatusAssignment error', e);
-        CURRENT.dept = 'Unassigned';
-        CURRENT.apparatus = CURRENT.label || username;
-      }
-      bootApparatus();
-    });
-
-    $('apLogout').addEventListener('click', ()=> location.reload());
-    }
-
-    let CURRENT = null;
-    function bootApparatus(){
-      $('loginCard').style.display='none';
-      $('appUI').style.display='block';
-      $('appUserLabel').textContent = `${CURRENT.username} • ${CURRENT.apparatus} • ${CURRENT.dept}`;
-      // watch incidents
-      onSnapshot(query(subCol('incidents')), snap=> {
-        const data = {}; snap.forEach(d=> data[d.id] = d.data()); renderIncidentsList(data);
-    // boot the app UI and start listening to incidents
-    function bootApp(){
-      showApp();
-      // subscribe to incidents collection for live updates
-      onSnapshot(query(subCol('incidents')), snap => {
-        INCIDENTS = {};
-        snap.forEach(d => INCIDENTS[d.id] = { id: d.id, ...d.data() });
-        renderIncidentList();
-        // update currently opened incident if any
-        if(SELECTED) renderOpenIncident(SELECTED);
-      }, err => {
-        console.error('Incidents snapshot error', err);
-        // still render cached if present
-        renderIncidentList();
-      });
-    }
-
-    function renderIncidentsList(data){
-      const t = $('incidentList'); t.innerHTML='';
-      const keys = Object.keys(data).sort((a,b)=> (data[b].createdAt||'').localeCompare(data[a].createdAt||''));
-      if(!keys.length) t.innerHTML = '<div class="muted">No active incidents</div>';
-      keys.forEach(id=>{
-        const it = data[id]; if(it.archived) return;
-        const div = document.createElement('div'); div.className='incidentItem';
-        div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="muted">${esc(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${id}">Open</button></div></div>`;
-    // ====== Incident list UI ======
-    function renderIncidentList(){
-      const t = $('incidentList'); t.innerHTML = '';
-      const arr = Object.values(INCIDENTS).sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
-      if(!arr.length){ t.innerHTML = '<div class="muted">No active incidents</div>'; return; }
-      arr.forEach(it=>{
-        if(it.archived) return;
-        const div = document.createElement('div'); div.className = 'incidentItem';
-        div.innerHTML = `
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>${escapeHtml(it.type||'')}</strong><div class="muted">${escapeHtml(it.address||'')}</div></div>
-            <div><button class="btn small openBtn" data-id="${it.id || it.id}">Open</button></div>
-          </div>`;
-        t.appendChild(div);
-      });
-      t.querySelectorAll('.openBtn').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
-      t.querySelectorAll('.openBtn').forEach(b => b.addEventListener('click', (ev) => openIncident(ev.currentTarget.dataset.id)));
-    }
-
-    // create incident flow
-    $('createBtn').addEventListener('click', ()=> { $('createPanel').style.display='block'; $('incidentPanel').style.display='none'; });
-    $('cancelInc').addEventListener('click', ()=> { $('createPanel').style.display='none'; });
-    $('submitInc').addEventListener('click', async ()=>{
-      const obj = { createdAt: now(), createdBy: CURRENT.username, creatorDept: CURRENT.dept, creatorApparatus: CURRENT.apparatus, type: $('incType').value, address: $('incAddress').value.trim(), nature: $('incNature').value.trim(), details: $('incDetails').value.trim(), isClosed:false, archived:false, unitsAttached: [], statusUpdates: [], messages: [], details: [] };
-      const ref = await addDoc(subCol('incidents'), obj);
-      $('createPanel').style.display='none';
-      openIncident(ref.id);
-    });
-    // ====== Create incident ======
-    async function submitIncident(){
-      const obj = {
-        createdAt: new Date().toISOString(),
-        createdBy: CURRENT.username,
-        creatorDept: CURRENT.dept || 'Unassigned',
-        creatorApparatus: CURRENT.apparatus || CURRENT.label,
-        type: $('incType').value,
-        address: $('incAddress').value.trim(),
-        nature: $('incNature').value.trim(),
-        details: $('incDetails').value.trim(),
-        isClosed: false,
-        archived: false,
-        unitsAttached: [],
-        statusUpdates: [],
-        messages: [],
-        details: []
-      };
-      try {
-        await addDoc(subCol('incidents'), obj);
-        $('createPanel').style.display = 'none';
-      } catch(e){
-        alert('Error creating incident: ' + (e.message || e));
-      }
-    }
-
-    let SELECTED = null;
-    // ====== Open incident ======
-    async function openIncident(id){
-      SELECTED = id;
-      const snap = await getDoc(docRef('incidents', id));
-      if(!snap.exists()) return alert('Not found');
-      if(!snap || !snap.exists || !snap.exists()) { alert('Incident not found'); return; }
-      const it = snap.data();
-      $('incidentPanel').style.display='block';
-      $('createPanel').style.display='none';
-      $('incTitle').textContent = `${it.type} — ${it.address || ''}`;
-      $('incMeta').textContent = `Created: ${it.createdAt || ''} • By: ${it.createdBy || ''}`;
-      renderUnits(it);
-      renderTimeline(it);
-      renderChat(it);
-      renderOpenIncident(id);
-    }
-
-    async function renderUnits(it){
-      const out = $('unitsBlock'); out.innerHTML='';
-      (it.unitsAttached||[]).forEach(u=>{
-        const div = document.createElement('div'); div.style.marginBottom='6px';
-        div.innerHTML = `<div style="font-weight:700">${esc(u.apparatus||u.unitId)}</div><div class="muted">${esc(u.agency||'')} • ${esc(u.status||'')}</div><div class="muted">${(u.statusHistory||[]).map(h=> `${esc(h.status)} @ ${esc(h.ts)}`).join(' | ')}</div>`;
-        out.appendChild(div);
-    function renderOpenIncident(id){
-      const it = INCIDENTS[id];
-      if(!it){ alert('Incident not available yet'); return; }
-      $('incidentPanel').style.display = 'block';
-      $('createPanel').style.display = 'none';
-      $('incTitle').textContent = `${it.type || ''} — ${it.address || ''}`;
-      $('incMeta').textContent = `Created: ${it.createdAt || ''} • By: ${it.createdBy || ''}`;
-      // units
-      const ub = $('unitsBlock'); ub.innerHTML = '';
-      (it.unitsAttached || []).forEach(u => {
-        const el = document.createElement('div');
-        el.innerHTML = `<div style="font-weight:700">${escapeHtml(u.apparatus || u.unitId || '')}</div><div class="muted">${escapeHtml(u.agency || '')} • ${escapeHtml(u.status || '')}</div><div class="muted">${(u.statusHistory||[]).map(h => `${escapeHtml(h.status)} @ ${escapeHtml(h.ts)}`).join(' | ')}</div>`;
-        ub.appendChild(el);
-      });
-    }
-    function renderTimeline(it){
-      const t = $('timelineBlock'); t.innerHTML='';
-      // timeline
-      const timeline = [];
-      (it.statusUpdates||[]).forEach(s=> timeline.push({ts:s.ts,txt:`${s.unitId} → ${s.status}`}));
-      (it.details||[]).forEach(d=> timeline.push({ts:d.ts,txt:`Detail by ${d.by}: ${d.text}`}));
-      (it.messages||[]).forEach(m=> timeline.push({ts:m.ts,txt:`${m.sender}: ${m.text}`}));
-      (it.statusUpdates || []).forEach(s => timeline.push({ ts: s.ts, txt: `${s.unitId} → ${s.status}` }));
-      (it.details || []).forEach(d => timeline.push({ ts: d.ts, txt: `Detail by ${d.by}: ${d.text}` }));
-      (it.messages || []).forEach(m => timeline.push({ ts: m.ts, txt: `${m.sender}: ${m.text}` }));
-      timeline.sort((a,b)=> (a.ts||'').localeCompare(b.ts||''));
-      timeline.forEach(item=> { const div=document.createElement('div'); div.className='muted'; div.textContent = `${item.ts} — ${item.txt}`; t.appendChild(div); });
-    }
-    function renderChat(it){
-      const c = $('chatBox'); c.innerHTML='';
-      (it.messages||[]).forEach(m=> { const d=document.createElement('div'); d.innerHTML = `<div style="font-weight:700">${esc(m.sender)}</div><div class="muted">${esc(m.text)}</div><div class="muted" style="font-size:11px">${esc(m.ts)}</div>`; c.appendChild(d); });
-      c.scrollTop = c.scrollHeight;
-      const tb = $('timelineBlock'); tb.innerHTML = '';
-      timeline.forEach(item => {
-        const d = document.createElement('div'); d.className = 'muted'; d.textContent = `${item.ts} — ${item.txt}`; tb.appendChild(d);
-      });
-      // chat
-      const cb = $('chatBox'); cb.innerHTML = '';
-      (it.messages || []).forEach(m => {
-        const d = document.createElement('div'); d.innerHTML = `<div style="font-weight:700">${escapeHtml(m.sender)}</div><div class="muted">${escapeHtml(m.text)}</div><div class="muted" style="font-size:11px">${escapeHtml(m.ts)}</div>`; cb.appendChild(d);
-      });
-      cb.scrollTop = cb.scrollHeight;
-    }
-
-    // attach/detach
-    $('attachBtn').addEventListener('click', async ()=> {
-      if(!SELECTED) return alert('Select incident');
-      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
-      const snap = await getDoc(ref); if(!snap.exists()) return;
-      const inc = snap.data();
-      inc.unitsAttached = inc.unitsAttached || [];
-      const unitId = CURRENT.username;
-      if(inc.unitsAttached.some(u=> u.unitId === unitId)) { alert('Already attached'); return; }
-      const newUnit = { unitId, agency: CURRENT.dept, apparatus: CURRENT.apparatus, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: now(), by: unitId }] };
-      inc.unitsAttached.push(newUnit);
-      inc.statusUpdates.push({ unitId, status:'Acknowledged', ts: now() });
-      await setDoc(ref, inc);
-      openIncident(SELECTED);
-    });
-    // ====== Attach unit to incident ======
-    async function attachToIncident(){
-      if(!SELECTED) return alert('Select an incident');
-      try {
-        const ref = docRef('incidents', SELECTED);
-        const snap = await getDoc(ref);
-        if(!snap || !snap.exists || !snap.exists()) return alert('Incident missing');
-        const inc = snap.data();
-        inc.unitsAttached = inc.unitsAttached || [];
-        const unitId = CURRENT.username;
-        if(inc.unitsAttached.some(u => u.unitId === unitId)) { alert('Already attached'); return; }
-        const newUnit = { unitId, agency: CURRENT.dept || 'Unassigned', apparatus: CURRENT.apparatus || CURRENT.label, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: new Date().toISOString(), by: unitId }] };
-        inc.unitsAttached.push(newUnit);
-        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId, status:'Acknowledged', ts: new Date().toISOString() });
-        await setDoc(ref, inc);
-      } catch(e){
-        alert('Attach failed: ' + (e.message || e));
-      }
-    }
-
-    // status update buttons
-    document.querySelectorAll('.statusBtn').forEach(b=> b.addEventListener('click', async (e)=> {
-      if(!SELECTED) return alert('Select incident');
-    // ====== Status update handler ======
-    async function statusUpdateHandler(e){
-      if(!SELECTED) return alert('Select an incident');
-      const status = e.currentTarget.dataset.status;
-      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
-      const snap = await getDoc(ref); if(!snap.exists()) return;
-      const inc = snap.data();
-      const u = (inc.unitsAttached||[]).find(x=> x.unitId === CURRENT.username);
-      if(!u) return alert('You are not attached');
-      u.status = status; u.statusHistory = u.statusHistory || []; u.statusHistory.push({ status, ts: now(), by: CURRENT.username });
-      inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: CURRENT.username, status, ts: now() });
-      if(status === 'Clear'){
-        const stillActive = (inc.unitsAttached||[]).some(x=> x.status !== 'Clear');
-        if(!stillActive){ inc.isClosed = true; inc.closedAt = now(); }
-      try {
-        const ref = docRef('incidents', SELECTED);
-        const snap = await getDoc(ref);
-        if(!snap || !snap.exists || !snap.exists()) return alert('Incident missing');
-        const inc = snap.data();
-        const unit = (inc.unitsAttached || []).find(u => u.unitId === CURRENT.username);
-        if(!unit) return alert('You must attach to the incident first');
-        unit.status = status;
-        unit.statusHistory = unit.statusHistory || []; unit.statusHistory.push({ status, ts: new Date().toISOString(), by: CURRENT.username });
-        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: CURRENT.username, status, ts: new Date().toISOString() });
-        if(status === 'Clear'){
-          const stillActive = (inc.unitsAttached || []).some(x => x.status !== 'Clear');
-          if(!stillActive){ inc.isClosed = true; inc.closedAt = new Date().toISOString(); }
-        }
-        await setDoc(ref, inc);
-      } catch(e){
-        alert('Status update failed: ' + (e.message || e));
-      }
-      await setDoc(ref, inc);
-      openIncident(SELECTED);
-    }));
-
-    // add agency (from fire_departments names)
-    $('addAgencyBtn').addEventListener('click', async ()=> {
-      if(!SELECTED) return alert('Select incident');
-      const snap = await getDocs(subCol('fire_departments'));
-      const options = []; snap.forEach(d=> options.push(d.data().name));
-      const choice = prompt('Enter agency name (choose from list):\\n' + options.join('\\n'));
-      if(!choice) return;
-      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
-      const s = await getDoc(ref); if(!s.exists()) return;
-      const inc = s.data(); const uid = `${choice.replace(/\\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
-      inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId: uid, agency: choice, apparatus: choice, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: now(), by:'SYSTEM' }] });
-      inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: now() });
-      await setDoc(ref, inc); openIncident(SELECTED);
-    });
-    }
-
-    // alarm templates
-    $('alarmBtn').addEventListener('click', ()=> { $('alarmMenu').style.display = $('alarmMenu').style.display === 'block' ? 'none' : 'block'; });
-    document.querySelectorAll('.alarmOpt').forEach(btn=> btn.addEventListener('click', async (e)=> {
-      const key = e.currentTarget.dataset.temp;
-      if(!SELECTED) return alert('Select incident');
-      const tmpDoc = await getDoc(docRef('alarm_templates', key));
-      if(!tmpDoc.exists()) return alert('Template empty');
-      const units = tmpDoc.data().units || [];
-      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
-      const s = await getDoc(ref); if(!s.exists()) return;
-      const inc = s.data();
-      units.forEach(deptName => {
-        const uid = `${deptName.replace(/\\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
-        inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId:uid, agency:deptName, apparatus:deptName, status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts: now(), by:'SYSTEM'}] });
-        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: now() });
-      });
-      await setDoc(ref, inc); openIncident(SELECTED); $('alarmMenu').style.display='none';
-    }));
-
-    // add detail
-    $('addDetailBtn').addEventListener('click', async ()=> {
-      if(!SELECTED) return alert('Select incident');
-      const txt = prompt('Enter detail:'); if(!txt) return;
-      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
-      const s = await getDoc(ref); if(!s.exists()) return;
-      const inc = s.data(); inc.details = inc.details || []; inc.details.push({ by: CURRENT.username, text: txt, ts: now() });
-      await setDoc(ref, inc); openIncident(SELECTED);
-    });
-    // ====== Add agency (admin-created department names used) ======
-    async function addAgencyToIncident(){
-      if(!SELECTED) return alert('Select an incident');
-      try {
-        // fetch list of departments from Firestore
-        const snap = await getDocs(subCol('fire_departments'));
-        const options = [];
-        snap.forEach(d => options.push(d.data().name));
-        const choice = prompt('Enter agency name (choose from list):\n' + options.join('\n'));
-        if(!choice) return;
-        const ref = docRef('incidents', SELECTED);
-        const s = await getDoc(ref);
-        if(!s || !s.exists || !s.exists()) return;
-        const inc = s.data();
-        const uid = `${choice.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
-        inc.unitsAttached = inc.unitsAttached || []; inc.unitsAttached.push({ unitId: uid, agency: choice, apparatus: choice, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: new Date().toISOString(), by:'SYSTEM' }] });
-        inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: new Date().toISOString() });
-        await setDoc(ref, inc);
-      } catch(e){
-        alert('Add agency failed: ' + (e.message || e));
-      }
-    }
-
-    // send chat
-    $('sendChat').addEventListener('click', async ()=> {
-      if(!SELECTED) return alert('Select incident');
-      const txt = $('chatInput').value.trim(); if(!txt) return;
-      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
-      const s = await getDoc(ref); if(!s.exists()) return;
-      const inc = s.data(); inc.messages = inc.messages || []; inc.messages.push({ sender: CURRENT.username, text: txt, ts: now() });
-      await setDoc(ref, inc); $('chatInput').value=''; openIncident(SELECTED);
-    });
-    // ====== Apply alarm template ======
-    async function applyAlarmTemplate(e){
-      if(!SELECTED) return alert('Select an incident');
-      const templateKey = e.currentTarget.dataset.temp; // first / second / third
-      try {
-        const tmp = await getDoc(docRef('alarm_templates', templateKey));
-        if(!tmp || !tmp.exists || !tmp.exists()) return alert('Template empty');
-        const units = tmp.data().units || [];
-        const ref = docRef('incidents', SELECTED);
-        const s = await getDoc(ref);
-        if(!s || !s.exists || !s.exists()) return;
-        const inc = s.data();
-        inc.unitsAttached = inc.unitsAttached || [];
-        units.forEach(deptName => {
-          const uid = `${deptName.replace(/\s+/g,'_')}_${Math.random().toString(36).slice(2,5)}`;
-          inc.unitsAttached.push({ unitId: uid, agency: deptName, apparatus: deptName, status: 'Acknowledged', statusHistory: [{ status:'Acknowledged', ts: new Date().toISOString(), by:'SYSTEM' }] });
-          inc.statusUpdates = inc.statusUpdates || []; inc.statusUpdates.push({ unitId: uid, status:'Acknowledged', ts: new Date().toISOString() });
-        });
-        await setDoc(ref, inc);
-        $('alarmMenu').style.display = 'none';
-      } catch(err){
-        alert('Alarm template error: ' + (err.message || err));
-      }
-    }
-
-    // archive
-    $('archiveIncBtn').addEventListener('click', async ()=> {
-      if(!SELECTED) return alert('Select incident');
-    // ====== Add detail ======
-    async function addDetailPrompt(){
-      if(!SELECTED) return alert('Select an incident');
-      const txt = prompt('Enter detail:');
-      if(!txt) return;
-      try {
-        const ref = docRef('incidents', SELECTED);
-        const s = await getDoc(ref);
-        if(!s || !s.exists || !s.exists()) return;
-        const inc = s.data();
-        inc.details = inc.details || []; inc.details.push({ by: CURRENT.username, text: txt, ts: new Date().toISOString() });
-        await setDoc(ref, inc);
-      } catch(e){
-        alert('Add detail failed: ' + (e.message || e));
-      }
-    }
-
-    // ====== Chat ======
-    async function sendChatMessage(){
-      if(!SELECTED) return alert('Select an incident');
-      const txt = $('chatInput').value.trim();
-      if(!txt) return;
-      try {
-        const ref = docRef('incidents', SELECTED);
-        const s = await getDoc(ref);
-        if(!s || !s.exists || !s.exists()) return;
-        const inc = s.data();
-        inc.messages = inc.messages || []; inc.messages.push({ sender: CURRENT.username, text: txt, ts: new Date().toISOString() });
-        await setDoc(ref, inc);
-        $('chatInput').value = '';
-      } catch(e){
-        alert('Send chat failed: ' + (e.message || e));
-      }
-    }
-
-    // ====== Archive incident (manual) ======
-    async function archiveCurrentIncident(){
-      if(!SELECTED) return alert('Select an incident');
-      if(!confirm('Archive incident?')) return;
-      const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', SELECTED);
-      const s = await getDoc(ref); if(!s.exists()) return;
-      const inc = s.data(); inc.archived = true; inc.archivedAt = now();
-      await setDoc(ref, inc); alert('Archived'); location.reload();
-    });
-      try {
-        const ref = docRef('incidents', SELECTED);
-        const s = await getDoc(ref);
-        if(!s || !s.exists || !s.exists()) return;
-        const inc = s.data(); inc.archived = true; inc.archivedAt = new Date().toISOString();
-        await setDoc(ref, inc);
-        alert('Archived');
-        SELECTED = null;
-      } catch(e){
-        alert('Archive failed: ' + (e.message || e));
-      }
-    }
-    $('archiveIncBtn')?.addEventListener('click', archiveCurrentIncident);
-
-    // ====== Show archived (past 90 days) ======
-    async function showArchived(){
-      try {
-        const snap = await getDocs(subCol('incidents'));
-        const threeMonths = Date.now() - 90*24*60*60*1000;
-        const arr = [];
-        snap.forEach(d => {
-          const val = d.data();
-          if(val.archived && (new Date(val.archivedAt || 0).getTime() >= threeMonths)) arr.push({ id: d.id, ...val });
-        });
-        $('incidentList').innerHTML = '';
-        if(!arr.length) { $('incidentList').innerHTML = '<div class="muted">No archived incidents</div>'; return; }
-        arr.forEach(it => {
-          const div = document.createElement('div'); div.className = 'incidentItem';
-          div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${escapeHtml(it.type)}</strong><div class="muted">${escapeHtml(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${it.id}">Open</button></div></div>`;
-          $('incidentList').appendChild(div);
-        });
-        $('incidentList').querySelectorAll('.openBtn').forEach(b => b.addEventListener('click', ev => openIncident(ev.currentTarget.dataset.id)));
-      } catch(e){
-        alert('Archive view failed: ' + (e.message || e));
-      }
-    }
-
-    // archive view
-    $('archiveBtn').addEventListener('click', async ()=> {
-      const snap = await getDocs(subCol('incidents'));
-      const arr = []; const three = Date.now() - 90*24*60*60*1000;
-      snap.forEach(d=> { const val = d.data(); if(val.archived && new Date(val.archivedAt||0).getTime() >= three) arr.push({ id:d.id, ...val }); });
-      $('incidentList').innerHTML=''; if(!arr.length) $('incidentList').innerHTML='<div class="muted">No archived incidents</div>';
-      arr.forEach(it=> { const div=document.createElement('div'); div.className='incidentItem'; div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${esc(it.type)}</strong><div class="muted">${esc(it.address||'')}</div></div><div><button class="btn small openBtn" data-id="${it.id}">Open</button></div></div>`; $('incidentList').appendChild(div); });
-      $('incidentList').querySelectorAll('.openBtn').forEach(b=> b.addEventListener('click', ()=> openIncident(b.dataset.id)));
-    });
-    // ====== Utility ======
-    function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
-
-    // wrappers
-    // small wrappers to avoid mixing named imports
-    import { getDoc as getDocRaw, getDocs as getDocsRaw } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-    async function getDoc(r){ return await getDocRaw(r); }
-    async function getDocs(r){ return await getDocsRaw(r); }
-
-  </script>
 </body>
 </html>
+
