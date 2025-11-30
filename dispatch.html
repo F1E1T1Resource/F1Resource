@@ -1,167 +1,140 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>F1 Resource – Apparatus Mobile Login</title>
 
 <style>
-:root {
-  --bg:#021022;
-  --panel:#081727;
-  --card:#0d1a2b;
-  --accent:#0b5fff;
-  --accent2:#7b5cff;
-  --muted:#97a7c5;
-  --radius:14px;
-}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #0a2a43, #1b567a);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+    }
 
-body {
-  margin:0;
-  padding:0;
-  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:linear-gradient(180deg,#020d1a,#031026,#041423);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#e9f1ff;
-}
+    #loginContainer {
+        width: 90%;
+        max-width: 380px;
+        background: rgba(255,255,255,0.15);
+        padding: 25px;
+        border-radius: 14px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 18px rgba(0,0,0,0.4);
+        text-align: center;
+    }
 
-.login-box {
-  width:95%;
-  max-width:400px;
-  background:linear-gradient(180deg,#0b1624,#08121a);
-  padding:26px;
-  border-radius:var(--radius);
-  border:1px solid rgba(255,255,255,0.05);
-  box-shadow:0 0 25px rgba(0,0,0,0.4);
-  text-align:center;
-}
+    #loginContainer img {
+        width: 140px;
+        margin-bottom: 10px;
+    }
 
-.logo img {
-  height:90px;
-  border-radius:14px;
-}
+    h2 {
+        margin-top: 5px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
 
-h2 {
-  margin:14px 0 4px;
-  font-size:1.6rem;
-  font-weight:800;
-}
+    input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 6px;
+        border: none;
+        font-size: 16px;
+    }
 
-.sub {
-  font-size:0.85rem;
-  color:var(--muted);
-}
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        background: #ffcc00;
+        font-size: 17px;
+        color: #000;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 10px;
+    }
 
-.input {
-  width:100%;
-  margin-top:12px;
-  padding:12px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:10px;
-  color:#e9f1ff;
-  font-size:1rem;
-}
+    button:hover {
+        background: #ffdb4d;
+    }
 
-.input:focus {
-  outline:2px solid var(--accent);
-}
+    #errorMessage {
+        margin-top: 10px;
+        color: #ff8080;
+        font-weight: bold;
+    }
 
-.btn {
-  width:100%;
-  margin-top:14px;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.primary {
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  color:#001020;
-}
-
-.secondary {
-  background:transparent;
-  color:var(--muted);
-  border:1px solid rgba(255,255,255,0.06);
-}
-
-.err {
-  margin-top:10px;
-  color:#ff8a8a;
-  font-size:0.9rem;
-}
+    #returnMain {
+        margin-top: 15px;
+        font-size: 15px;
+        color: #d0e8ff;
+        cursor: pointer;
+        text-decoration: underline;
+    }
 </style>
+
 </head>
 
 <body>
 
-<div class="login-box">
-  <div class="logo">
+<div id="loginContainer">
     <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755">
-  </div>
 
-  <h2>Apparatus Login</h2>
-  <div class="sub">Sign in using your assigned unit credentials</div>
+    <h2>Apparatus Mobile Login</h2>
 
-  <input id="apUser" class="input" placeholder="Unit Username (e.g., ENGINE511)">
-  <input id="apPass" class="input" type="password" placeholder="Password">
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
 
-  <button id="btnLogin" class="btn primary">Login</button>
-  <button id="btnBack" class="btn secondary">Back to Main Login</button>
+    <button onclick="loginApparatus()">LOGIN</button>
 
-  <div id="msg" class="err"></div>
+    <p id="errorMessage"></p>
+
+    <p id="returnMain" onclick="goMain()">Return to Main Login</p>
 </div>
 
 <script>
-// Local apparatus accounts (Option A system)
-function loadAppUsers(){
-  try { return JSON.parse(localStorage.getItem("f1_apparatus_local_v1")||"{}"); }
-  catch(e){ return {}; }
-}
+    // Local login system
+    const USERS = {
+        "ADMIN": { password: "ADMIN", role: "admin" },
+        "UNIT101": { password: "PASS101", role: "apparatus" },
+        "ENGINE2": { password: "E2", role: "apparatus" }
+        // You can add more apparatus accounts here
+    };
 
-// Ensure demo units exist if empty
-let appUsers = loadAppUsers();
-if(Object.keys(appUsers).length === 0){
-  appUsers = {
-    "ENGINE511": { password:"ENGINE511", label:"Engine 511" },
-    "ENGINE512": { password:"ENGINE512", label:"Engine 512" }
-  };
-  localStorage.setItem("f1_apparatus_local_v1", JSON.stringify(appUsers));
-}
+    function loginApparatus() {
+        const u = document.getElementById("username").value.trim();
+        const p = document.getElementById("password").value.trim();
 
-document.getElementById("btnBack").onclick = () => {
-  window.location.href = "index.html";
-};
+        if (!USERS[u]) {
+            document.getElementById("errorMessage").innerText = "User not found.";
+            return;
+        }
 
-document.getElementById("btnLogin").onclick = () => {
-  const u = document.getElementById("apUser").value.trim().toUpperCase();
-  const p = document.getElementById("apPass").value.trim();
+        if (USERS[u].password !== p) {
+            document.getElementById("errorMessage").innerText = "Incorrect password.";
+            return;
+        }
 
-  if(!u || !p){
-    msg.textContent = "Please enter username and password";
-    return;
-  }
+        // Save login session
+        localStorage.setItem("dispatchUser", u);
+        localStorage.setItem("dispatchRole", USERS[u].role);
 
-  const users = loadAppUsers();
-  if(!users[u] || users[u].password !== p){
-    msg.textContent = "Invalid apparatus credentials";
-    return;
-  }
+        // Redirect to single dispatch file
+        window.location.href = "dispatch.html";
+    }
 
-  // Save session (SSO)
-  sessionStorage.setItem("f1_apparatus_user", u);
-
-  // Redirect to dispatch main screen
-  window.location.href = "dispatch.html";
-};
+    function goMain() {
+        window.location.href = "index.html";
+    }
 </script>
 
 </body>
 </html>
-
