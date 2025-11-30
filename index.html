@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>F1 Resource — Main App + Dispatch</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>F1 Resource — Main App (Hybrid: Local login + Firestore data)</title>
 <style>
 :root{
-  --bg:#021023;--panel:#071727;--card:#0b1624;
-  --accent:#0b5fff;--accent2:#7b5cff;--muted:#9aa6bd;
+  --bg:#021023; --panel:#071727; --card:#0b1624;
+  --accent:#0b5fff; --accent2:#7b5cff; --muted:#9aa6bd;
   --radius:12px;
 }
 *{box-sizing:border-box}
@@ -24,7 +24,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
 .view.active{display:block}
 .input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit;margin-top:8px}
 .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
-.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001020}
+.btn.primary{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001020}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
 .list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .listItem{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
@@ -32,49 +32,43 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
 .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:9999}
 .modal{background:linear-gradient(180deg,#0b1624,#08121a);padding:16px;border-radius:12px;max-width:720px;width:96%;border:1px solid rgba(255,255,255,0.03)}
 .drag-handle{margin-right:8px;cursor:grab;color:var(--muted)}
-@media (max-width:900px){
-  .grid{grid-template-columns:1fr}
-  .sidebar{position:fixed;left:-320px;top:20px;height:calc(100vh-40px);z-index:1200;transition:left .22s}
-  .sidebar.open{left:12px}
-}
 .small{padding:6px 8px;font-size:13px}
+@media (max-width:900px){ .grid{grid-template-columns:1fr} .sidebar{position:fixed;left:-320px;top:20px;height:calc(100vh-40px);z-index:1200;transition:left .22s} .sidebar.open{left:12px} .header img{height:44px} }
 </style>
 </head>
 <body>
 <div class="container card">
   <div class="header">
     <img id="logo" src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="logo">
-    <div>
-      <h2 style="margin:0">F1 Resource</h2>
-      <div class="meta">Oswego County — Resources & Dispatch</div>
-    </div>
+    <div><h2 style="margin:0">F1 Resource</h2><div class="meta">Oswego County — Resources & Dispatch</div></div>
     <div style="margin-left:auto" id="topRightInfo" class="meta"></div>
   </div>
 
   <!-- LOGIN SCREEN -->
   <div id="loginScreen" style="margin-top:18px">
-    <div class="card" style="display:flex;gap:12px;align-items:center">
+    <div class="card" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
       <div style="flex:0 0 88px"><img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:80px;border-radius:10px"></div>
-      <div style="flex:1">
+      <div style="flex:1;min-width:220px">
         <h3 style="margin:0">Main App Login</h3>
         <div class="meta">Local login for admins & department users. Default admin: <strong>ADMIN / ADMIN</strong></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
           <input id="loginUser" class="input" placeholder="Username">
           <input id="loginPass" class="input" type="password" placeholder="Password">
         </div>
-        <div style="display:flex;gap:8px;margin-top:12px">
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
           <button id="btnLogin" class="btn primary">Login</button>
-          <button id="btnFill" class="btn ghost">Demo Fill</button>
-          <button id="gotoApparatus" class="btn ghost" style="margin-left:auto">Apparatus Login</button>
+          <button id="btnFill" class="btn ghost">Fill Admin</button>
+          <button id="appLoginPageBtn" class="btn ghost" style="margin-left:auto">Apparatus Login</button>
         </div>
         <div id="loginMsg" style="color:#ff9b9b;margin-top:8px"></div>
       </div>
     </div>
   </div>
+
   <!-- APP -->
   <div id="app" style="display:none;margin-top:18px">
     <div class="grid">
-      <aside class="sidebar" id="sidebar">
+      <aside class="sidebar" id="sidebar" aria-label="Main navigation">
         <div style="display:flex;gap:8px;align-items:center">
           <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:48px;border-radius:8px">
           <div style="font-weight:800">F1 Resource</div>
@@ -98,7 +92,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
       <main>
         <div id="home" class="view active card">
           <h3>WELCOME</h3>
-          <div class="meta">This is F1 Resource — your all inclusive application for resources and dispatch.</div>
+          <div class="meta">This is <strong>F1 Resource</strong>, your all inclusive application for the resources in Oswego County.</div>
         </div>
 
         <div id="departments" class="view card">
@@ -124,6 +118,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
           </div>
           <div id="coordList" class="list"></div>
         </div>
+
         <div id="teams" class="view card">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div><strong>County Teams</strong></div>
@@ -134,17 +129,17 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
 
         <div id="hazmat" class="view card">
           <h3>HazMat Search</h3>
-          <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
             <input id="hazQuery" class="input" placeholder="UN/NA number (e.g. 1203)">
             <button id="hazSearchBtn" class="btn primary">Search</button>
-            <button id="hazAdminBtn" class="btn ghost">Add/Edit</button>
+            <button id="hazAdminBtn" class="btn ghost">Add / Edit</button>
           </div>
           <div id="hazResult" style="margin-top:12px"></div>
         </div>
 
         <div id="ev" class="view card">
           <h3>EV Safety</h3>
-          <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
             <input id="evQuery" class="input" placeholder="VIN or Year,Make,Model">
             <button id="evSearchBtn" class="btn primary">Find</button>
           </div>
@@ -170,6 +165,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
           </div>
           <div id="appList" class="list" style="margin-top:12px"></div>
         </div>
+
         <div id="admin" class="view card">
           <h3>Admin</h3>
           <div style="display:flex;gap:8px;margin-top:12px">
@@ -179,6 +175,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
           <div id="userList" class="list" style="margin-top:12px"></div>
         </div>
 
+        <!-- Dispatch / Incidents (simplified) -->
         <div id="dispatchView" class="view card">
           <h3>Apparatus Mobile — Dispatch</h3>
           <div id="dispatchArea">
@@ -190,6 +187,7 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
               </div>
             </div>
             <div id="incidentList" style="margin-top:12px"></div>
+
             <div id="createPanel" style="display:none;margin-top:12px">
               <input id="incAddress" class="input" placeholder="Address">
               <input id="incType" class="input" placeholder="Type / Nature">
@@ -212,11 +210,14 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
     </div>
   </div>
 </div>
+
 <!-- Modal -->
 <div id="modalBackdrop" class="modal-backdrop"><div class="modal"><h3 id="modalTitle"></h3><div id="modalBody"></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="modalCancel" class="btn ghost">Cancel</button><button id="modalSave" class="btn primary">Save</button></div></div></div>
 
 <script type="module">
-// Firebase imports
+/* =========================
+   Firebase (Firestore) init
+   ========================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
@@ -234,18 +235,29 @@ const ROOT_COL='f1root', ROOT_DOC='f1resource';
 const subCol = (name)=> collection(db, ROOT_COL, ROOT_DOC, name);
 const docRef = (col,id)=> doc(db, ROOT_COL, ROOT_DOC, col, id);
 
-// Helpers
+/* ================
+   Utility helpers
+   ================ */
 const $ = id => document.getElementById(id);
 function esc(s){ return s? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;') : ''; }
 
-// Local users storage
+/* ============================
+   Local login (Option A: all local)
+   ============================ */
 const LOCAL_USERS_KEY = 'f1_local_users_v1';
 function loadLocalUsers(){ try{ return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}'); }catch(e){ return {}; } }
 function saveLocalUsers(obj){ localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(obj)); }
 let localUsers = loadLocalUsers();
-if(!localUsers.ADMIN){ localUsers.ADMIN = { password:'ADMIN', role:'ADMIN', dept:'' }; saveLocalUsers(localUsers); }
+// Provide default users if none exist
+if(!localUsers.ADMIN){
+  localUsers.ADMIN = { password:'ADMIN', role:'ADMIN', dept:'' };
+  // sample dept admin/user (you can remove or edit these later)
+  localUsers['DEPT1ADMIN'] = { password:'DEPT1PASS', role:'DEPT_ADMIN', dept:'Example VFD' };
+  localUsers['DEPT1USER'] = { password:'DEPT1USER', role:'DEPT_USER', dept:'Example VFD' };
+  saveLocalUsers(localUsers);
+}
 
-// Apparatus local accounts (for Option A)
+/* Apparatus local accounts (stored locally) */
 const APP_USERS_KEY = 'f1_apparatus_local_v1';
 function loadAppUsers(){ try{ return JSON.parse(localStorage.getItem(APP_USERS_KEY)||'{}'); }catch(e){ return {}; } }
 function saveAppUsers(o){ localStorage.setItem(APP_USERS_KEY, JSON.stringify(o)); }
@@ -255,49 +267,31 @@ if(!Object.keys(appUsers).length){
   appUsers['ENGINE512'] = { password:'ENGINE512', label:'Engine 512' };
   saveAppUsers(appUsers);
 }
-// SSO keys
+
+/* Session keys */
 const MAIN_SESSION_KEY = 'f1_main_user';
 const APP_SESSION_KEY = 'f1_apparatus_user';
 
-// State
-let CURRENT_USER = null; // main app user
-let CURRENT_APP = null;  // apparatus user
+let CURRENT_USER = null;
+let CURRENT_APP = null;
 let INCIDENTS = {}; let SELECTED_INC = null;
 
-// Modal helpers
+/* Modal */
 const modal = $('modalBackdrop'), modalTitle=$('modalTitle'), modalBody=$('modalBody'), modalSave=$('modalSave'), modalCancel=$('modalCancel');
 function showModal(title, buildFn, onSave){
   modalTitle.textContent = title; modalBody.innerHTML=''; buildFn(modalBody);
-  modal.classList.add('show'); modal.style.display='flex';
+  modal.style.display='flex'; modal.classList.add('show');
   modalSave.onclick = async ()=>{ await onSave(); modal.style.display='none'; modalBody.innerHTML=''; modalSave.onclick=null; };
   modalCancel.onclick = ()=>{ modal.style.display='none'; modalBody.innerHTML=''; modalSave.onclick=null; };
 }
 
-// Navigation
+/* Navigation and view switching */
 document.querySelectorAll('.nav button[data-view]').forEach(b=> b.addEventListener('click', ()=> setView(b.dataset.view)));
-function setView(id){
-  document.querySelectorAll('.view').forEach(v=> v.classList.remove('active'));
-  const el = $(id); if(el) el.classList.add('active');
-  document.querySelectorAll('.nav button[data-view]').forEach(b=> b.classList.toggle('active', b.dataset.view===id));
-}
+function setView(id){ document.querySelectorAll('.view').forEach(v=> v.classList.remove('active')); const el = $(id); if(el) el.classList.add('active'); document.querySelectorAll('.nav button[data-view]').forEach(b=> b.classList.toggle('active', b.dataset.view===id)); }
 
-// Login handlers
+/* Login UI handlers */
 $('btnFill').addEventListener('click', ()=>{ $('loginUser').value='ADMIN'; $('loginPass').value='ADMIN'; });
-$('gotoApparatus').addEventListener('click', ()=> { // show apparatus login modal UI inside same file
-  showModal('Apparatus Login', body=>{
-    body.innerHTML = `<input id="ap_user" class="input" placeholder="Unit username"><input id="ap_pass" class="input" type="password" placeholder="Password"><div class="meta">Demo: ENGINE511 / ENGINE511</div>`;
-  }, async ()=>{
-    const u = ($('ap_user').value||'').trim().toUpperCase(); const p = ($('ap_pass').value||'').trim();
-    if(!u||!p){ alert('Enter creds'); return; }
-    appUsers = loadAppUsers();
-    if(!appUsers[u] || appUsers[u].password !== p){ alert('Invalid apparatus login'); return; }
-    // persist SSO
-    localStorage.setItem(APP_SESSION_KEY, u);
-    CURRENT_APP = { username:u, label: appUsers[u].label || u };
-    modal.style.display='none';
-    bootDispatchForApp();
-  });
-});
+$('appLoginPageBtn').addEventListener('click', ()=> { window.location.href = 'apparatus_login.html'; });
 
 $('btnLogin').addEventListener('click', ()=>{
   const rawU = ($('loginUser').value||'').trim();
@@ -307,104 +301,90 @@ $('btnLogin').addEventListener('click', ()=>{
   localUsers = loadLocalUsers();
   const user = localUsers[u];
   if(!user || user.password !== rawP){ $('loginMsg').textContent='Invalid credentials'; return; }
-  // success
   CURRENT_USER = { username:u, role:user.role, dept:user.dept||'' };
   localStorage.setItem(MAIN_SESSION_KEY, u);
-  $('loginMsg').textContent='';
-  $('topRightInfo').textContent = `${u} • ${user.role}`;
-  $('loginScreen').style.display='none'; $('app').style.display='block';
+  $('loginMsg').textContent=''; $('topRightInfo').textContent = `${u} • ${user.role}`; $('loginScreen').style.display='none'; $('app').style.display='block';
   setupAfterLogin();
 });
 
-// Logout
-$('logoutBtn').addEventListener('click', ()=>{ localStorage.removeItem(MAIN_SESSION_KEY); location.reload(); });
-
-// Auto-login attempts
+/* Auto-login */
 (function tryAutoLogin(){
   const savedMain = localStorage.getItem(MAIN_SESSION_KEY);
   if(savedMain){
     localUsers = loadLocalUsers();
     const u = savedMain.toUpperCase();
-    if(localUsers[u]){ CURRENT_USER = { username:u, role:localUsers[u].role, dept:localUsers[u].dept||'' }; $('topRightInfo').textContent = `${u} • ${localUsers[u].role}`; $('loginScreen').style.display='none'; $('app').style.display='block'; setupAfterLogin(); return; }
-    else localStorage.removeItem(MAIN_SESSION_KEY);
+    if(localUsers[u]){ CURRENT_USER = { username:u, role:localUsers[u].role, dept:localUsers[u].dept||'' }; $('topRightInfo').textContent = `${u} • ${localUsers[u].role}`; $('loginScreen').style.display='none'; $('app').style.display='block'; setupAfterLogin(); return; } else localStorage.removeItem(MAIN_SESSION_KEY);
   }
   const savedApp = localStorage.getItem(APP_SESSION_KEY);
   if(savedApp){
     appUsers = loadAppUsers();
-    if(appUsers[savedApp]){ CURRENT_APP = { username:savedApp, label: appUsers[savedApp].label }; bootDispatchForApp(); }
-    else localStorage.removeItem(APP_SESSION_KEY);
+    if(appUsers[savedApp]){ CURRENT_APP = { username:savedApp, label: appUsers[savedApp].label }; bootDispatchForApp(); } else localStorage.removeItem(APP_SESSION_KEY);
   }
 })();
 
+/* Logout */
+$('logoutBtn').addEventListener('click', ()=>{ localStorage.removeItem(MAIN_SESSION_KEY); location.reload(); });
+
+/* Setup after login: permissions + listeners */
 function setupAfterLogin(){
-  // show/hide apparatus control per role
   if(CURRENT_USER.role !== 'ADMIN') document.querySelector('button[data-view="admin"]').style.display='none';
   if(CURRENT_USER.role !== 'ADMIN' && CURRENT_USER.role !== 'DEPT_ADMIN') document.querySelector('button[data-view="apparatus"]').style.display='none';
-  // attach CRUD buttons
   attachCrudHandlers();
   startRealtimeListeners();
 }
 
-// Firestore realtime listeners
+/* ---------------------
+   Firestore listeners
+   --------------------- */
 function startRealtimeListeners(){
-  onSnapshot(query(subCol('fire_departments')), snap => {
-    const out={}; snap.forEach(d=> out[d.id]=d.data()); renderDepartmentsOrdered(out);
-  });
-  onSnapshot(query(subCol('ems_agencies')), snap => {
-    const out={}; snap.forEach(d=> out[d.id]=d.data()); renderEMSOrdered(out);
-  });
-  onSnapshot(query(subCol('coordinators')), snap => {
-    const out={}; snap.forEach(d=> out[d.id]=d.data()); renderCoordinatorsOrdered(out);
-  });
-  onSnapshot(query(subCol('county_teams')), snap => {
-    const out={}; snap.forEach(d=> out[d.id]=d.data()); renderTeamsOrdered(out);
-  });
-  onSnapshot(query(subCol('apparatus')), snap => {
-    const out={}; snap.forEach(d=> out[d.id]=d.data()); renderApparatus(out);
-  });
-  onSnapshot(query(subCol('incidents')), snap => {
-    INCIDENTS={}; snap.forEach(d=> INCIDENTS[d.id]={ id:d.id, ...(d.data()) }); renderIncidentList();
-  });
+  onSnapshot(query(subCol('fire_departments')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderDepartmentsOrdered(out); });
+  onSnapshot(query(subCol('ems_agencies')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderEMSOrdered(out); });
+  onSnapshot(query(subCol('coordinators')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderCoordinatorsOrdered(out); });
+  onSnapshot(query(subCol('county_teams')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderTeamsOrdered(out); });
+  onSnapshot(query(subCol('apparatus')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderApparatus(out); });
+  onSnapshot(query(subCol('incidents')), snap => { INCIDENTS={}; snap.forEach(d=> INCIDENTS[d.id]={ id:d.id, ...(d.data()) }); renderIncidentList(); });
   renderUsersOrdered(loadLocalUsers());
   fetchWeather();
 }
 
-// Renderers and DnD (simplified)
+/* Utility: sort by stored order then name */
 function sortByOrder(map){ return Object.entries(map||{}).map(([id,d])=> ({ id, ...(d||{}) })).sort((a,b)=> ((a.order||1e9)-(b.order||1e9)) || (''+a.name).localeCompare(b.name)); }
 
+/* ------------------------
+   Renderers (departments)
+   ------------------------ */
 function renderDepartmentsOrdered(map){
   const t=$('deptList'); t.innerHTML=''; const items = sortByOrder(map);
   items.forEach(d=>{
-    const div=document.createElement('div'); div.className='listItem'; div.dataset.id=d.id;
+    const div=document.createElement('div'); div.className='listItem'; div.dataset.id=d.id; div.draggable = !!(CURRENT_USER && CURRENT_USER.role==='ADMIN');
     const drag = CURRENT_USER && CURRENT_USER.role==='ADMIN' ? '<span class="drag-handle">≡</span>' : '';
-    div.draggable = !!(CURRENT_USER && CURRENT_USER.role==='ADMIN');
-    div.innerHTML = `<div><div style="font-weight:800">${drag}${esc(d.name||'')}</div><div class='meta'>${esc(d.battalion||'')} ${d.address? ' • '+esc(d.address):''}</div></div>
-      <div style="display:flex;gap:8px"><button class="small btn" data-id="${d.id}" data-act="view-dept">View</button>${CURRENT_USER && (CURRENT_USER.role==='ADMIN' || (CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept===d.name))?`<button class="small btn" data-id="${d.id}" data-act="edit-dept">Edit</button>`:''}</div>`;
+    const canEdit = (CURRENT_USER && (CURRENT_USER.role==='ADMIN' || (CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept===d.name)));
+    div.innerHTML = `<div><div style="font-weight:800">${drag}${esc(d.name||'')}</div><div class='meta'>${esc(d.battalion||'')} ${d.address? ' • '+esc(d.address):''}</div></div><div style="display:flex;gap:8px"><button class="small btn" data-id="${d.id}" data-act="view-dept">View</button>${canEdit?`<button class="small btn" data-id="${d.id}" data-act="edit-dept">Edit</button>`:''}</div>`;
     t.appendChild(div);
   });
-  t.querySelectorAll('button[data-act="view-dept"]').forEach(b=> b.addEventListener('click', ()=> alert('Dept view placeholder')));
+  t.querySelectorAll('button[data-act="view-dept"]').forEach(b=> b.addEventListener('click', ()=> viewDept(b.dataset.id)));
   t.querySelectorAll('button[data-act="edit-dept"]').forEach(b=> b.addEventListener('click', ()=> editDoc('fire_departments', b.dataset.id)));
   if(CURRENT_USER && CURRENT_USER.role==='ADMIN') enableDragReorder(t, persistFirestoreOrder('fire_departments'));
 }
 
+/* EMS */
 function renderEMSOrdered(map){
   const t=$('emsList'); t.innerHTML=''; const items = sortByOrder(map);
   items.forEach(e=>{
-    const div=document.createElement('div'); div.className='listItem'; div.dataset.id=e.id;
-    div.draggable = !!(CURRENT_USER && CURRENT_USER.role==='ADMIN');
+    const div=document.createElement('div'); div.className='listItem'; div.dataset.id=e.id; div.draggable = !!(CURRENT_USER && CURRENT_USER.role==='ADMIN');
     const drag = CURRENT_USER && CURRENT_USER.role==='ADMIN' ? '<span class="drag-handle">≡</span>' : '';
     div.innerHTML = `<div><div style="font-weight:800">${drag}${esc(e.name||'')}</div><div class="meta">${esc(e.address||'')}</div></div><div><button class="small btn" data-id="${e.id}" data-act="view-ems">View</button></div>`;
     t.appendChild(div);
   });
-  t.querySelectorAll('button[data-act="view-ems"]').forEach(b=> b.addEventListener('click', ()=> alert('EMS view placeholder')));
+  t.querySelectorAll('button[data-act="view-ems"]').forEach(b=> b.addEventListener('click', ()=> viewEMS(b.dataset.id)));
   if(CURRENT_USER && CURRENT_USER.role==='ADMIN') enableDragReorder(t, persistFirestoreOrder('ems_agencies'));
 }
 
+/* Coordinators */
 function renderCoordinatorsOrdered(map){
   const t=$('coordList'); t.innerHTML=''; const items = sortByOrder(map);
   items.forEach(c=>{
-    const div=document.createElement('div'); div.className='listItem'; div.dataset.id=c.id;
-    div.draggable = !!(CURRENT_USER && CURRENT_USER.role==='ADMIN');
+    const div=document.createElement('div'); div.className='listItem'; div.dataset.id=c.id; div.draggable = !!(CURRENT_USER && CURRENT_USER.role==='ADMIN');
     const drag = CURRENT_USER && CURRENT_USER.role==='ADMIN' ? '<span class="drag-handle">≡</span>' : '';
     div.innerHTML = `<div><div style="font-weight:800">${drag}${esc(c.name||'')}</div><div class="meta">Callsign: ${esc(c.callsign||'')}</div></div><div>${CURRENT_USER&&CURRENT_USER.role==='ADMIN'?`<button class="small btn" data-id="${c.id}" data-act="edit-coord">Edit</button>`:''}</div>`;
     t.appendChild(div);
@@ -413,7 +393,164 @@ function renderCoordinatorsOrdered(map){
   if(CURRENT_USER && CURRENT_USER.role==='ADMIN') enableDragReorder(t, persistFirestoreOrder('coordinators'));
 }
 
-// ... end of file
+/* Teams */
+function renderTeamsOrdered(map){
+  const t=$('teamList'); t.innerHTML=''; const items = sortByOrder(map);
+  items.forEach(tm=>{
+    const div=document.createElement('div'); div.className='listItem'; div.dataset.id=tm.id; div.draggable = !!(CURRENT_USER && CURRENT_USER.role==='ADMIN');
+    const drag = CURRENT_USER && CURRENT_USER.role==='ADMIN' ? '<span class="drag-handle">≡</span>' : '';
+    div.innerHTML = `<div><div style="font-weight:800">${drag}${esc(tm.name||'')}</div><div class="meta">${esc(tm.lead||'')}</div></div><div></div>`;
+    t.appendChild(div);
+  });
+  if(CURRENT_USER && CURRENT_USER.role==='ADMIN') enableDragReorder(t, persistFirestoreOrder('county_teams'));
+}
+
+/* Apparatus list */
+function renderApparatus(map){ const t=$('appList'); t.innerHTML=''; Object.entries(map||{}).forEach(([id,a])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><div style="font-weight:800">${esc(a.apparatusName||id)}</div><div class="meta">${esc(a.department||'Unassigned')}</div></div><div style="display:flex;gap:8px">${(CURRENT_USER && (CURRENT_USER.role==='ADMIN' || CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept===a.department))?`<button class="small btn" data-id="${id}" data-act="edit-app">Edit</button><button class="small btn" data-id="${id}" data-act="del-app">Delete</button>`:''}</div>`; t.appendChild(div); }); t.querySelectorAll('button[data-act="edit-app"]').forEach(b=> b.addEventListener('click', ()=> editDoc('apparatus', b.dataset.id))); t.querySelectorAll('button[data-act="del-app"]').forEach(b=> b.addEventListener('click', async ()=> { if(confirm('Delete?')) await deleteDoc(docRef('apparatus', b.dataset.id)); })); }
+
+/* Users (local) render */
+const LOCAL_USERS_ORDER_KEY = 'f1_local_users_order';
+function loadLocalUsersOrder(){ try{ return JSON.parse(localStorage.getItem(LOCAL_USERS_ORDER_KEY)||'[]'); }catch(e){return[];} }
+function saveLocalUsersOrder(a){ localStorage.setItem(LOCAL_USERS_ORDER_KEY, JSON.stringify(a)); }
+
+function renderUsersOrdered(obj){
+  const t=$('userList'); t.innerHTML=''; const order = loadLocalUsersOrder();
+  let keys = Object.keys(obj||{});
+  if(order && order.length){
+    const ordered = order.filter(u=> keys.includes(u));
+    const missing = keys.filter(k=> !ordered.includes(k));
+    keys = [...ordered,...missing];
+  } else keys.sort();
+  keys.forEach(u=>{ const user = obj[u]; const div=document.createElement('div'); div.className='listItem'; div.dataset.id=u; div.draggable = !!(CURRENT_USER && CURRENT_USER.role==='ADMIN'); const drag = CURRENT_USER && CURRENT_USER.role==='ADMIN' ? '<span class="drag-handle">≡</span>' : ''; div.innerHTML = `<div><strong>${drag}${esc(u)}</strong><div class="meta">Role: ${esc(user.role||'')} ${user.dept? ' • Dept: '+esc(user.dept):''}</div></div><div style="display:flex;gap:8px">${(CURRENT_USER && (CURRENT_USER.role==='ADMIN' || (CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept===user.dept)))?`<button class="small btn" onclick="editLocalUser('${u}')">Edit</button><button class="small btn" onclick="deleteLocalUser('${u}')">Delete</button>`:''}</div>`; t.appendChild(div); });
+  if(CURRENT_USER && CURRENT_USER.role==='ADMIN') enableDragReorder($('userList'), async (ids)=>{ saveLocalUsersOrder(ids); renderUsersOrdered(loadLocalUsers()); });
+}
+
+/* Drag & Drop reorder utilities */
+function enableDragReorder(container, persistFn){
+  if(!container) return;
+  let dragEl=null;
+  container.addEventListener('dragstart', e=>{ const it = e.target.closest('[draggable="true"]'); if(!it) return; dragEl=it; e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain', it.dataset.id||''); it.style.opacity='0.5'; });
+  container.addEventListener('dragend', e=>{ if(dragEl) dragEl.style.opacity=''; dragEl=null; });
+  container.addEventListener('dragover', e=>{ e.preventDefault(); const after = getDragAfterElement(container, e.clientY); const dragging = dragEl; if(!dragging) return; if(after==null) container.appendChild(dragging); else container.insertBefore(dragging, after); });
+  container.addEventListener('drop', async e=>{ e.preventDefault(); const ids = Array.from(container.children).map(ch=> ch.dataset && ch.dataset.id ? ch.dataset.id : null).filter(Boolean); try{ await persistFn(ids); }catch(err){ alert('Save order failed'); console.error(err); } });
+  function getDragAfterElement(container, y){
+    const els = [...container.querySelectorAll('[draggable="true"]')].filter(el=> el!==dragEl);
+    let closest=null; let offset=Number.NEGATIVE_INFINITY;
+    for(const child of els){
+      const box=child.getBoundingClientRect();
+      const off = y - box.top - box.height/2;
+      if(off>offset){ offset=off; closest=child; }
+    }
+    return closest;
+  }
+}
+function persistFirestoreOrder(collectionName){ return async function(ids){ for(let i=0;i<ids.length;i++){ const id=ids[i]; try{ await setDoc(docRef(collectionName, id), { order:i }, { merge:true }); }catch(e){ console.error('order save',e); throw e; } } }; }
+
+/* ---------------------
+   CRUD helpers / editors
+   --------------------- */
+async function editDoc(collectionName, id){
+  const snap = await getDoc(docRef(collectionName, id));
+  const data = snap.exists()? snap.data() : {};
+  showModal('Edit '+collectionName, (root)=>{
+    root.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px">';
+    if(collectionName==='fire_departments'){
+      root.innerHTML += `<input id="f_name" class="input" placeholder="Name" value="${esc(data.name||'')}"/><input id="f_batt" class="input" placeholder="Battalion" value="${esc(data.battalion||'')}"/><input id="f_addr" class="input" placeholder="Address" value="${esc(data.address||'')}"/><input id="f_apps" class="input" placeholder="Apparatus (| separated)" value="${esc(data.apparatus||'')}"/>`;
+    } else if(collectionName==='apparatus'){
+      root.innerHTML += `<input id="ap_name" class="input" placeholder="Apparatus Name" value="${esc(data.apparatusName||'')}"/><input id="ap_dept" class="input" placeholder="Department" value="${esc(data.department||'')}"/>`;
+    } else if(collectionName==='coordinators'){
+      root.innerHTML += `<input id="c_name" class="input" placeholder="Name" value="${esc(data.name||'')}"/><input id="c_calls" class="input" placeholder="Callsign" value="${esc(data.callsign||'')}"/>`;
+    } else {
+      root.innerHTML += `<input id="g_name" class="input" placeholder="Name" value="${esc(data.name||'')}"/>`;
+    }
+    root.innerHTML += '</div>';
+  }, async ()=>{
+    if(collectionName==='fire_departments'){ const obj={ name:$('f_name').value.trim(), battalion:$('f_batt').value.trim(), address:$('f_addr').value.trim(), apparatus:$('f_apps').value.trim()}; await setDoc(docRef('fire_departments', id), obj, { merge:true }); }
+    else if(collectionName==='apparatus'){ const obj={ apparatusName:$('ap_name').value.trim(), department:$('ap_dept').value.trim() }; await setDoc(docRef('apparatus', id), obj, { merge:true }); }
+    else if(collectionName==='coordinators'){ const obj={ name:$('c_name').value.trim(), callsign:$('c_calls').value.trim() }; await setDoc(docRef('coordinators', id), obj, { merge:true }); }
+    else { await setDoc(docRef(collectionName, id), { name: $('g_name').value.trim() }, { merge:true }); }
+  });
+}
+
+/* Add handlers */
+$('addDept').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add Department', (root)=>{ root.innerHTML = `<input id="n_name" class="input" placeholder="Name"/><input id="n_batt" class="input" placeholder="Battalion"/><input id="n_addr" class="input" placeholder="Address"/><input id="n_apps" class="input" placeholder="Apparatus (| separated)"/>`; }, async ()=>{ await addDoc(subCol('fire_departments'), { name:$('n_name').value.trim(), battalion:$('n_batt').value.trim(), address:$('n_addr').value.trim(), apparatus:$('n_apps').value.trim() }); }); });
+
+$('addEms').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add EMS', (r)=> r.innerHTML = `<input id="e_name" class="input" placeholder="Name"/><input id="e_addr" class="input" placeholder="Address"/>`, async ()=> await addDoc(subCol('ems_agencies'), { name:$('e_name').value.trim(), address:$('e_addr').value.trim() })); });
+
+$('addCoord').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add Coordinator', (r)=> r.innerHTML=`<input id="co_name" class="input" placeholder="Name"/><input id="co_calls" class="input" placeholder="Callsign"/>`, async ()=> await addDoc(subCol('coordinators'), { name:$('co_name').value.trim(), callsign:$('co_calls').value.trim() })); });
+
+$('addTeam').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add Team', (r)=> r.innerHTML=`<input id="t_name" class="input" placeholder="Team"/><input id="t_lead" class="input" placeholder="Lead"/><input id="t_caps" class="input" placeholder="Capabilities (| separated)"/>`, async ()=> await addDoc(subCol('county_teams'), { name:$('t_name').value.trim(), lead:$('t_lead').value.trim(), capabilities:$('t_caps').value.trim() })); });
+
+$('addApp').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add Apparatus', (r)=> r.innerHTML = `<input id="ap_usr" class="input" placeholder="Login username (ENGINE511)"/><input id="ap_disp" class="input" placeholder="Apparatus display name"/><input id="ap_dept_new" class="input" placeholder="Department"/>`, async ()=>{ const u = ($('ap_usr').value||'').trim().toUpperCase(); if(!u) return alert('username'); await setDoc(docRef('apparatus', u), { username:u, apparatusName:$('ap_disp').value.trim(), department:$('ap_dept_new').value.trim() }); appUsers = loadAppUsers(); appUsers[u] = { password: u, label: $('ap_disp').value.trim() || u }; saveAppUsers(appUsers); }); });
+
+/* HazMat search and admin */
+$('hazSearchBtn').addEventListener('click', async ()=>{ const q = ($('hazQuery').value||'').trim(); if(!q) return alert('Enter UN'); const s = await getDoc(docRef('hazmat', q)); if(s.exists()){ const e = s.data(); $('hazResult').innerHTML = `<div style="font-weight:800">${esc(e.name||'')}</div><div class="meta">Class: ${esc(e.hazard_class||'')}</div><div style="margin-top:8px"><strong>Flammability:</strong> ${esc(e.flammability||'—')}</div><div><strong>Water reactivity:</strong> ${esc(e.water_reactivity||'—')}</div><div style="margin-top:8px"><strong>Evacuation small:</strong> ${esc(e.evacuation_small||'—')}</div><div><strong>Evacuation large:</strong> ${esc(e.evacuation_large||'—')}</div><div style="margin-top:8px">${esc(e.notes||'')}</div>`; } else $('hazResult').innerHTML = `<div class="meta">No record for ${esc(q)}</div>`; });
+
+$('hazAdminBtn').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add HazMat', (r)=> r.innerHTML = `<input id="hz_un" class="input" placeholder="UN"/><input id="hz_name" class="input" placeholder="Name"/><input id="hz_class" class="input" placeholder="Hazard class"/><input id="hz_flame" class="input" placeholder="Flammability"/><input id="hz_water" class="input" placeholder="Water reactivity"/><input id="hz_evac_s" class="input" placeholder="Evac small"/><input id="hz_evac_l" class="input" placeholder="Evac large"/><textarea id="hz_notes" class="input" placeholder="Notes"></textarea>`, async ()=>{ const un = $('hz_un').value.trim(); if(!un) return alert('UN'); await setDoc(docRef('hazmat', un), { un, name:$('hz_name').value.trim(), hazard_class:$('hz_class').value.trim(), flammability:$('hz_flame').value.trim(), water_reactivity:$('hz_water').value.trim(), evacuation_small:$('hz_evac_s').value.trim(), evacuation_large:$('hz_evac_l').value.trim(), notes:$('hz_notes').value.trim() }); alert('Saved'); }); });
+
+/* EV find (basic) */
+$('evSearchBtn').addEventListener('click', async ()=>{ const q = ($('evQuery').value||'').trim(); if(!q) return alert('Enter'); const key = q.trim().toLowerCase().replace(/\s+/g,'_'); const s = await getDoc(docRef('ev_guides', key)); if(s.exists()){ const d = s.data(); $('evResult').innerHTML = `<div style="font-weight:800">${esc(d.make||key)}</div><div style="margin-top:6px"><a href="${esc(d.url)}" target="_blank">${esc(d.url)}</a></div>`; } else $('evResult').innerHTML = `<div class="meta">No guide for ${esc(q)}</div>`; });
+
+/* Manage Local Users (Admin) */
+$('manageUsers').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Manage Local Users', (root)=>{ const users = loadLocalUsers(); let html = '<div style="max-height:300px;overflow:auto">'; Object.keys(users).forEach(u=> { html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><div><strong>${esc(u)}</strong><div class="meta">Role: ${esc(users[u].role||'')} ${users[u].dept? ' • Dept: '+esc(users[u].dept):''}</div></div><div><button class="btn small" data-user="${esc(u)}" data-act="editLocal">Edit</button> <button class="btn small" data-user="${esc(u)}" data-act="delLocal">Delete</button></div></div>` }); html += '</div><div style="margin-top:8px"><button id="createLocal" class="btn primary">Create User</button></div>'; root.innerHTML = html; root.querySelectorAll('button[data-act="editLocal"]').forEach(b=> b.addEventListener('click', ()=> editLocalUser(b.dataset.user))); root.querySelectorAll('button[data-act="delLocal"]').forEach(b=> b.addEventListener('click', ()=> { if(confirm('Delete '+b.dataset.user+'?')){ const u=b.dataset.user; const obj=loadLocalUsers(); delete obj[u]; saveLocalUsers(obj); alert('Deleted'); modal.style.display='none'; renderUsersOrdered(loadLocalUsers()); } })); root.querySelector('#createLocal').addEventListener('click', ()=> showModal('Create User', r=> r.innerHTML=`<input id="lu_name" class="input" placeholder="Username"/><input id="lu_pass" class="input" placeholder="Password"/><select id="lu_role" class="input"><option>ADMIN</option><option>DEPT_ADMIN</option><option>DEPT_USER</option></select><input id="lu_dept" class="input" placeholder="Department (for DEPT roles)"/>`, async ()=>{ const un = ($('lu_name').value||'').trim().toUpperCase(); if(!un) return alert('username'); const pw = $('lu_pass').value.trim(); const role = $('lu_role').value; const dept = $('lu_dept').value.trim(); const obj = loadLocalUsers(); obj[un] = { password: pw||'changeme', role, dept }; saveLocalUsers(obj); alert('Saved'); modal.style.display='none'; renderUsersOrdered(loadLocalUsers()); })); }, async ()=>{}); });
+
+/* Edit / Delete local user functions (exposed) */
+function editLocalUser(u){ const users = loadLocalUsers(); const d = users[u]; showModal('Edit User', r=> r.innerHTML = `<div><strong>${esc(u)}</strong></div><input id="lu_pw" class="input" value="${esc(d.password||'')}" placeholder="Password"/><select id="lu_role" class="input"><option${d.role==='ADMIN'?' selected':''}>ADMIN</option><option${d.role==='DEPT_ADMIN'?' selected':''}>DEPT_ADMIN</option><option${d.role==='DEPT_USER'?' selected':''}>DEPT_USER</option></select><input id="lu_dept" class="input" value="${esc(d.dept||'')}" placeholder="Department"/>`, async ()=>{ const pw=$('lu_pw').value.trim(); const role=$('lu_role').value; const dept=$('lu_dept').value.trim(); const obj=loadLocalUsers(); obj[u] = { password: pw||obj[u].password, role, dept }; saveLocalUsers(obj); renderUsersOrdered(obj); alert('Saved'); }); }
+function deleteLocalUser(u){ if(confirm('Delete '+u+'?')){ const obj=loadLocalUsers(); delete obj[u]; saveLocalUsers(obj); renderUsersOrdered(obj); } }
+
+/* Helper: is current user admin */
+function isAdmin(){ if(!CURRENT_USER){ alert('Please log in as admin'); return false; } if(CURRENT_USER.role!=='ADMIN'){ alert('Admin privileges required'); return false; } return true; }
+
+/* Attach some handlers that depend on login state */
+function attachCrudHandlers(){ renderUsersOrdered(loadLocalUsers()); $('refreshApp').addEventListener('click', ()=> { /* no-op refresh */ alert('Refreshed'); }); }
+
+/* Weather fetch (NWS) */
+async function fetchWeather(){ try{ const r = await fetch('https://api.weather.gov/alerts/active?area=OSW'); const j = await r.json(); if(j && Array.isArray(j.features) && j.features.length) $('weatherBlock').textContent = j.features.map(f=> `${f.properties.event} — ${f.properties.areaDesc}`).join('\\n\\n'); else $('weatherBlock').textContent = 'No active alerts'; }catch(e){ $('weatherBlock').textContent = 'Weather unavailable'; } }
+
+/* -----------------------
+   Dispatch / Incidents
+   ----------------------- */
+function bootDispatchForApp(){ setView('dispatchView'); $('loginScreen').style.display='none'; $('app').style.display='block'; $('unitLabel').textContent = CURRENT_APP.username + ' • ' + (CURRENT_APP.label||''); $('unitMeta').textContent = 'Assigned: ' + (CURRENT_APP.department||'Unassigned'); $('createIncidentBtn').addEventListener('click', ()=> $('createPanel').style.display='block'); $('cancelInc').addEventListener('click', ()=> $('createPanel').style.display='none'); $('submitInc').addEventListener('click', submitIncident); $('attachBtn').addEventListener('click', attachToIncident); $('sendChat').addEventListener('click', sendChat); $('viewArchiveBtn').addEventListener('click', ()=> alert('Archive view (not detailed)')); }
+
+async function submitIncident(){ const obj = { createdAt:new Date().toISOString(), createdBy: CURRENT_APP.username, creatorApparatus: CURRENT_APP.label||CURRENT_APP.username, address:$('incAddress').value.trim(), type:$('incType').value.trim(), details:$('incDetails').value.trim(), unitsAttached:[], statusUpdates:[], messages:[], archived:false }; try{ await addDoc(subCol('incidents'), obj); $('createPanel').style.display='none'; }catch(e){ alert('Error: '+e.message); } }
+
+function renderIncidentList(){ const t=$('incidentList'); t.innerHTML=''; const arr = Object.values(INCIDENTS).filter(i=> !i.archived).sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||'')); if(!arr.length) t.innerHTML='<div class="meta">No active incidents</div>'; arr.forEach(it=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><strong>${esc(it.type||'')}</strong><div class="meta">${esc(it.address||'')}</div></div><div><button class="small btn" data-id="${it.id}">Open</button></div>`; t.appendChild(div); div.querySelector('button').addEventListener('click', ()=> openIncident(it.id)); }); }
+
+async function openIncident(id){ SELECTED_INC = id; const snap = await getDoc(docRef('incidents', id)); if(!snap.exists()){ alert('Missing'); return; } const it = snap.data(); $('openTitle').textContent = `${it.type||''} — ${it.address||''}`; $('openMeta').textContent = `Created: ${it.createdAt||''} • By: ${it.createdBy||''}`; const ub = $('unitsBlock'); ub.innerHTML=''; (it.unitsAttached||[]).forEach(u=>{ const d = document.createElement('div'); d.innerHTML = `<div style="font-weight:700">${esc(u.apparatus||u.unitId||'')}</div><div class="meta">${esc(u.agency||'')} • ${esc(u.status||'')}</div>`; ub.appendChild(d); }); const cb = $('chatBox'); cb.innerHTML=''; (it.messages||[]).forEach(m=>{ const el = document.createElement('div'); el.innerHTML = `<div style="font-weight:700">${esc(m.sender)}</div><div class="meta">${esc(m.text)}</div><div class="meta" style="font-size:12px">${esc(m.ts)}</div>`; cb.appendChild(el); }); $('openIncidentPanel').style.display='block'; }
+
+async function attachToIncident(){ if(!SELECTED_INC) return alert('Select incident'); try{ const ref = docRef('incidents', SELECTED_INC); const snap = await getDoc(ref); if(!snap.exists()) return alert('Incident missing'); const inc = snap.data(); inc.unitsAttached = inc.unitsAttached||[]; const uid = CURRENT_APP.username; if(inc.unitsAttached.some(u=> u.unitId===uid)) return alert('Already attached'); const newUnit = { unitId: uid, apparatus: CURRENT_APP.label||uid, agency: CURRENT_APP.department||'Unassigned', status:'Acknowledged', statusHistory:[{ status:'Acknowledged', ts:new Date().toISOString(), by:uid }] }; inc.unitsAttached.push(newUnit); inc.statusUpdates = inc.statusUpdates||[]; inc.statusUpdates.push({ unitId:uid, status:'Acknowledged', ts:new Date().toISOString() }); await setDoc(ref, inc); }catch(e){ alert('Attach failed'); } }
+
+async function sendChat(){ if(!SELECTED_INC) return alert('Select incident'); const txt = $('chatInput').value.trim(); if(!txt) return; try{ const ref = docRef('incidents', SELECTED_INC); const snap = await getDoc(ref); if(!snap.exists()) return; const inc = snap.data(); inc.messages = inc.messages||[]; inc.messages.push({ sender: CURRENT_APP.username, text: txt, ts:new Date().toISOString() }); await setDoc(ref, inc); $('chatInput').value=''; }catch(e){ alert('Send failed'); } }
+
+/* ---------------------
+   Small helpers
+   --------------------- */
+function loadLocalUsers(){ try{ return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY)||'{}'); }catch(e){return{};} }
+function saveLocalUsers(u){ localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(u)); }
+
+/* Initialize UI state (show login if not logged in) */
+if(!localStorage.getItem(MAIN_SESSION_KEY)){ $('loginScreen').style.display='block'; $('app').style.display='none'; } else { $('loginScreen').style.display='none'; $('app').style.display='block'; startRealtimeListeners(); }
+
+/* DOM ready: attach some listeners */
+window.addEventListener('DOMContentLoaded', ()=>{ if(localStorage.getItem(MAIN_SESSION_KEY)) startRealtimeListeners(); });
+
+/* Expose some functions to global scope for inline calls */
+window.editLocalUser = editLocalUser;
+window.deleteLocalUser = deleteLocalUser;
+window.viewDept = async function(id){
+  // simple dept view presentation
+  const snap = await getDoc(docRef('fire_departments', id));
+  if(!snap.exists()){ alert('Missing dept'); return; }
+  const d = snap.data();
+  showModal('Department — '+(d.name||''), root=>{ root.innerHTML = `<div style="font-weight:800">${esc(d.name||'')}</div><div class="meta">${esc(d.battalion||'')} • ${esc(d.address||'')}</div><div style="margin-top:8px"><strong>Apparatus</strong><div class="meta">${(d.apparatus||'').split('|').map(s=>esc(s.trim())).join('<br/>')}</div></div>`; }, async ()=>{});
+};
+window.viewEMS = async function(id){
+  const snap = await getDoc(docRef('ems_agencies', id));
+  if(!snap.exists()){ alert('Missing'); return; }
+  const d = snap.data();
+  showModal('EMS — '+(d.name||''), root=>{ root.innerHTML = `<div style="font-weight:800">${esc(d.name||'')}</div><div class="meta">${esc(d.address||'')}</div>`; }, async ()=>{});
+};
+
 </script>
 </body>
 </html>
