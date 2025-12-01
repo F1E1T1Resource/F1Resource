@@ -3,184 +3,190 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>F1 Resource — Dispatch (Apparatus Mobile)</title>
+<title>F1 Resource — Main App</title>
 <style>
 :root{
-  --bg:#041428; --panel:#071727; --card:#0b1624;
+  --bg:#021023; --panel:#071727; --card:#0b1624;
   --accent:#0b5fff; --accent2:#7b5cff; --muted:#9aa6bd;
   --radius:12px;
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#021023,#041428);color:#eaf3ff;min-height:100vh}
-.container{max-width:980px;margin:18px auto;padding:12px}
-.card{background:linear-gradient(180deg,#0b1624,#08121a);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.container{max-width:1100px;margin:20px auto;padding:12px}
+.card{background:linear-gradient(180deg,#0b1624,#07121a);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
 .header{display:flex;align-items:center;gap:12px}
-.header img{height:48px;border-radius:8px}
-.meta{color:var(--muted);font-size:13px}
-.grid{display:grid;grid-template-columns:1fr 360px;gap:12px}
-@media (max-width:900px){ .grid{grid-template-columns:1fr} .rightCol{order:2} .leftCol{order:1} }
-.h1{margin:0 0 8px 0}
-.input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;margin-top:8px}
+.header img{height:56px;border-radius:8px}
+.grid{display:grid;grid-template-columns:260px 1fr;gap:16px}
+.sidebar{background:linear-gradient(180deg,#071323,#06121a);padding:12px;border-radius:12px;height:calc(100vh - 80px);position:sticky;top:20px}
+.nav button{display:block;width:100%;text-align:left;padding:10px;border-radius:8px;border:none;background:transparent;color:var(--muted);margin-bottom:6px;cursor:pointer;font-weight:700}
+.nav button.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001020;transform:translateX(6px)}
+.view{display:none}
+.view.active{display:block}
+.input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit;margin-top:8px}
 .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
-.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001020}
+.btn.primary{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001020}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
 .list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .listItem{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
-.small{padding:6px 8px;font-size:13px}
-.timeline{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;max-height:220px;overflow:auto}
-.adminPanel{background:linear-gradient(180deg,#081623,#07121a);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-top:12px}
-.hidden{display:none}
-.badge{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-weight:700}
+.meta{color:var(--muted);font-size:13px}
+.modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:9999}
+.modal{background:linear-gradient(180deg,#0b1624,#08121a);padding:16px;border-radius:12px;max-width:720px;width:96%;border:1px solid rgba(255,255,255,0.03)}
+@media (max-width:900px){ .grid{grid-template-columns:1fr} .sidebar{position:fixed;left:-320px;top:20px;height:calc(100vh-40px);z-index:1200;transition:left .22s} .sidebar.open{left:12px} .header img{height:44px} }
 </style>
 </head>
 <body>
 <div class="container card">
   <div class="header">
-    <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="logo">
-    <div>
-      <h2 class="h1">Apparatus Mobile — Dispatch</h2>
-      <div class="meta">Create incidents, attach units, track status (timestamps), and chat.</div>
-    </div>
-    <div style="margin-left:auto;text-align:right">
-      <div id="who" class="meta"></div>
-      <div style="margin-top:6px"><button id="btnLogout" class="btn ghost small">Logout</button></div>
+    <img id="logo" src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="logo">
+    <div><h2 style="margin:0">F1 Resource</h2><div class="meta">Oswego County — Resources & Dispatch</div></div>
+    <div style="margin-left:auto" id="topRightInfo" class="meta"></div>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" style="margin-top:18px">
+    <div class="card" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <div style="flex:0 0 88px"><img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:80px;border-radius:10px"></div>
+      <div style="flex:1;min-width:220px">
+        <h3 style="margin:0">Main App Login</h3>
+        <div class="meta">Local login for admins & department users. Default admin: <strong>ADMIN / ADMIN</strong></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <input id="loginUser" class="input" placeholder="Username">
+          <input id="loginPass" class="input" type="password" placeholder="Password">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button id="btnLogin" class="btn primary">Login</button>
+          <button id="btnFill" class="btn ghost">Fill Admin</button>
+          <button id="openDispatch" class="btn ghost" style="margin-left:auto">Apparatus Mobile Login</button>
+        </div>
+        <div id="loginMsg" style="color:#ff9b9b;margin-top:8px"></div>
+      </div>
     </div>
   </div>
 
-  <div class="grid" style="margin-top:12px">
-    <div class="leftCol">
+  <!-- APP (hidden until login) -->
+  <div id="app" style="display:none;margin-top:18px">
+    <div class="grid">
+      <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+        <div style="display:flex;gap:8px;align-items:center">
+          <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" style="height:48px;border-radius:8px">
+          <div style="font-weight:800">F1 Resource</div>
+        </div>
+        <nav class="nav" style="margin-top:12px">
+          <button data-view="home" class="active">Home</button>
+          <button data-view="departments">Fire Departments</button>
+          <button data-view="ems">EMS Agencies</button>
+          <button data-view="coordinators">County Coordinators</button>
+          <button data-view="teams">County Teams</button>
+          <button data-view="hazmat">HazMat Search</button>
+          <button data-view="ev">EV Safety</button>
+          <button data-view="risks">Fire & Driving Risk</button>
+          <button data-view="weather">Weather</button>
+          <button data-view="apparatus">Apparatus Control</button>
+          <button data-view="admin">Admin</button>
+          <button id="logoutBtn" class="btn ghost" style="margin-top:12px">Logout</button>
+        </nav>
+      </aside>
 
-      <div id="createCard" class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>Create Incident</strong><div class="meta">Fill the basics and submit — units can attach.</div></div>
-          <div><span id="connectedBadge" class="badge">Offline</span></div>
+      <main>
+        <div id="home" class="view active card">
+          <h3>WELCOME</h3>
+          <div class="meta">This is <strong>F1 Resource</strong>, your all inclusive application for the resources in Oswego County.</div>
         </div>
 
-        <div style="margin-top:10px">
-          <input id="inc_address" class="input" placeholder="Address / Location">
-          <input id="inc_type" class="input" placeholder="Type / Nature (structure, mva, fire, etc.)">
-          <textarea id="inc_notes" class="input" placeholder="Details / notes"></textarea>
-
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <select id="alarmSelect" class="input" style="flex:1">
-              <option value="">No Alarm</option>
-              <option value="1st">1st Alarm Structure</option>
-              <option value="2nd">2nd Alarm Structure</option>
-              <option value="3rd">3rd Alarm Structure</option>
-            </select>
-            <button id="btnCreate" class="btn primary">Create</button>
+        <div id="departments" class="view card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>Fire Departments</strong><div class="meta">Manage departments</div></div>
+            <div><button id="addDept" class="btn primary">+ Add</button></div>
           </div>
-        </div>
-      </div>
-
-      <div id="activeIncCard" class="card" style="margin-top:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>Active Incidents</strong><div class="meta">Tap to open</div></div>
-          <div><button id="btnRefreshList" class="btn ghost small">Refresh</button></div>
-        </div>
-        <div id="incList" class="list"></div>
-      </div>
-
-      <div id="openIncCard" class="card hidden" style="margin-top:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong id="openTitle"></strong><div id="openSub" class="meta"></div></div>
-          <div><button id="btnCloseOpen" class="btn ghost small">Close</button></div>
+          <div id="deptList" class="list"></div>
         </div>
 
-        <div style="margin-top:10px">
-          <div><strong>Attached Units</strong></div>
-          <div id="attachedUnits" class="timeline" style="margin-top:8px"></div>
-
-          <div style="margin-top:10px"><strong>Status Update</strong>
-            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
-              <button class="statusBtn btn small" data-status="Acknowledged">Acknowledged</button>
-              <button class="statusBtn btn small" data-status="Responding">Responding</button>
-              <button class="statusBtn btn small" data-status="Staged">Staged</button>
-              <button class="statusBtn btn small" data-status="Arrived">Arrived</button>
-              <button class="statusBtn btn small" data-status="Returning">Returning</button>
-              <button class="statusBtn btn small" data-status="Clear">Clear</button>
-            </div>
+        <div id="ems" class="view card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>EMS Agencies</strong></div>
+            <div><button id="addEms" class="btn primary">+ Add</button></div>
           </div>
+          <div id="emsList" class="list"></div>
+        </div>
 
-          <div style="margin-top:10px"><strong>Incident Timeline & Chat</strong>
-            <div id="timelineBox" class="timeline" style="margin-top:8px"></div>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <input id="chatIn" class="input" placeholder="Message" />
-              <button id="sendMsg" class="btn primary">Send</button>
-            </div>
+        <div id="coordinators" class="view card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>County Coordinators</strong></div>
+            <div><button id="addCoord" class="btn primary">+ Add</button></div>
           </div>
+          <div id="coordList" class="list"></div>
+        </div>
 
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <button id="btnAttachSelf" class="btn ghost">Attach Myself</button>
-            <button id="btnAddAgency" class="btn ghost">Add Agency</button>
-            <button id="btnClearArchive" class="btn ghost">Archive Incident</button>
+        <div id="teams" class="view card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>County Teams</strong></div>
+            <div><button id="addTeam" class="btn primary">+ Add Team</button></div>
           </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="rightCol">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>Units</strong><div class="meta">Available apparatus</div></div>
-          <div><button id="btnShowAdmin" class="btn ghost small">Admin Tools</button></div>
-        </div>
-        <div id="unitsList" class="list" style="margin-top:12px"></div>
-      </div>
-
-      <div id="adminPanel" class="adminPanel hidden">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>Admin Tools</strong><div class="meta">Visible to ADMIN only</div></div>
-          <div><button id="btnCloseAdmin" class="btn ghost small">Close</button></div>
+          <div id="teamList" class="list"></div>
         </div>
 
-        <div style="margin-top:10px">
+        <div id="hazmat" class="view card">
+          <h3>HazMat Search</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="hazQuery" class="input" placeholder="UN/NA number (e.g. 1203)">
+            <button id="hazSearchBtn" class="btn primary">Search</button>
+            <button id="hazAdminBtn" class="btn ghost">Add / Edit</button>
+          </div>
+          <div id="hazResult" style="margin-top:12px"></div>
+        </div>
+
+        <div id="ev" class="view card">
+          <h3>EV Safety</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="evQuery" class="input" placeholder="VIN or Year,Make,Model">
+            <button id="evSearchBtn" class="btn primary">Find</button>
+          </div>
+          <div id="evResult" style="margin-top:12px"></div>
+        </div>
+
+        <div id="risks" class="view card">
+          <h3>Fire & Driving Risk</h3>
+          <div id="riskBody" class="meta" style="margin-top:8px"></div>
+        </div>
+
+        <div id="weather" class="view card">
+          <h3>Weather</h3>
+          <div class="meta">Active weather alerts for Oswego County</div>
+          <pre id="weatherBlock" style="white-space:pre-wrap;margin-top:8px;color:var(--muted)"></pre>
+        </div>
+
+        <div id="apparatus" class="view card">
+          <h3>Apparatus Control</h3>
           <div style="display:flex;gap:8px">
-            <button id="btnAddDept" class="btn primary small">+ Department</button>
-            <button id="btnAddUnit" class="btn ghost small">+ Apparatus</button>
+            <button id="addApp" class="btn primary">+ Add Apparatus</button>
+            <button id="refreshApp" class="btn ghost">Refresh</button>
           </div>
-
-          <div style="margin-top:10px">
-            <div><strong>Departments</strong></div>
-            <div id="deptListAdmin" class="list" style="margin-top:8px"></div>
-          </div>
-
-          <div style="margin-top:10px">
-            <div><strong>Apparatus</strong></div>
-            <div id="unitListAdmin" class="list" style="margin-top:8px"></div>
-          </div>
-
-          <div style="margin-top:10px">
-            <div><strong>Alarm presets</strong></div>
-            <div id="alarmPresets" style="margin-top:8px"></div>
-            <div style="margin-top:8px"><button id="btnEditAlarms" class="btn ghost small">Edit Alarms</button></div>
-          </div>
+          <div id="appList" class="list" style="margin-top:12px"></div>
         </div>
-      </div>
 
+        <div id="admin" class="view card">
+          <h3>Admin</h3>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button id="manageUsers" class="btn primary">Manage Local Users</button>
+            <button id="manageHaz" class="btn ghost">HazMat Import</button>
+          </div>
+          <div id="userList" class="list" style="margin-top:12px"></div>
+        </div>
+
+      </main>
     </div>
   </div>
 </div>
 
-<!-- Modal simple -->
-<div id="modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:9999">
-  <div style="background:linear-gradient(180deg,#0b1624,#07121a);padding:12px;border-radius:12px;width:92%;max-width:560px;border:1px solid rgba(255,255,255,0.03)">
-    <div id="modalTitle" style="font-weight:800"></div>
-    <div id="modalBody" style="margin-top:8px"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="modalCancel" class="btn ghost">Cancel</button><button id="modalOk" class="btn primary">Save</button></div>
-  </div>
-</div>
+<!-- Modal -->
+<div id="modalBackdrop" class="modal-backdrop"><div class="modal"><h3 id="modalTitle"></h3><div id="modalBody"></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="modalCancel" class="btn ghost">Cancel</button><button id="modalSave" class="btn primary">Save</button></div></div></div>
 
 <script type="module">
-/* ---------------------------
-  Firebase (Firestore) v9+
-  --------------------------- */
+/* ------------------------
+   Firebase (Firestore) init
+   ------------------------ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs, deleteDoc,
-  onSnapshot, query, orderBy, where, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
@@ -190,392 +196,153 @@ const firebaseConfig = {
   messagingSenderId: "182745701982",
   appId: "1:182745701982:web:9f4f3836b41b450987decf"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const ROOT_COL='f1root', ROOT_DOC='f1resource';
+const subCol = (name)=> collection(db, ROOT_COL, ROOT_DOC, name);
+const docRef = (col,id)=> doc(db, ROOT_COL, ROOT_DOC, col, id);
 
-/* Root names */
-const ROOT_COL='dispatch_root', ROOT_DOC='dispatch';
-const departmentsCol = ( ) => collection(db, ROOT_COL, ROOT_DOC, 'departments');
-const apparatusCol = ( ) => collection(db, ROOT_COL, ROOT_DOC, 'dispatch_apparatus');
-const incidentsCol = ( ) => collection(db, ROOT_COL, ROOT_DOC, 'incidents');
+/* Utility */
+const $ = id => document.getElementById(id);
+function esc(s){ return s? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;') : ''; }
 
-const subTimeline = (incidentId) => collection(db, ROOT_COL, ROOT_DOC, 'incidents', incidentId, 'timeline');
-const subApparatus = (incidentId) => collection(db, ROOT_COL, ROOT_DOC, 'incidents', incidentId, 'apparatus');
-
-/* ---------------------------
-  Local session / login check
-  --------------------------- */
-const dispatchUser = localStorage.getItem('dispatchUser');
-const dispatchRole = localStorage.getItem('dispatchRole') || 'apparatus';
-
-if(!dispatchUser){
-  // not logged in — redirect to apparatus_login.html
-  window.location.href = 'apparatus_login.html';
+/* Local login (option A) */
+const LOCAL_USERS_KEY = 'f1_local_users_v1';
+function loadLocalUsers(){ try{ return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}'); }catch(e){ return {}; } }
+function saveLocalUsers(obj){ localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(obj)); }
+let localUsers = loadLocalUsers();
+if(!localUsers.ADMIN){
+  localUsers.ADMIN = { password:'ADMIN', role:'ADMIN', dept:'' };
+  localUsers['DEPT1ADMIN'] = { password:'DEPT1PASS', role:'DEPT_ADMIN', dept:'Example VFD' };
+  localUsers['DEPT1USER'] = { password:'DEPT1USER', role:'DEPT_USER', dept:'Example VFD' };
+  saveLocalUsers(localUsers);
 }
 
-// UI elements
-const who = document.getElementById('who');
-who.textContent = `${dispatchUser} • ${dispatchRole.toUpperCase()}`;
+/* Session key */
+const MAIN_SESSION_KEY = 'f1_main_user';
+let CURRENT_USER = null;
 
-document.getElementById('btnLogout').addEventListener('click', ()=>{
-  localStorage.removeItem('dispatchUser'); localStorage.removeItem('dispatchRole'); location.href='apparatus_login.html';
+/* UI login handlers */
+$('btnFill').addEventListener('click', ()=>{ $('loginUser').value='ADMIN'; $('loginPass').value='ADMIN'; });
+$('openDispatch').addEventListener('click', ()=>{ // open dispatch.html in new tab
+  window.open('dispatch.html','_blank');
 });
 
-/* State */
-let DEPARTMENTS = {}; // id -> data
-let APPARATUS = {};   // id -> data
-let INCIDENTS = {};   // id -> data
-
-/* UI refs */
-const unitsList = document.getElementById('unitsList');
-const incList = document.getElementById('incList');
-const attachedUnits = document.getElementById('attachedUnits');
-const timelineBox = document.getElementById('timelineBox');
-const openTitle = document.getElementById('openTitle');
-const openSub = document.getElementById('openSub');
-const openIncCard = document.getElementById('openIncCard');
-const btnAttachSelf = document.getElementById('btnAttachSelf');
-const btnCreate = document.getElementById('btnCreate');
-const btnRefreshList = document.getElementById('btnRefreshList');
-const connectedBadge = document.getElementById('connectedBadge');
-
-/* Admin UI */
-const adminPanel = document.getElementById('adminPanel');
-const btnShowAdmin = document.getElementById('btnShowAdmin');
-const btnCloseAdmin = document.getElementById('btnCloseAdmin');
-const deptListAdmin = document.getElementById('deptListAdmin');
-const unitListAdmin = document.getElementById('unitListAdmin');
-const alarmPresets = document.getElementById('alarmPresets');
-const btnAddDept = document.getElementById('btnAddDept');
-const btnAddUnit = document.getElementById('btnAddUnit');
-const btnEditAlarms = document.getElementById('btnEditAlarms');
-
-let OPEN_INCIDENT_ID = null;
-
-/* Helper: show modal */
-const modal = document.getElementById('modal');
-const modalTitle = document.getElementById('modalTitle');
-const modalBody = document.getElementById('modalBody');
-const modalOk = document.getElementById('modalOk');
-const modalCancel = document.getElementById('modalCancel');
-function showModal(title, buildFn, onSave){
-  modalTitle.textContent = title; modalBody.innerHTML=''; buildFn(modalBody);
-  modal.style.display = 'flex';
-  return new Promise((res,rej)=>{
-    modalOk.onclick = async ()=>{ try{ await onSave(); modal.style.display='none'; res(true); } catch(e){ rej(e); } }
-    modalCancel.onclick = ()=>{ modal.style.display='none'; res(false); };
-  });
-}
-
-/* -------------------------
-  Realtime listeners
-  ------------------------- */
-onSnapshot(query(departmentsCol()), snap => {
-  const out={}; snap.forEach(d=> out[d.id] = d.data()); DEPARTMENTS = out; renderAdminLists();
-});
-onSnapshot(query(apparatusCol()), snap => {
-  const out={}; snap.forEach(d=> out[d.id] = d.data()); APPARATUS = out; renderUnits(); renderAdminLists();
-});
-onSnapshot(query(incidentsCol()), snap => {
-  const out={}; snap.forEach(d=> out[d.id] = d.data()); INCIDENTS = out; renderIncidentList();
+$('btnLogin').addEventListener('click', ()=>{
+  const rawU = ($('loginUser').value||'').trim().toUpperCase();
+  const rawP = ($('loginPass').value||'').trim();
+  if(!rawU||!rawP){ $('loginMsg').textContent='Enter username & password'; return; }
+  localUsers = loadLocalUsers();
+  const user = localUsers[rawU];
+  if(!user || user.password !== rawP){ $('loginMsg').textContent='Invalid credentials'; return; }
+  CURRENT_USER = { username:rawU, role:user.role, dept:user.dept||'' };
+  localStorage.setItem(MAIN_SESSION_KEY, rawU);
+  $('loginMsg').textContent=''; $('topRightInfo').textContent = `${rawU} • ${user.role}`; $('loginScreen').style.display='none'; $('app').style.display='block';
+  setupAfterLogin();
 });
 
-/* Firestore connectivity indicator */
-connectedBadge.textContent = 'Connected';
-
-/* -------------------------
-  Renderers
-  ------------------------- */
-function renderUnits(){
-  unitsList.innerHTML = '';
-  const arr = Object.entries(APPARATUS).sort((a,b)=> (a[1].apparatusName||a[0]).localeCompare(b[1].apparatusName||b[0]));
-  if(!arr.length) unitsList.innerHTML = '<div class="meta">No units defined</div>';
-  arr.forEach(([id,u])=>{
-    const div = document.createElement('div'); div.className='listItem';
-    div.innerHTML = `<div><strong>${u.apparatusName||id}</strong><div class="meta">${u.department||'Unassigned'}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="show">Open</button></div>`;
-    unitsList.appendChild(div);
-    div.querySelector('button[data-act="show"]').addEventListener('click', ()=> showAppDetails(id));
-  });
-}
-
-function renderIncidentList(){
-  incList.innerHTML = '';
-  const arr = Object.entries(INCIDENTS).filter(([id,i])=> !i.archived).sort((a,b)=> (b[1].createdAt||'').localeCompare(a[1].createdAt||''));
-  if(!arr.length) incList.innerHTML = '<div class="meta">No active incidents</div>';
-  arr.forEach(([id,i])=>{
-    const div = document.createElement('div'); div.className='listItem';
-    div.innerHTML = `<div><strong>${i.type||'No Type'}</strong><div class="meta">${i.address||'No Address'} • ${i.createdAt?i.createdAt:''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="open">Open</button></div>`;
-    incList.appendChild(div);
-    div.querySelector('button[data-act="open"]').addEventListener('click', ()=> openIncident(id));
-  });
-}
-
-function renderAdminLists(){
-  // departments
-  deptListAdmin.innerHTML=''; unitListAdmin.innerHTML=''; alarmPresets.innerHTML='';
-  const dEntries = Object.entries(DEPARTMENTS).sort((a,b)=> (a[1].name||'').localeCompare(b[1].name||''));
-  dEntries.forEach(([id,d])=>{
-    const div=document.createElement('div'); div.className='listItem';
-    div.innerHTML = `<div><strong>${d.name}</strong><div class="meta">${d.notes||''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="edit-dept">Edit</button><button class="small btn" data-id="${id}" data-act="del-dept">Delete</button></div>`;
-    deptListAdmin.appendChild(div);
-    div.querySelector('button[data-act="edit-dept"]').addEventListener('click', ()=> editDept(id));
-    div.querySelector('button[data-act="del-dept"]').addEventListener('click', async ()=> { if(confirm('Delete department?')) await deleteDoc(doc(departmentsCol(), id)); });
-  });
-  const aEntries = Object.entries(APPARATUS).sort((a,b)=> (a[1].apparatusName||a[0]).localeCompare(b[1].apparatusName||b[0]));
-  aEntries.forEach(([id,u])=>{
-    const div=document.createElement('div'); div.className='listItem';
-    div.innerHTML = `<div><strong>${u.apparatusName||id}</strong><div class="meta">${u.department||''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="edit-unit">Edit</button><button class="small btn" data-id="${id}" data-act="del-unit">Delete</button></div>`;
-    unitListAdmin.appendChild(div);
-    div.querySelector('button[data-act="edit-unit"]').addEventListener('click', ()=> editUnit(id));
-    div.querySelector('button[data-act="del-unit"]').addEventListener('click', async ()=> { if(confirm('Delete apparatus?')) { await deleteDoc(doc(apparatusCol(), id)); } });
-  });
-
-  // alarm presets - if you want to store presets in departments or separate collection we can expand - for now read from departments -> alarms field
-  dEntries.forEach(([id,d])=>{
-    if(d.alarms){
-      const group = document.createElement('div'); group.style.marginBottom='6px';
-      group.innerHTML = `<div style="font-weight:700">${d.name}</div><div class="meta">${(d.alarms||[]).map(a=>a.name).join(', ')}</div>`;
-      alarmPresets.appendChild(group);
-    }
-  });
-}
-
-/* -------------------------
-  Actions: Create incident
-  ------------------------- */
-btnCreate.addEventListener('click', async ()=>{
-  const address = document.getElementById('inc_address').value.trim();
-  const type = document.getElementById('inc_type').value.trim();
-  const notes = document.getElementById('inc_notes').value.trim();
-  const alarm = document.getElementById('alarmSelect').value || '';
-  if(!address && !type){ alert('Enter at least address or type'); return; }
-  try{
-    const docRef = await addDoc(incidentsCol(), {
-      address, type, notes, alarm,
-      createdBy: dispatchUser,
-      createdAt: new Date().toISOString(),
-      archived: false
-    });
-    // create subcollections entries can be added later (timeline, apparatus) when updates happen
-    document.getElementById('inc_address').value=''; document.getElementById('inc_type').value=''; document.getElementById('inc_notes').value='';
-    alert('Incident created');
-  }catch(e){ alert('Create failed: '+e.message); }
-});
-
-/* -------------------------
-  Open / view incident
-  ------------------------- */
-async function openIncident(id){
-  OPEN_INCIDENT_ID = id;
-  const d = await getDoc(doc(incidentsCol(), id));
-  if(!d.exists()){ alert('Missing incident'); return; }
-  const data = d.data();
-  openTitle.textContent = `${data.type||'Incident'} • ${data.address||''}`;
-  openSub.textContent = `Created: ${data.createdAt||''} • By: ${data.createdBy||''}`;
-  // fetch subcollections: apparatus + timeline
-  attachedUnits.innerHTML = '';
-  timelineBox.innerHTML = '';
-  // apparatus subcollection
-  const appSnap = await getDocs(subApparatus(id));
-  appSnap.forEach(s=>{
-    const u = s.data();
-    const el = document.createElement('div');
-    el.innerHTML = `<div style="font-weight:700">${u.apparatusName||u.unitId}</div><div class="meta">${u.status||''} • ${u.agency||''}</div>`;
-    attachedUnits.appendChild(el);
-  });
-  // timeline
-  const tlSnap = await getDocs(subTimeline(id));
-  tlSnap.forEach(s=>{
-    const t = s.data();
-    const el = document.createElement('div');
-    el.innerHTML = `<div style="font-weight:700">${t.title||t.status||t.sender||'Event'}</div><div class="meta">${t.text||''}</div><div class="meta" style="font-size:12px">${t.ts||''}</div>`;
-    timelineBox.appendChild(el);
-  });
-
-  // show panel
-  openIncCard.classList.remove('hidden');
-}
-
-/* Attach self */
-btnAttachSelf.addEventListener('click', async ()=>{
-  if(!OPEN_INCIDENT_ID) return alert('Open an incident');
-  // create a doc in incidents/{id}/apparatus with unit id
-  const uid = (dispatchUser||'').toUpperCase();
-  if(!uid) return alert('No unit id in session');
-  try{
-    // check if already attached
-    const existing = await getDocs(subApparatus(OPEN_INCIDENT_ID));
-    const list = []; existing.forEach(s=> list.push(s.data()));
-    if(list.some(i=> (i.unitId||'')===uid)) return alert('Already attached');
-    await addDoc(subApparatus(OPEN_INCIDENT_ID), {
-      unitId: uid,
-      apparatusName: APPARATUS[uid] ? APPARATUS[uid].apparatusName : uid,
-      agency: APPARATUS[uid] ? APPARATUS[uid].department : '',
-      status: 'Acknowledged',
-      statusHistory: [{ status:'Acknowledged', ts:new Date().toISOString(), by:dispatchUser }]
-    });
-    // add timeline entry
-    await addDoc(subTimeline(OPEN_INCIDENT_ID), { title:'Unit Attached', text: `${uid} attached`, ts:new Date().toISOString(), sender: dispatchUser });
-    openIncident(OPEN_INCIDENT_ID);
-  }catch(e){ alert('Attach failed: '+e.message); }
-});
-
-/* Status update: will add an entry to apparatus subdoc matching unit and add to timeline */
-document.querySelectorAll('.statusBtn').forEach(b=> b.addEventListener('click', async (ev)=>{
-  if(!OPEN_INCIDENT_ID) return alert('Open an incident');
-  const status = ev.currentTarget.dataset.status;
-  const uid = dispatchUser;
-  // find apparatus doc by unitId in subcollection
-  const appSnap = await getDocs(subApparatus(OPEN_INCIDENT_ID));
-  let foundDoc = null;
-  appSnap.forEach(d=>{ const o = d.data(); if((o.unitId||'')===uid) foundDoc = { id:d.id, data:o }; });
-  if(!foundDoc) return alert('You must attach before updating status');
-  // update: append status history + update status
-  const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', OPEN_INCIDENT_ID, 'apparatus', foundDoc.id);
-  try{
-    const newHistory = (foundDoc.data.statusHistory||[]).concat([{ status, ts:new Date().toISOString(), by:uid }]);
-    await setDoc(ref, { status, statusHistory: newHistory }, { merge:true });
-    // add timeline entry
-    await addDoc(subTimeline(OPEN_INCIDENT_ID), { title:'Status', text: `${uid}: ${status}`, status, ts:new Date().toISOString(), sender: uid });
-    // if Clear -> optionally archive (we'll leave archiving to admin or user via Archive button)
-    openIncident(OPEN_INCIDENT_ID);
-  }catch(e){ alert('Update failed: '+e.message); }
-}));
-
-/* Send chat message -> timeline */
-document.getElementById('sendMsg').addEventListener('click', async ()=>{
-  if(!OPEN_INCIDENT_ID) return alert('Open an incident');
-  const text = document.getElementById('chatIn').value.trim();
-  if(!text) return;
-  try{ await addDoc(subTimeline(OPEN_INCIDENT_ID), { title:'Msg', text, sender: dispatchUser, ts:new Date().toISOString() }); document.getElementById('chatIn').value=''; openIncident(OPEN_INCIDENT_ID); }catch(e){ alert('Send failed'); }
-});
-
-/* Archive incident */
-document.getElementById('btnClearArchive').addEventListener('click', async ()=>{
-  if(!OPEN_INCIDENT_ID) return alert('Open an incident');
-  if(!confirm('Archive this incident?')) return;
-  try{ await setDoc(doc(incidentsCol(), OPEN_INCIDENT_ID), { archived:true }, { merge:true }); openIncCard.classList.add('hidden'); OPEN_INCIDENT_ID=null; }catch(e){ alert('Archive failed'); }
-});
-
-/* Refresh list */
-btnRefreshList.addEventListener('click', ()=> renderIncidentList());
-
-/* Show apparatus detail (simple modal) */
-function showAppDetails(id){
-  const a = APPARATUS[id] || { apparatusName:id };
-  showModal(`Apparatus: ${a.apparatusName||id}`, (root)=>{
-    root.innerHTML = `<div><strong>${a.apparatusName||id}</strong></div><div class="meta">${a.department||''}</div><div style="margin-top:8px">${a.notes||''}</div>`;
-  }, async ()=>{});
-}
-
-/* -------------------------
-  Admin features
-  ------------------------- */
-btnShowAdmin.addEventListener('click', ()=> {
-  if(dispatchRole !== 'admin'){ alert('Admin tools only'); return; }
-  adminPanel.classList.toggle('hidden');
-});
-btnCloseAdmin.addEventListener('click', ()=> adminPanel.classList.add('hidden'));
-
-btnAddDept.addEventListener('click', async ()=>{
-  await showModal('Add Department', (root)=>{
-    root.innerHTML = `<input id="dept_name" class="input" placeholder="Department name"/><input id="dept_notes" class="input" placeholder="Notes"/><textarea id="dept_alarms" class="input" placeholder="Alarms JSON (optional) e.g. [{name:'1st',units:['Dept A','Dept B']}]"></textarea>`;
-  }, async ()=>{
-    const name = document.getElementById('dept_name').value.trim();
-    const notes = document.getElementById('dept_notes').value.trim();
-    let alarms = [];
-    try{ const raw = document.getElementById('dept_alarms').value.trim(); if(raw) alarms = JSON.parse(raw); }catch(e){ alert('Alarms JSON invalid'); throw e; }
-    if(!name) return alert('Name required');
-    await addDoc(departmentsCol(), { name, notes, alarms });
-  });
-});
-
-btnAddUnit.addEventListener('click', async ()=>{
-  await showModal('Add Apparatus', (root)=>{
-    // For apparatus we store id as uppercase key (username)
-    root.innerHTML = `<input id="u_id" class="input" placeholder="Unit ID (ENGINE511)"/><input id="u_name" class="input" placeholder="Display name (Engine 511)"/><input id="u_dept" class="input" placeholder="Department"/><input id="u_pass" class="input" placeholder="Password (for local login mapping)"/>`;
-  }, async ()=>{
-    const id = (document.getElementById('u_id').value||'').trim().toUpperCase();
-    const name = document.getElementById('u_name').value.trim();
-    const dept = document.getElementById('u_dept').value.trim();
-    const pass = document.getElementById('u_pass').value.trim() || id;
-    if(!id) return alert('Unit ID required');
-    // Save to apparatus collection
-    await setDoc(doc(apparatusCol(), id), { apparatusName:name||id, department:dept||'', notes:'', createdAt:new Date().toISOString() });
-    // Also create / update local app user mapping in localStorage (so apparatus_login.html will accept user)
-    const appKey = 'f1_apparatus_local_v1';
-    const store = JSON.parse(localStorage.getItem(appKey) || '{}');
-    store[id] = { password: pass, label: name||id, department: dept||'' };
-    localStorage.setItem(appKey, JSON.stringify(store));
-    alert('Added apparatus. Also saved local login mapping (for apparatus_login.html)');
-  });
-});
-
-/* Edit Dept and Unit functions */
-async function editDept(id){
-  const cur = DEPARTMENTS[id] || {};
-  await showModal('Edit Department', (root)=>{
-    root.innerHTML = `<input id="dept_name" class="input" placeholder="Department name" value="${cur.name||''}"/><input id="dept_notes" class="input" placeholder="Notes" value="${cur.notes||''}"/><textarea id="dept_alarms" class="input" placeholder="Alarms JSON (optional)">${JSON.stringify(cur.alarms||[])}</textarea>`;
-  }, async ()=>{
-    const name = document.getElementById('dept_name').value.trim();
-    const notes = document.getElementById('dept_notes').value.trim();
-    let alarms=[];
-    try{ const raw = document.getElementById('dept_alarms').value.trim(); if(raw) alarms = JSON.parse(raw); }catch(e){ alert('Alarms JSON invalid'); throw e; }
-    if(!name) return alert('Name required');
-    await setDoc(doc(departmentsCol(), id), { name, notes, alarms }, { merge:true });
-  });
-}
-
-async function editUnit(id){
-  const cur = APPARATUS[id] || {};
-  await showModal('Edit Apparatus', (root)=>{
-    root.innerHTML = `<input id="u_name" class="input" placeholder="Display name" value="${cur.apparatusName||''}"/><input id="u_dept" class="input" placeholder="Department" value="${cur.department||''}"/><textarea id="u_notes" class="input" placeholder="Notes">${cur.notes||''}</textarea>`;
-  }, async ()=>{
-    const name = document.getElementById('u_name').value.trim();
-    const dept = document.getElementById('u_dept').value.trim();
-    const notes = document.getElementById('u_notes').value.trim();
-    await setDoc(doc(apparatusCol(), id), { apparatusName: name, department: dept, notes }, { merge:true });
-  });
-}
-
-/* Edit alarms */
-btnEditAlarms.addEventListener('click', async ()=>{
-  const all = Object.entries(DEPARTMENTS).map(([id,d])=> ({ id, ...d }));
-  await showModal('Edit Alarm Presets (per-department)', (root)=>{
-    let html = '<div style="max-height:300px;overflow:auto">';
-    all.forEach(d=> html += `<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)"><div style="font-weight:800">${d.name}</div><textarea id="alarms_${d.id}" class="input" placeholder="Alarms JSON">${JSON.stringify(d.alarms||[])}</textarea></div>`);
-    html += '</div>';
-    root.innerHTML = html;
-  }, async ()=>{
-    for(const [id,d] of Object.entries(DEPARTMENTS)){
-      const raw = document.getElementById(`alarms_${id}`).value;
-      let alarms=[]; try{ if(raw) alarms = JSON.parse(raw); }catch(e){ alert('Invalid JSON for department ' + (d.name||id)); throw e; }
-      await setDoc(doc(departmentsCol(), id), { alarms }, { merge:true });
-    }
-  });
-});
-
-/* -------------------------
-  Small utilities & startup
-  ------------------------- */
-function showModal(title, buildFn, onSave){
-  return new Promise((res,rej)=>{
-    modalTitle.textContent = title; modalBody.innerHTML = ''; buildFn(modalBody);
-    modal.style.display = 'flex';
-    modalOk.onclick = async ()=>{ try{ await onSave(); modal.style.display='none'; res(true); } catch(e){ alert('Save failed: '+(e.message||e)); rej(e); } };
-    modalCancel.onclick = ()=>{ modal.style.display='none'; res(false); };
-  });
-}
-
-/* When page loads, ensure admin panel visible only for admin role */
-(function init(){
-  if(dispatchRole === 'admin') adminPanel.classList.remove('hidden');
-  else adminPanel.classList.add('hidden');
+/* Auto login */
+(function tryAutoLogin(){
+  const s = localStorage.getItem(MAIN_SESSION_KEY);
+  if(s){ localUsers = loadLocalUsers(); const u = s.toUpperCase(); if(localUsers[u]){ CURRENT_USER = { username:u, role:localUsers[u].role, dept:localUsers[u].dept||'' }; $('topRightInfo').textContent = `${u} • ${localUsers[u].role}`; $('loginScreen').style.display='none'; $('app').style.display='block'; setupAfterLogin(); } else localStorage.removeItem(MAIN_SESSION_KEY); }
 })();
 
-/* For graceful unload */
-window.addEventListener('beforeunload', ()=>{ /* nothing special */ });
+/* Logout */
+$('logoutBtn').addEventListener('click', ()=>{ localStorage.removeItem(MAIN_SESSION_KEY); location.reload(); });
+
+/* Setup after login */
+function setupAfterLogin(){
+  if(CURRENT_USER.role !== 'ADMIN') document.querySelector('button[data-view="admin"]').style.display='none';
+  attachCrudHandlers();
+  startRealtime();
+}
+
+/* Firestore realtime listeners */
+function startRealtime(){
+  onSnapshot(query(subCol('fire_departments')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderDepartments(out); });
+  onSnapshot(query(subCol('ems_agencies')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderEMS(out); });
+  onSnapshot(query(subCol('coordinators')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderCoordinators(out); });
+  onSnapshot(query(subCol('county_teams')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderTeams(out); });
+  onSnapshot(query(subCol('apparatus')), snap => { const out={}; snap.forEach(d=> out[d.id]=d.data()); renderApparatus(out); });
+}
+
+/* Renderers */
+function renderDepartments(map){
+  const t=$('deptList'); t.innerHTML=''; Object.entries(map||{}).forEach(([id,d])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${esc(d.name||id)}</strong><div class="meta">${esc(d.battalion||'')} ${d.address? ' • '+esc(d.address):''}</div></div><div style="display:flex;gap:8px">${(CURRENT_USER&& (CURRENT_USER.role==='ADMIN' || (CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept===d.name)))?`<button class="small btn" onclick="editDoc('fire_departments','${id}')">Edit</button>`:''}</div>`; t.appendChild(div); }); }
+function renderEMS(map){ const t=$('emsList'); t.innerHTML=''; Object.entries(map||{}).forEach(([id,e])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${esc(e.name||id)}</strong><div class="meta">${esc(e.address||'')}</div></div><div>${(CURRENT_USER&&CURRENT_USER.role==='ADMIN')?`<button class="small btn" onclick="editDoc('ems_agencies','${id}')">Edit</button>`:''}</div>`; t.appendChild(div); });}
+function renderCoordinators(map){ const t=$('coordList'); t.innerHTML=''; Object.entries(map||{}).forEach(([id,c])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${esc(c.name||id)}</strong><div class="meta">Callsign: ${esc(c.callsign||'')}</div></div><div>${(CURRENT_USER&&CURRENT_USER.role==='ADMIN')?`<button class="small btn" onclick="editDoc('coordinators','${id}')">Edit</button>`:''}</div>`; t.appendChild(div); });}
+function renderTeams(map){ const t=$('teamList'); t.innerHTML=''; Object.entries(map||{}).forEach(([id,tm])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${esc(tm.name||id)}</strong><div class="meta">${esc(tm.lead||'')}</div></div><div>${(CURRENT_USER&&CURRENT_USER.role==='ADMIN')?`<button class="small btn" onclick="editDoc('county_teams','${id}')">Edit</button>`:''}</div>`; t.appendChild(div); });}
+function renderApparatus(map){ const t=$('appList'); t.innerHTML=''; Object.entries(map||{}).forEach(([id,a])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${esc(a.apparatusName||id)}</strong><div class="meta">${esc(a.department||'')}</div></div><div>${(CURRENT_USER&&(CURRENT_USER.role==='ADMIN' || (CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept===a.department)))?`<button class="small btn" onclick="editDoc('apparatus','${id}')">Edit</button>`:''}</div>`; t.appendChild(div); }); }
+
+/* Generic editor */
+async function editDoc(collectionName, id){
+  // fetch doc
+  const snap = await getDoc(docRef(collectionName, id));
+  const data = snap.exists()? snap.data() : {};
+  showModal('Edit '+collectionName, (root)=>{
+    root.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px">';
+    if(collectionName==='fire_departments'){
+      root.innerHTML += `<input id="f_name" class="input" placeholder="Name" value="${esc(data.name||'')}"/><input id="f_batt" class="input" placeholder="Battalion" value="${esc(data.battalion||'')}"/><input id="f_addr" class="input" placeholder="Address" value="${esc(data.address||'')}"/><input id="f_apps" class="input" placeholder="Apparatus (| separated)" value="${esc(data.apparatus||'')}"/>`;
+    } else if(collectionName==='apparatus'){
+      root.innerHTML += `<input id="ap_name" class="input" placeholder="Apparatus Name" value="${esc(data.apparatusName||'')}"/><input id="ap_dept" class="input" placeholder="Department" value="${esc(data.department||'')}"/>`;
+    } else if(collectionName==='coordinators'){
+      root.innerHTML += `<input id="c_name" class="input" placeholder="Name" value="${esc(data.name||'')}"/><input id="c_calls" class="input" placeholder="Callsign" value="${esc(data.callsign||'')}"/>`;
+    } else {
+      root.innerHTML += `<input id="g_name" class="input" placeholder="Name" value="${esc(data.name||'')}"/>`;
+    }
+    root.innerHTML += '</div>';
+  }, async ()=>{
+    if(collectionName==='fire_departments'){ const obj={ name:$('f_name').value.trim(), battalion:$('f_batt').value.trim(), address:$('f_addr').value.trim(), apparatus:$('f_apps').value.trim()}; await setDoc(docRef('fire_departments', id), obj, { merge:true }); }
+    else if(collectionName==='apparatus'){ const obj={ apparatusName:$('ap_name').value.trim(), department:$('ap_dept').value.trim() }; await setDoc(docRef('apparatus', id), obj, { merge:true }); }
+    else if(collectionName==='coordinators'){ const obj={ name:$('c_name').value.trim(), callsign:$('c_calls').value.trim() }; await setDoc(docRef('coordinators', id), obj, { merge:true }); }
+    else { await setDoc(docRef(collectionName, id), { name: $('g_name').value.trim() }, { merge:true }); }
+  });
+}
+
+/* Add buttons (simple) */
+$('addDept').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add Department', (root)=>{ root.innerHTML = `<input id="n_name" class="input" placeholder="Name"/><input id="n_batt" class="input" placeholder="Battalion"/><input id="n_addr" class="input" placeholder="Address"/><input id="n_apps" class="input" placeholder="Apparatus (| separated)"/>`; }, async ()=>{ await addDoc(subCol('fire_departments'), { name:$('n_name').value.trim(), battalion:$('n_batt').value.trim(), address:$('n_addr').value.trim(), apparatus:$('n_apps').value.trim() }); }); });
+$('addEms').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add EMS', (r)=> r.innerHTML = `<input id="e_name" class="input" placeholder="Name"/><input id="e_addr" class="input" placeholder="Address"/>`, async ()=> await addDoc(subCol('ems_agencies'), { name:$('e_name').value.trim(), address:$('e_addr').value.trim() })); });
+$('addCoord').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add Coordinator', (r)=> r.innerHTML=`<input id="co_name" class="input" placeholder="Name"/><input id="co_calls" class="input" placeholder="Callsign"/>`, async ()=> await addDoc(subCol('coordinators'), { name:$('co_name').value.trim(), callsign:$('co_calls').value.trim() })); });
+$('addTeam').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add Team', (r)=> r.innerHTML=`<input id="t_name" class="input" placeholder="Team"/><input id="t_lead" class="input" placeholder="Lead"/><input id="t_caps" class="input" placeholder="Capabilities (| separated)"/>`, async ()=> await addDoc(subCol('county_teams'), { name:$('t_name').value.trim(), lead:$('t_lead').value.trim(), capabilities:$('t_caps').value.trim() })); });
+$('addApp').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Add Apparatus', (r)=> r.innerHTML = `<input id="ap_usr" class="input" placeholder="Login username (ENGINE511)"/><input id="ap_disp" class="input" placeholder="Apparatus display name"/><input id="ap_dept_new" class="input" placeholder="Department"/>`, async ()=>{ const u = ($('ap_usr').value||'').trim().toUpperCase(); if(!u) return alert('username'); await setDoc(docRef('apparatus', u), { username:u, apparatusName:$('ap_disp').value.trim(), department:$('ap_dept_new').value.trim() }); // also add local mapping for apparatus login convenience const appKey = 'f1_apparatus_local_v1'; const store = JSON.parse(localStorage.getItem(appKey) || '{}'); store[u] = { password: u, label: $('ap_disp').value.trim() || u }; localStorage.setItem(appKey, JSON.stringify(store)); alert('Added apparatus (and local login mapping)'); }); });
+
+/* HazMat find */
+$('hazSearchBtn').addEventListener('click', async ()=>{ const q = ($('hazQuery').value||'').trim(); if(!q) return alert('Enter UN'); const s = await getDoc(docRef('hazmat', q)); if(s.exists()){ const e = s.data(); $('hazResult').innerHTML = `<div style="font-weight:800">${esc(e.name||'')}</div><div class="meta">Class: ${esc(e.hazard_class||'')}</div><div style="margin-top:8px"><strong>Flammability:</strong> ${esc(e.flammability||'—')}</div><div><strong>Water reactivity:</strong> ${esc(e.water_reactivity||'—')}</div><div style="margin-top:8px"><strong>Evacuation small:</strong> ${esc(e.evacuation_small||'—')}</div><div><strong>Evacuation large:</strong> ${esc(e.evacuation_large||'—')}</div><div style="margin-top:8px">${esc(e.notes||'')}</div>`; } else $('hazResult').innerHTML = `<div class="meta">No record for ${esc(q)}</div>`; });
+
+/* EV find (basic) */
+$('evSearchBtn').addEventListener('click', async ()=>{ const q = ($('evQuery').value||'').trim(); if(!q) return alert('Enter'); const key = q.trim().toLowerCase().replace(/\s+/g,'_'); const s = await getDoc(docRef('ev_guides', key)); if(s.exists()){ const d = s.data(); $('evResult').innerHTML = `<div style="font-weight:800">${esc(d.make||key)}</div><div style="margin-top:6px"><a href="${esc(d.url)}" target="_blank">${esc(d.url)}</a></div>`; } else $('evResult').innerHTML = `<div class="meta">No guide for ${esc(q)}</div>`; });
+
+/* Manage local users */
+$('manageUsers').addEventListener('click', ()=>{ if(!isAdmin()) return; showModal('Manage Local Users', (root)=>{ const users = loadLocalUsers(); let html = '<div style="max-height:300px;overflow:auto">'; Object.keys(users).forEach(u=> { html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><div><strong>${esc(u)}</strong><div class="meta">Role: ${esc(users[u].role||'')} ${users[u].dept? ' • Dept: '+esc(users[u].dept):''}</div></div><div><button class="btn small" data-user="${esc(u)}" data-act="editLocal">Edit</button> <button class="btn small" data-user="${esc(u)}" data-act="delLocal">Delete</button></div></div>` }); html += '</div><div style="margin-top:8px"><button id="createLocal" class="btn primary">Create User</button></div>'; root.innerHTML = html; root.querySelectorAll('button[data-act="editLocal"]').forEach(b=> b.addEventListener('click', ()=> editLocalUser(b.dataset.user))); root.querySelectorAll('button[data-act="delLocal"]').forEach(b=> b.addEventListener('click', ()=> { if(confirm('Delete '+b.dataset.user+'?')){ const u=b.dataset.user; const obj=loadLocalUsers(); delete obj[u]; saveLocalUsers(obj); alert('Deleted'); modal.style.display='none'; renderLocalUsers(); } })); root.querySelector('#createLocal').addEventListener('click', ()=> showModal('Create User', r=> r.innerHTML=`<input id="lu_name" class="input" placeholder="Username"/><input id="lu_pass" class="input" placeholder="Password"/><select id="lu_role" class="input"><option>ADMIN</option><option>DEPT_ADMIN</option><option>DEPT_USER</option></select><input id="lu_dept" class="input" placeholder="Department (for DEPT roles)"/>`, async ()=>{ const un = ($('lu_name').value||'').trim().toUpperCase(); if(!un) return alert('username'); const pw = $('lu_pass').value.trim(); const role = $('lu_role').value; const dept = $('lu_dept').value.trim(); const obj = loadLocalUsers(); obj[un] = { password: pw||'changeme', role, dept }; saveLocalUsers(obj); alert('Saved'); modal.style.display='none'; renderLocalUsers(); })); }, async ()=>{}); });
+
+/* helpers for user management */
+function renderLocalUsers(){ const t=$('userList'); const obj = loadLocalUsers(); t.innerHTML=''; Object.keys(obj).sort().forEach(u=>{ const user = obj[u]; const div=document.createElement('div'); div.className='listItem'; div.innerHTML=`<div><strong>${esc(u)}</strong><div class="meta">Role: ${esc(user.role||'')} ${user.dept? ' • Dept: '+esc(user.dept):''}</div></div><div style="display:flex;gap:6px">${(CURRENT_USER && (CURRENT_USER.role==='ADMIN' || (CURRENT_USER.role==='DEPT_ADMIN' && CURRENT_USER.dept===user.dept)))?`<button class="small btn" onclick="editLocalUser('${u}')">Edit</button><button class="small btn" onclick="deleteLocalUser('${u}')">Delete</button>`:''}</div>`; t.appendChild(div); }); }
+function editLocalUser(u){ const users = loadLocalUsers(); const d = users[u]; showModal('Edit User', r=> r.innerHTML = `<div><strong>${esc(u)}</strong></div><input id="lu_pw" class="input" value="${esc(d.password||'')}" placeholder="Password"/><select id="lu_role" class="input"><option${d.role==='ADMIN'?' selected':''}>ADMIN</option><option${d.role==='DEPT_ADMIN'?' selected':''}>DEPT_ADMIN</option><option${d.role==='DEPT_USER'?' selected':''}>DEPT_USER</option></select><input id="lu_dept" class="input" value="${esc(d.dept||'')}" placeholder="Department"/>`, async ()=>{ const pw=$('lu_pw').value.trim(); const role=$('lu_role').value; const dept=$('lu_dept').value.trim(); const obj=loadLocalUsers(); obj[u] = { password: pw||obj[u].password, role, dept }; saveLocalUsers(obj); renderLocalUsers(); alert('Saved'); }); }
+function deleteLocalUser(u){ if(confirm('Delete '+u+'?')){ const obj=loadLocalUsers(); delete obj[u]; saveLocalUsers(obj); renderLocalUsers(); } }
+function loadLocalUsers(){ try{ return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY)||'{}'); }catch(e){return{};} }
+function saveLocalUsers(v){ localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(v)); }
+
+/* Helpers */
+function isAdmin(){ if(!CURRENT_USER){ alert('Log in as admin'); return false; } if(CURRENT_USER.role!=='ADMIN'){ alert('Admin privileges required'); return false; } return true; }
+function esc(s){ return s? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;') : ''; }
+
+/* Modal utilities */
+const modal = $('modalBackdrop'), modalTitle=$('modalTitle'), modalBody=$('modalBody'), modalSave=$('modalSave'), modalCancel=$('modalCancel');
+function showModal(title, buildFn, onSave){
+  modalTitle.textContent = title; modalBody.innerHTML=''; buildFn(modalBody);
+  modal.style.display='flex';
+  modalSave.onclick = async ()=>{ await onSave(); modal.style.display='none'; modalSave.onclick=null; };
+  modalCancel.onclick = ()=>{ modal.style.display='none'; modalSave.onclick=null; };
+}
+
+/* initial UI */
+if(!localStorage.getItem(MAIN_SESSION_KEY)){ $('loginScreen').style.display='block'; $('app').style.display='none'; } else { $('loginScreen').style.display='none'; $('app').style.display='block'; startRealtime(); }
+
+/* expose a few inline functions for button calls */
+window.editDoc = editDoc;
+window.editLocalUser = editLocalUser;
+window.deleteLocalUser = deleteLocalUser;
+window.renderLocalUsers = renderLocalUsers;
 
 </script>
 </body>
