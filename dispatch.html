@@ -1,140 +1,582 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>F1 Resource – Apparatus Mobile Login</title>
-
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>F1 Resource — Dispatch (Apparatus Mobile)</title>
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #0a2a43, #1b567a);
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-    }
-
-    #loginContainer {
-        width: 90%;
-        max-width: 380px;
-        background: rgba(255,255,255,0.15);
-        padding: 25px;
-        border-radius: 14px;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 0 18px rgba(0,0,0,0.4);
-        text-align: center;
-    }
-
-    #loginContainer img {
-        width: 140px;
-        margin-bottom: 10px;
-    }
-
-    h2 {
-        margin-top: 5px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        margin-bottom: 20px;
-    }
-
-    input {
-        width: 100%;
-        padding: 12px;
-        margin: 10px 0;
-        border-radius: 6px;
-        border: none;
-        font-size: 16px;
-    }
-
-    button {
-        width: 100%;
-        padding: 12px;
-        border: none;
-        border-radius: 6px;
-        background: #ffcc00;
-        font-size: 17px;
-        color: #000;
-        cursor: pointer;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    button:hover {
-        background: #ffdb4d;
-    }
-
-    #errorMessage {
-        margin-top: 10px;
-        color: #ff8080;
-        font-weight: bold;
-    }
-
-    #returnMain {
-        margin-top: 15px;
-        font-size: 15px;
-        color: #d0e8ff;
-        cursor: pointer;
-        text-decoration: underline;
-    }
+:root{
+  --bg:#041428; --panel:#071727; --card:#0b1624;
+  --accent:#0b5fff; --accent2:#7b5cff; --muted:#9aa6bd;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#021023,#041428);color:#eaf3ff;min-height:100vh}
+.container{max-width:980px;margin:18px auto;padding:12px}
+.card{background:linear-gradient(180deg,#0b1624,#08121a);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.header{display:flex;align-items:center;gap:12px}
+.header img{height:48px;border-radius:8px}
+.meta{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:12px}
+@media (max-width:900px){ .grid{grid-template-columns:1fr} .rightCol{order:2} .leftCol{order:1} }
+.h1{margin:0 0 8px 0}
+.input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;margin-top:8px}
+.btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001020}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.listItem{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
+.small{padding:6px 8px;font-size:13px}
+.timeline{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;max-height:220px;overflow:auto}
+.adminPanel{background:linear-gradient(180deg,#081623,#07121a);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-top:12px}
+.hidden{display:none}
+.badge{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-weight:700}
 </style>
-
 </head>
-
 <body>
+<div class="container card">
+  <div class="header">
+    <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="logo">
+    <div>
+      <h2 class="h1">Apparatus Mobile — Dispatch</h2>
+      <div class="meta">Create incidents, attach units, track status (timestamps), and chat.</div>
+    </div>
+    <div style="margin-left:auto;text-align:right">
+      <div id="who" class="meta"></div>
+      <div style="margin-top:6px"><button id="btnLogout" class="btn ghost small">Logout</button></div>
+    </div>
+  </div>
 
-<div id="loginContainer">
-    <img src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755">
+  <div class="grid" style="margin-top:12px">
+    <div class="leftCol">
 
-    <h2>Apparatus Mobile Login</h2>
+      <div id="createCard" class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Create Incident</strong><div class="meta">Fill the basics and submit — units can attach.</div></div>
+          <div><span id="connectedBadge" class="badge">Offline</span></div>
+        </div>
 
-    <input id="username" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
+        <div style="margin-top:10px">
+          <input id="inc_address" class="input" placeholder="Address / Location">
+          <input id="inc_type" class="input" placeholder="Type / Nature (structure, mva, fire, etc.)">
+          <textarea id="inc_notes" class="input" placeholder="Details / notes"></textarea>
 
-    <button onclick="loginApparatus()">LOGIN</button>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <select id="alarmSelect" class="input" style="flex:1">
+              <option value="">No Alarm</option>
+              <option value="1st">1st Alarm Structure</option>
+              <option value="2nd">2nd Alarm Structure</option>
+              <option value="3rd">3rd Alarm Structure</option>
+            </select>
+            <button id="btnCreate" class="btn primary">Create</button>
+          </div>
+        </div>
+      </div>
 
-    <p id="errorMessage"></p>
+      <div id="activeIncCard" class="card" style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Active Incidents</strong><div class="meta">Tap to open</div></div>
+          <div><button id="btnRefreshList" class="btn ghost small">Refresh</button></div>
+        </div>
+        <div id="incList" class="list"></div>
+      </div>
 
-    <p id="returnMain" onclick="goMain()">Return to Main Login</p>
+      <div id="openIncCard" class="card hidden" style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong id="openTitle"></strong><div id="openSub" class="meta"></div></div>
+          <div><button id="btnCloseOpen" class="btn ghost small">Close</button></div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div><strong>Attached Units</strong></div>
+          <div id="attachedUnits" class="timeline" style="margin-top:8px"></div>
+
+          <div style="margin-top:10px"><strong>Status Update</strong>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <button class="statusBtn btn small" data-status="Acknowledged">Acknowledged</button>
+              <button class="statusBtn btn small" data-status="Responding">Responding</button>
+              <button class="statusBtn btn small" data-status="Staged">Staged</button>
+              <button class="statusBtn btn small" data-status="Arrived">Arrived</button>
+              <button class="statusBtn btn small" data-status="Returning">Returning</button>
+              <button class="statusBtn btn small" data-status="Clear">Clear</button>
+            </div>
+          </div>
+
+          <div style="margin-top:10px"><strong>Incident Timeline & Chat</strong>
+            <div id="timelineBox" class="timeline" style="margin-top:8px"></div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="chatIn" class="input" placeholder="Message" />
+              <button id="sendMsg" class="btn primary">Send</button>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button id="btnAttachSelf" class="btn ghost">Attach Myself</button>
+            <button id="btnAddAgency" class="btn ghost">Add Agency</button>
+            <button id="btnClearArchive" class="btn ghost">Archive Incident</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="rightCol">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Units</strong><div class="meta">Available apparatus</div></div>
+          <div><button id="btnShowAdmin" class="btn ghost small">Admin Tools</button></div>
+        </div>
+        <div id="unitsList" class="list" style="margin-top:12px"></div>
+      </div>
+
+      <div id="adminPanel" class="adminPanel hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Admin Tools</strong><div class="meta">Visible to ADMIN only</div></div>
+          <div><button id="btnCloseAdmin" class="btn ghost small">Close</button></div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div style="display:flex;gap:8px">
+            <button id="btnAddDept" class="btn primary small">+ Department</button>
+            <button id="btnAddUnit" class="btn ghost small">+ Apparatus</button>
+          </div>
+
+          <div style="margin-top:10px">
+            <div><strong>Departments</strong></div>
+            <div id="deptListAdmin" class="list" style="margin-top:8px"></div>
+          </div>
+
+          <div style="margin-top:10px">
+            <div><strong>Apparatus</strong></div>
+            <div id="unitListAdmin" class="list" style="margin-top:8px"></div>
+          </div>
+
+          <div style="margin-top:10px">
+            <div><strong>Alarm presets</strong></div>
+            <div id="alarmPresets" style="margin-top:8px"></div>
+            <div style="margin-top:8px"><button id="btnEditAlarms" class="btn ghost small">Edit Alarms</button></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
-<script>
-    // Local login system
-    const USERS = {
-        "ADMIN": { password: "ADMIN", role: "admin" },
-        "UNIT101": { password: "PASS101", role: "apparatus" },
-        "ENGINE2": { password: "E2", role: "apparatus" }
-        // You can add more apparatus accounts here
-    };
+<!-- Modal simple -->
+<div id="modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:9999">
+  <div style="background:linear-gradient(180deg,#0b1624,#07121a);padding:12px;border-radius:12px;width:92%;max-width:560px;border:1px solid rgba(255,255,255,0.03)">
+    <div id="modalTitle" style="font-weight:800"></div>
+    <div id="modalBody" style="margin-top:8px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="modalCancel" class="btn ghost">Cancel</button><button id="modalOk" class="btn primary">Save</button></div>
+  </div>
+</div>
 
-    function loginApparatus() {
-        const u = document.getElementById("username").value.trim();
-        const p = document.getElementById("password").value.trim();
+<script type="module">
+/* ---------------------------
+  Firebase (Firestore) v9+
+  --------------------------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import {
+  getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs, deleteDoc,
+  onSnapshot, query, orderBy, where, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-        if (!USERS[u]) {
-            document.getElementById("errorMessage").innerText = "User not found.";
-            return;
-        }
+const firebaseConfig = {
+  apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
+  authDomain: "f1resource-8fedc.firebaseapp.com",
+  projectId: "f1resource-8fedc",
+  storageBucket: "f1resource-8fedc.firebasestorage.app",
+  messagingSenderId: "182745701982",
+  appId: "1:182745701982:web:9f4f3836b41b450987decf"
+};
 
-        if (USERS[u].password !== p) {
-            document.getElementById("errorMessage").innerText = "Incorrect password.";
-            return;
-        }
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-        // Save login session
-        localStorage.setItem("dispatchUser", u);
-        localStorage.setItem("dispatchRole", USERS[u].role);
+/* Root names */
+const ROOT_COL='dispatch_root', ROOT_DOC='dispatch';
+const departmentsCol = ( ) => collection(db, ROOT_COL, ROOT_DOC, 'departments');
+const apparatusCol = ( ) => collection(db, ROOT_COL, ROOT_DOC, 'dispatch_apparatus');
+const incidentsCol = ( ) => collection(db, ROOT_COL, ROOT_DOC, 'incidents');
 
-        // Redirect to single dispatch file
-        window.location.href = "dispatch.html";
+const subTimeline = (incidentId) => collection(db, ROOT_COL, ROOT_DOC, 'incidents', incidentId, 'timeline');
+const subApparatus = (incidentId) => collection(db, ROOT_COL, ROOT_DOC, 'incidents', incidentId, 'apparatus');
+
+/* ---------------------------
+  Local session / login check
+  --------------------------- */
+const dispatchUser = localStorage.getItem('dispatchUser');
+const dispatchRole = localStorage.getItem('dispatchRole') || 'apparatus';
+
+if(!dispatchUser){
+  // not logged in — redirect to apparatus_login.html
+  window.location.href = 'apparatus_login.html';
+}
+
+// UI elements
+const who = document.getElementById('who');
+who.textContent = `${dispatchUser} • ${dispatchRole.toUpperCase()}`;
+
+document.getElementById('btnLogout').addEventListener('click', ()=>{
+  localStorage.removeItem('dispatchUser'); localStorage.removeItem('dispatchRole'); location.href='apparatus_login.html';
+});
+
+/* State */
+let DEPARTMENTS = {}; // id -> data
+let APPARATUS = {};   // id -> data
+let INCIDENTS = {};   // id -> data
+
+/* UI refs */
+const unitsList = document.getElementById('unitsList');
+const incList = document.getElementById('incList');
+const attachedUnits = document.getElementById('attachedUnits');
+const timelineBox = document.getElementById('timelineBox');
+const openTitle = document.getElementById('openTitle');
+const openSub = document.getElementById('openSub');
+const openIncCard = document.getElementById('openIncCard');
+const btnAttachSelf = document.getElementById('btnAttachSelf');
+const btnCreate = document.getElementById('btnCreate');
+const btnRefreshList = document.getElementById('btnRefreshList');
+const connectedBadge = document.getElementById('connectedBadge');
+
+/* Admin UI */
+const adminPanel = document.getElementById('adminPanel');
+const btnShowAdmin = document.getElementById('btnShowAdmin');
+const btnCloseAdmin = document.getElementById('btnCloseAdmin');
+const deptListAdmin = document.getElementById('deptListAdmin');
+const unitListAdmin = document.getElementById('unitListAdmin');
+const alarmPresets = document.getElementById('alarmPresets');
+const btnAddDept = document.getElementById('btnAddDept');
+const btnAddUnit = document.getElementById('btnAddUnit');
+const btnEditAlarms = document.getElementById('btnEditAlarms');
+
+let OPEN_INCIDENT_ID = null;
+
+/* Helper: show modal */
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const modalOk = document.getElementById('modalOk');
+const modalCancel = document.getElementById('modalCancel');
+function showModal(title, buildFn, onSave){
+  modalTitle.textContent = title; modalBody.innerHTML=''; buildFn(modalBody);
+  modal.style.display = 'flex';
+  return new Promise((res,rej)=>{
+    modalOk.onclick = async ()=>{ try{ await onSave(); modal.style.display='none'; res(true); } catch(e){ rej(e); } }
+    modalCancel.onclick = ()=>{ modal.style.display='none'; res(false); };
+  });
+}
+
+/* -------------------------
+  Realtime listeners
+  ------------------------- */
+onSnapshot(query(departmentsCol()), snap => {
+  const out={}; snap.forEach(d=> out[d.id] = d.data()); DEPARTMENTS = out; renderAdminLists();
+});
+onSnapshot(query(apparatusCol()), snap => {
+  const out={}; snap.forEach(d=> out[d.id] = d.data()); APPARATUS = out; renderUnits(); renderAdminLists();
+});
+onSnapshot(query(incidentsCol()), snap => {
+  const out={}; snap.forEach(d=> out[d.id] = d.data()); INCIDENTS = out; renderIncidentList();
+});
+
+/* Firestore connectivity indicator */
+connectedBadge.textContent = 'Connected';
+
+/* -------------------------
+  Renderers
+  ------------------------- */
+function renderUnits(){
+  unitsList.innerHTML = '';
+  const arr = Object.entries(APPARATUS).sort((a,b)=> (a[1].apparatusName||a[0]).localeCompare(b[1].apparatusName||b[0]));
+  if(!arr.length) unitsList.innerHTML = '<div class="meta">No units defined</div>';
+  arr.forEach(([id,u])=>{
+    const div = document.createElement('div'); div.className='listItem';
+    div.innerHTML = `<div><strong>${u.apparatusName||id}</strong><div class="meta">${u.department||'Unassigned'}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="show">Open</button></div>`;
+    unitsList.appendChild(div);
+    div.querySelector('button[data-act="show"]').addEventListener('click', ()=> showAppDetails(id));
+  });
+}
+
+function renderIncidentList(){
+  incList.innerHTML = '';
+  const arr = Object.entries(INCIDENTS).filter(([id,i])=> !i.archived).sort((a,b)=> (b[1].createdAt||'').localeCompare(a[1].createdAt||''));
+  if(!arr.length) incList.innerHTML = '<div class="meta">No active incidents</div>';
+  arr.forEach(([id,i])=>{
+    const div = document.createElement('div'); div.className='listItem';
+    div.innerHTML = `<div><strong>${i.type||'No Type'}</strong><div class="meta">${i.address||'No Address'} • ${i.createdAt?i.createdAt:''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="open">Open</button></div>`;
+    incList.appendChild(div);
+    div.querySelector('button[data-act="open"]').addEventListener('click', ()=> openIncident(id));
+  });
+}
+
+function renderAdminLists(){
+  // departments
+  deptListAdmin.innerHTML=''; unitListAdmin.innerHTML=''; alarmPresets.innerHTML='';
+  const dEntries = Object.entries(DEPARTMENTS).sort((a,b)=> (a[1].name||'').localeCompare(b[1].name||''));
+  dEntries.forEach(([id,d])=>{
+    const div=document.createElement('div'); div.className='listItem';
+    div.innerHTML = `<div><strong>${d.name}</strong><div class="meta">${d.notes||''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="edit-dept">Edit</button><button class="small btn" data-id="${id}" data-act="del-dept">Delete</button></div>`;
+    deptListAdmin.appendChild(div);
+    div.querySelector('button[data-act="edit-dept"]').addEventListener('click', ()=> editDept(id));
+    div.querySelector('button[data-act="del-dept"]').addEventListener('click', async ()=> { if(confirm('Delete department?')) await deleteDoc(doc(departmentsCol(), id)); });
+  });
+  const aEntries = Object.entries(APPARATUS).sort((a,b)=> (a[1].apparatusName||a[0]).localeCompare(b[1].apparatusName||b[0]));
+  aEntries.forEach(([id,u])=>{
+    const div=document.createElement('div'); div.className='listItem';
+    div.innerHTML = `<div><strong>${u.apparatusName||id}</strong><div class="meta">${u.department||''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="edit-unit">Edit</button><button class="small btn" data-id="${id}" data-act="del-unit">Delete</button></div>`;
+    unitListAdmin.appendChild(div);
+    div.querySelector('button[data-act="edit-unit"]').addEventListener('click', ()=> editUnit(id));
+    div.querySelector('button[data-act="del-unit"]').addEventListener('click', async ()=> { if(confirm('Delete apparatus?')) { await deleteDoc(doc(apparatusCol(), id)); } });
+  });
+
+  // alarm presets - if you want to store presets in departments or separate collection we can expand - for now read from departments -> alarms field
+  dEntries.forEach(([id,d])=>{
+    if(d.alarms){
+      const group = document.createElement('div'); group.style.marginBottom='6px';
+      group.innerHTML = `<div style="font-weight:700">${d.name}</div><div class="meta">${(d.alarms||[]).map(a=>a.name).join(', ')}</div>`;
+      alarmPresets.appendChild(group);
     }
+  });
+}
 
-    function goMain() {
-        window.location.href = "index.html";
+/* -------------------------
+  Actions: Create incident
+  ------------------------- */
+btnCreate.addEventListener('click', async ()=>{
+  const address = document.getElementById('inc_address').value.trim();
+  const type = document.getElementById('inc_type').value.trim();
+  const notes = document.getElementById('inc_notes').value.trim();
+  const alarm = document.getElementById('alarmSelect').value || '';
+  if(!address && !type){ alert('Enter at least address or type'); return; }
+  try{
+    const docRef = await addDoc(incidentsCol(), {
+      address, type, notes, alarm,
+      createdBy: dispatchUser,
+      createdAt: new Date().toISOString(),
+      archived: false
+    });
+    // create subcollections entries can be added later (timeline, apparatus) when updates happen
+    document.getElementById('inc_address').value=''; document.getElementById('inc_type').value=''; document.getElementById('inc_notes').value='';
+    alert('Incident created');
+  }catch(e){ alert('Create failed: '+e.message); }
+});
+
+/* -------------------------
+  Open / view incident
+  ------------------------- */
+async function openIncident(id){
+  OPEN_INCIDENT_ID = id;
+  const d = await getDoc(doc(incidentsCol(), id));
+  if(!d.exists()){ alert('Missing incident'); return; }
+  const data = d.data();
+  openTitle.textContent = `${data.type||'Incident'} • ${data.address||''}`;
+  openSub.textContent = `Created: ${data.createdAt||''} • By: ${data.createdBy||''}`;
+  // fetch subcollections: apparatus + timeline
+  attachedUnits.innerHTML = '';
+  timelineBox.innerHTML = '';
+  // apparatus subcollection
+  const appSnap = await getDocs(subApparatus(id));
+  appSnap.forEach(s=>{
+    const u = s.data();
+    const el = document.createElement('div');
+    el.innerHTML = `<div style="font-weight:700">${u.apparatusName||u.unitId}</div><div class="meta">${u.status||''} • ${u.agency||''}</div>`;
+    attachedUnits.appendChild(el);
+  });
+  // timeline
+  const tlSnap = await getDocs(subTimeline(id));
+  tlSnap.forEach(s=>{
+    const t = s.data();
+    const el = document.createElement('div');
+    el.innerHTML = `<div style="font-weight:700">${t.title||t.status||t.sender||'Event'}</div><div class="meta">${t.text||''}</div><div class="meta" style="font-size:12px">${t.ts||''}</div>`;
+    timelineBox.appendChild(el);
+  });
+
+  // show panel
+  openIncCard.classList.remove('hidden');
+}
+
+/* Attach self */
+btnAttachSelf.addEventListener('click', async ()=>{
+  if(!OPEN_INCIDENT_ID) return alert('Open an incident');
+  // create a doc in incidents/{id}/apparatus with unit id
+  const uid = (dispatchUser||'').toUpperCase();
+  if(!uid) return alert('No unit id in session');
+  try{
+    // check if already attached
+    const existing = await getDocs(subApparatus(OPEN_INCIDENT_ID));
+    const list = []; existing.forEach(s=> list.push(s.data()));
+    if(list.some(i=> (i.unitId||'')===uid)) return alert('Already attached');
+    await addDoc(subApparatus(OPEN_INCIDENT_ID), {
+      unitId: uid,
+      apparatusName: APPARATUS[uid] ? APPARATUS[uid].apparatusName : uid,
+      agency: APPARATUS[uid] ? APPARATUS[uid].department : '',
+      status: 'Acknowledged',
+      statusHistory: [{ status:'Acknowledged', ts:new Date().toISOString(), by:dispatchUser }]
+    });
+    // add timeline entry
+    await addDoc(subTimeline(OPEN_INCIDENT_ID), { title:'Unit Attached', text: `${uid} attached`, ts:new Date().toISOString(), sender: dispatchUser });
+    openIncident(OPEN_INCIDENT_ID);
+  }catch(e){ alert('Attach failed: '+e.message); }
+});
+
+/* Status update: will add an entry to apparatus subdoc matching unit and add to timeline */
+document.querySelectorAll('.statusBtn').forEach(b=> b.addEventListener('click', async (ev)=>{
+  if(!OPEN_INCIDENT_ID) return alert('Open an incident');
+  const status = ev.currentTarget.dataset.status;
+  const uid = dispatchUser;
+  // find apparatus doc by unitId in subcollection
+  const appSnap = await getDocs(subApparatus(OPEN_INCIDENT_ID));
+  let foundDoc = null;
+  appSnap.forEach(d=>{ const o = d.data(); if((o.unitId||'')===uid) foundDoc = { id:d.id, data:o }; });
+  if(!foundDoc) return alert('You must attach before updating status');
+  // update: append status history + update status
+  const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', OPEN_INCIDENT_ID, 'apparatus', foundDoc.id);
+  try{
+    const newHistory = (foundDoc.data.statusHistory||[]).concat([{ status, ts:new Date().toISOString(), by:uid }]);
+    await setDoc(ref, { status, statusHistory: newHistory }, { merge:true });
+    // add timeline entry
+    await addDoc(subTimeline(OPEN_INCIDENT_ID), { title:'Status', text: `${uid}: ${status}`, status, ts:new Date().toISOString(), sender: uid });
+    // if Clear -> optionally archive (we'll leave archiving to admin or user via Archive button)
+    openIncident(OPEN_INCIDENT_ID);
+  }catch(e){ alert('Update failed: '+e.message); }
+}));
+
+/* Send chat message -> timeline */
+document.getElementById('sendMsg').addEventListener('click', async ()=>{
+  if(!OPEN_INCIDENT_ID) return alert('Open an incident');
+  const text = document.getElementById('chatIn').value.trim();
+  if(!text) return;
+  try{ await addDoc(subTimeline(OPEN_INCIDENT_ID), { title:'Msg', text, sender: dispatchUser, ts:new Date().toISOString() }); document.getElementById('chatIn').value=''; openIncident(OPEN_INCIDENT_ID); }catch(e){ alert('Send failed'); }
+});
+
+/* Archive incident */
+document.getElementById('btnClearArchive').addEventListener('click', async ()=>{
+  if(!OPEN_INCIDENT_ID) return alert('Open an incident');
+  if(!confirm('Archive this incident?')) return;
+  try{ await setDoc(doc(incidentsCol(), OPEN_INCIDENT_ID), { archived:true }, { merge:true }); openIncCard.classList.add('hidden'); OPEN_INCIDENT_ID=null; }catch(e){ alert('Archive failed'); }
+});
+
+/* Refresh list */
+btnRefreshList.addEventListener('click', ()=> renderIncidentList());
+
+/* Show apparatus detail (simple modal) */
+function showAppDetails(id){
+  const a = APPARATUS[id] || { apparatusName:id };
+  showModal(`Apparatus: ${a.apparatusName||id}`, (root)=>{
+    root.innerHTML = `<div><strong>${a.apparatusName||id}</strong></div><div class="meta">${a.department||''}</div><div style="margin-top:8px">${a.notes||''}</div>`;
+  }, async ()=>{});
+}
+
+/* -------------------------
+  Admin features
+  ------------------------- */
+btnShowAdmin.addEventListener('click', ()=> {
+  if(dispatchRole !== 'admin'){ alert('Admin tools only'); return; }
+  adminPanel.classList.toggle('hidden');
+});
+btnCloseAdmin.addEventListener('click', ()=> adminPanel.classList.add('hidden'));
+
+btnAddDept.addEventListener('click', async ()=>{
+  await showModal('Add Department', (root)=>{
+    root.innerHTML = `<input id="dept_name" class="input" placeholder="Department name"/><input id="dept_notes" class="input" placeholder="Notes"/><textarea id="dept_alarms" class="input" placeholder="Alarms JSON (optional) e.g. [{name:'1st',units:['Dept A','Dept B']}]"></textarea>`;
+  }, async ()=>{
+    const name = document.getElementById('dept_name').value.trim();
+    const notes = document.getElementById('dept_notes').value.trim();
+    let alarms = [];
+    try{ const raw = document.getElementById('dept_alarms').value.trim(); if(raw) alarms = JSON.parse(raw); }catch(e){ alert('Alarms JSON invalid'); throw e; }
+    if(!name) return alert('Name required');
+    await addDoc(departmentsCol(), { name, notes, alarms });
+  });
+});
+
+btnAddUnit.addEventListener('click', async ()=>{
+  await showModal('Add Apparatus', (root)=>{
+    // For apparatus we store id as uppercase key (username)
+    root.innerHTML = `<input id="u_id" class="input" placeholder="Unit ID (ENGINE511)"/><input id="u_name" class="input" placeholder="Display name (Engine 511)"/><input id="u_dept" class="input" placeholder="Department"/><input id="u_pass" class="input" placeholder="Password (for local login mapping)"/>`;
+  }, async ()=>{
+    const id = (document.getElementById('u_id').value||'').trim().toUpperCase();
+    const name = document.getElementById('u_name').value.trim();
+    const dept = document.getElementById('u_dept').value.trim();
+    const pass = document.getElementById('u_pass').value.trim() || id;
+    if(!id) return alert('Unit ID required');
+    // Save to apparatus collection
+    await setDoc(doc(apparatusCol(), id), { apparatusName:name||id, department:dept||'', notes:'', createdAt:new Date().toISOString() });
+    // Also create / update local app user mapping in localStorage (so apparatus_login.html will accept user)
+    const appKey = 'f1_apparatus_local_v1';
+    const store = JSON.parse(localStorage.getItem(appKey) || '{}');
+    store[id] = { password: pass, label: name||id, department: dept||'' };
+    localStorage.setItem(appKey, JSON.stringify(store));
+    alert('Added apparatus. Also saved local login mapping (for apparatus_login.html)');
+  });
+});
+
+/* Edit Dept and Unit functions */
+async function editDept(id){
+  const cur = DEPARTMENTS[id] || {};
+  await showModal('Edit Department', (root)=>{
+    root.innerHTML = `<input id="dept_name" class="input" placeholder="Department name" value="${cur.name||''}"/><input id="dept_notes" class="input" placeholder="Notes" value="${cur.notes||''}"/><textarea id="dept_alarms" class="input" placeholder="Alarms JSON (optional)">${JSON.stringify(cur.alarms||[])}</textarea>`;
+  }, async ()=>{
+    const name = document.getElementById('dept_name').value.trim();
+    const notes = document.getElementById('dept_notes').value.trim();
+    let alarms=[];
+    try{ const raw = document.getElementById('dept_alarms').value.trim(); if(raw) alarms = JSON.parse(raw); }catch(e){ alert('Alarms JSON invalid'); throw e; }
+    if(!name) return alert('Name required');
+    await setDoc(doc(departmentsCol(), id), { name, notes, alarms }, { merge:true });
+  });
+}
+
+async function editUnit(id){
+  const cur = APPARATUS[id] || {};
+  await showModal('Edit Apparatus', (root)=>{
+    root.innerHTML = `<input id="u_name" class="input" placeholder="Display name" value="${cur.apparatusName||''}"/><input id="u_dept" class="input" placeholder="Department" value="${cur.department||''}"/><textarea id="u_notes" class="input" placeholder="Notes">${cur.notes||''}</textarea>`;
+  }, async ()=>{
+    const name = document.getElementById('u_name').value.trim();
+    const dept = document.getElementById('u_dept').value.trim();
+    const notes = document.getElementById('u_notes').value.trim();
+    await setDoc(doc(apparatusCol(), id), { apparatusName: name, department: dept, notes }, { merge:true });
+  });
+}
+
+/* Edit alarms */
+btnEditAlarms.addEventListener('click', async ()=>{
+  const all = Object.entries(DEPARTMENTS).map(([id,d])=> ({ id, ...d }));
+  await showModal('Edit Alarm Presets (per-department)', (root)=>{
+    let html = '<div style="max-height:300px;overflow:auto">';
+    all.forEach(d=> html += `<div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.03)"><div style="font-weight:800">${d.name}</div><textarea id="alarms_${d.id}" class="input" placeholder="Alarms JSON">${JSON.stringify(d.alarms||[])}</textarea></div>`);
+    html += '</div>';
+    root.innerHTML = html;
+  }, async ()=>{
+    for(const [id,d] of Object.entries(DEPARTMENTS)){
+      const raw = document.getElementById(`alarms_${id}`).value;
+      let alarms=[]; try{ if(raw) alarms = JSON.parse(raw); }catch(e){ alert('Invalid JSON for department ' + (d.name||id)); throw e; }
+      await setDoc(doc(departmentsCol(), id), { alarms }, { merge:true });
     }
+  });
+});
+
+/* -------------------------
+  Small utilities & startup
+  ------------------------- */
+function showModal(title, buildFn, onSave){
+  return new Promise((res,rej)=>{
+    modalTitle.textContent = title; modalBody.innerHTML = ''; buildFn(modalBody);
+    modal.style.display = 'flex';
+    modalOk.onclick = async ()=>{ try{ await onSave(); modal.style.display='none'; res(true); } catch(e){ alert('Save failed: '+(e.message||e)); rej(e); } };
+    modalCancel.onclick = ()=>{ modal.style.display='none'; res(false); };
+  });
+}
+
+/* When page loads, ensure admin panel visible only for admin role */
+(function init(){
+  if(dispatchRole === 'admin') adminPanel.classList.remove('hidden');
+  else adminPanel.classList.add('hidden');
+})();
+
+/* For graceful unload */
+window.addEventListener('beforeunload', ()=>{ /* nothing special */ });
+
 </script>
-
 </body>
 </html>
