@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>F1 Resource — Dispatch (Apparatus)</title>
 <style>
 :root{--bg:#041428;--accent:#0b5fff;--accent2:#7b5cff;--muted:#9aa6bd}
@@ -184,7 +184,6 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;ba
 </div>
 
 <script type="module">
-/* Firebase setup */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
@@ -199,7 +198,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* Collections */
 const ROOT_COL='dispatch_root', ROOT_DOC='dispatch';
 const departmentsCol = () => collection(db, ROOT_COL, ROOT_DOC, 'departments');
 const apparatusCol = () => collection(db, ROOT_COL, ROOT_DOC, 'dispatch_apparatus');
@@ -207,10 +205,10 @@ const incidentsCol = () => collection(db, ROOT_COL, ROOT_DOC, 'incidents');
 const subApp = (incId) => collection(db, ROOT_COL, ROOT_DOC, 'incidents', incId, 'apparatus');
 const subTL = (incId) => collection(db, ROOT_COL, ROOT_DOC, 'incidents', incId, 'timeline');
 
-/* Local apparatus login mapping stored in localStorage key f1_apparatus_local_v1 */
 const APP_USERS_KEY = 'f1_apparatus_local_v1';
 function loadAppUsers(){ try{ return JSON.parse(localStorage.getItem(APP_USERS_KEY)||'{}'); }catch(e){ return {}; } }
 function saveAppUsers(o){ localStorage.setItem(APP_USERS_KEY, JSON.stringify(o)); }
+
 let appUsers = loadAppUsers();
 if(!Object.keys(appUsers).length){
   appUsers['ENGINE511'] = { password:'ENGINE511', label:'Engine 511', department:'' };
@@ -218,17 +216,15 @@ if(!Object.keys(appUsers).length){
   saveAppUsers(appUsers);
 }
 
-/* Session */
 let dispatchUser = null;
 let dispatchRole = null;
 
-/* Node refs */
+/* DOM refs */
 const loginView = document.getElementById('loginView');
 const dispatchApp = document.getElementById('dispatchApp');
 const who = document.getElementById('who');
 const apMsg = document.getElementById('apMsg');
 
-/* Login handlers */
 document.getElementById('btnAppLogin').addEventListener('click', ()=>{
   const u = (document.getElementById('apUser').value||'').trim().toUpperCase();
   const p = (document.getElementById('apPass').value||'').trim();
@@ -240,9 +236,9 @@ document.getElementById('btnAppLogin').addEventListener('click', ()=>{
   localStorage.setItem('dispatchUser', dispatchUser); localStorage.setItem('dispatchRole', dispatchRole);
   startDispatchApp();
 });
+
 document.getElementById('btnMainBack').addEventListener('click', ()=> window.open('index.html','_blank'));
 
-/* Auto-login */
 (function(){
   const u = localStorage.getItem('dispatchUser'); const r = localStorage.getItem('dispatchRole');
   if(u){ appUsers = loadAppUsers(); if(appUsers[u]){ dispatchUser = u; dispatchRole = r||appUsers[u].role||'apparatus'; startDispatchApp(); } else { localStorage.removeItem('dispatchUser'); localStorage.removeItem('dispatchRole'); } }
@@ -250,11 +246,9 @@ document.getElementById('btnMainBack').addEventListener('click', ()=> window.ope
 
 document.getElementById('btnLogout').addEventListener('click', ()=>{ localStorage.removeItem('dispatchUser'); localStorage.removeItem('dispatchRole'); location.reload(); });
 
-/* UI state */
 let DEPARTMENTS={}, APPARATUS={}, INCIDENTS={};
 let OPEN_INCIDENT_ID = null;
 
-/* Firestore realtime */
 onSnapshot(departmentsCol(), snap=>{ const out={}; snap.forEach(d=> out[d.id]=d.data()); DEPARTMENTS=out; renderAdminLists(); });
 onSnapshot(apparatusCol(), snap=>{ const out={}; snap.forEach(d=> out[d.id]=d.data()); APPARATUS=out; renderUnits(); renderAdminLists(); });
 onSnapshot(incidentsCol(), snap=>{ const out={}; snap.forEach(d=> out[d.id]=d.data()); INCIDENTS=out; renderIncidentList(); });
@@ -263,25 +257,14 @@ function startDispatchApp(){
   loginView.style.display='none'; dispatchApp.style.display='block';
   who.textContent = `${dispatchUser} • ${dispatchRole.toUpperCase()}`;
   document.getElementById('connectedBadge').textContent = 'Connected';
-  if(dispatchRole==='admin') document.getElementById('adminPanel').classList.remove('hidden');
-  else document.getElementById('adminPanel').classList.add('hidden');
+  if(dispatchRole==='admin') document.getElementById('adminPanel').classList.remove('hidden'); else document.getElementById('adminPanel').classList.add('hidden');
 }
 
-/* Render units */
-function renderUnits(){
-  const el = document.getElementById('unitsList'); el.innerHTML=''; const arr = Object.entries(APPARATUS).sort((a,b)=> (a[1].apparatusName||a[0]).localeCompare(b[1].apparatusName||b[0]));
-  if(!arr.length) el.innerHTML = '<div class="meta">No units defined</div>';
-  arr.forEach(([id,u])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><strong>${u.apparatusName||id}</strong><div class="meta">${u.department||''}</div></div><div><button class="small btn" data-id="${id}" data-act="open">Open</button></div>`; el.appendChild(div); div.querySelector('button[data-act="open"]').addEventListener('click', ()=> showAppDetails(id)); });
-}
+/* renderers */
+function renderUnits(){ const el = document.getElementById('unitsList'); el.innerHTML=''; const arr = Object.entries(APPARATUS).sort((a,b)=> (a[1].apparatusName||a[0]).localeCompare(b[1].apparatusName||b[0])); if(!arr.length) el.innerHTML = '<div class="meta">No units defined</div>'; arr.forEach(([id,u])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><strong>${u.apparatusName||id}</strong><div class="meta">${u.department||''}</div></div><div><button class="small btn" data-id="${id}" data-act="open">Open</button></div>`; el.appendChild(div); div.querySelector('button[data-act="open"]').addEventListener('click', ()=> showAppDetails(id)); }); }
 
-/* Render incidents list */
-function renderIncidentList(){
-  const el = document.getElementById('incList'); el.innerHTML=''; const arr = Object.entries(INCIDENTS).filter(([id,i])=> !i.archived).sort((a,b)=> (b[1].createdAt||'').localeCompare(a[1].createdAt||''));
-  if(!arr.length) el.innerHTML = '<div class="meta">No active incidents</div>';
-  arr.forEach(([id,i])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><strong>${i.type||'No Type'}</strong><div class="meta">${i.address||''} • ${i.createdAt||''}</div></div><div><button class="small btn" data-id="${id}" data-act="open">Open</button></div>`; el.appendChild(div); div.querySelector('button[data-act="open"]').addEventListener('click', ()=> openIncident(id)); });
-}
+function renderIncidentList(){ const el = document.getElementById('incList'); el.innerHTML=''; const arr = Object.entries(INCIDENTS).filter(([id,i])=> !i.archived).sort((a,b)=> (b[1].createdAt||'').localeCompare(a[1].createdAt||'')); if(!arr.length) el.innerHTML = '<div class="meta">No active incidents</div>'; arr.forEach(([id,i])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><strong>${i.type||'No Type'}</strong><div class="meta">${i.address||''} • ${i.createdAt||''}</div></div><div><button class="small btn" data-id="${id}" data-act="open">Open</button></div>`; el.appendChild(div); div.querySelector('button[data-act="open"]').addEventListener('click', ()=> openIncident(id)); }); }
 
-/* Open incident */
 async function openIncident(id){
   OPEN_INCIDENT_ID = id;
   const snap = await getDoc(doc(incidentsCol(), id));
@@ -289,7 +272,6 @@ async function openIncident(id){
   const data = snap.data();
   document.getElementById('openTitle').textContent = `${data.type||'Incident'} • ${data.address||''}`;
   document.getElementById('openSub').textContent = `Created: ${data.createdAt||''} • By: ${data.createdBy||''}`;
-  // load apparatus & timeline subcollections
   const appSnap = await getDocs(subApp(id)); const attached = []; appSnap.forEach(s=> attached.push(s.data()));
   const tlSnap = await getDocs(subTL(id)); const tl = []; tlSnap.forEach(s=> tl.push(s.data()));
   const attachedEl = document.getElementById('attachedUnits'); attachedEl.innerHTML=''; attached.forEach(a=>{ const d=document.createElement('div'); d.innerHTML=`<div style="font-weight:700">${a.apparatusName||a.unitId}</div><div class="meta">${a.status||''} • ${a.agency||''}</div>`; attachedEl.appendChild(d); });
@@ -297,50 +279,51 @@ async function openIncident(id){
   document.getElementById('openIncCard').classList.remove('hidden');
 }
 
-/* Attach self */
+/* helper functions that require imports */
+import { getDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+/* attach self */
 document.getElementById('btnAttachSelf').addEventListener('click', async ()=>{
   if(!OPEN_INCIDENT_ID) return alert('Open an incident');
   const uid = dispatchUser;
-  // prevent duplicate attach
   const existing = await getDocs(subApp(OPEN_INCIDENT_ID));
-  let already=false;
-  existing.forEach(s=> { const o=s.data(); if((o.unitId||'')===uid) already=true; });
+  let already=false; existing.forEach(s=> { const o=s.data(); if((o.unitId||'')===uid) already=true; });
   if(already) return alert('Already attached');
   await addDoc(subApp(OPEN_INCIDENT_ID), { unitId:uid, apparatusName: (APPARATUS[uid] && APPARATUS[uid].apparatusName) || uid, agency: (APPARATUS[uid]&&APPARATUS[uid].department)||'', status:'Acknowledged', statusHistory:[{status:'Acknowledged', ts:new Date().toISOString(), by:uid}] });
   await addDoc(subTL(OPEN_INCIDENT_ID), { title:'Attach', text:`${uid} attached`, sender:uid, ts:new Date().toISOString() });
   openIncident(OPEN_INCIDENT_ID);
 });
 
-/* Status buttons (delegated) */
-document.querySelectorAll('.statusBtn').forEach(b=> b.addEventListener('click', async (ev)=>{
-  if(!OPEN_INCIDENT_ID) return alert('Open an incident');
-  const status = ev.currentTarget.dataset.status;
-  const uid = dispatchUser;
-  // find apparatus doc
-  const appSnap = await getDocs(subApp(OPEN_INCIDENT_ID));
-  let foundDoc = null; let foundId=null;
-  appSnap.forEach(d=>{ const o=d.data(); if((o.unitId||'')===uid){ foundDoc=o; foundId=d.id; }});
-  if(!foundDoc) return alert('Attach before updating status');
-  const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', OPEN_INCIDENT_ID, 'apparatus', foundId);
-  const newHistory = (foundDoc.statusHistory||[]).concat([{ status, ts:new Date().toISOString(), by:uid }]);
-  await setDoc(ref, { status, statusHistory:newHistory }, { merge:true });
-  await addDoc(subTL(OPEN_INCIDENT_ID), { title:'Status', text:`${uid}: ${status}`, sender:uid, ts:new Date().toISOString() });
-  openIncident(OPEN_INCIDENT_ID);
-}));
+/* status updates */
+document.addEventListener('click', async (ev)=>{
+  if(ev.target && ev.target.classList && ev.target.classList.contains('statusBtn')){
+    if(!OPEN_INCIDENT_ID) return alert('Open an incident');
+    const status = ev.target.dataset.status; const uid = dispatchUser;
+    const appSnap = await getDocs(subApp(OPEN_INCIDENT_ID));
+    let foundDoc=null, foundId=null;
+    appSnap.forEach(d=>{ const o=d.data(); if((o.unitId||'')===uid){ foundDoc=o; foundId=d.id; }});
+    if(!foundDoc) return alert('Attach before updating status');
+    const ref = doc(db, ROOT_COL, ROOT_DOC, 'incidents', OPEN_INCIDENT_ID, 'apparatus', foundId);
+    const newHistory = (foundDoc.statusHistory||[]).concat([{ status, ts:new Date().toISOString(), by:uid }]);
+    await setDoc(ref, { status, statusHistory:newHistory }, { merge:true });
+    await addDoc(subTL(OPEN_INCIDENT_ID), { title:'Status', text:`${uid}: ${status}`, sender:uid, ts:new Date().toISOString() });
+    openIncident(OPEN_INCIDENT_ID);
+  }
+});
 
-/* Create incident */
+/* create incident */
 document.getElementById('btnCreate').addEventListener('click', async ()=>{
   const address = document.getElementById('inc_address').value.trim();
   const type = document.getElementById('inc_type').value.trim();
   const notes = document.getElementById('inc_notes').value.trim();
   const alarm = document.getElementById('alarmSelect').value || '';
   if(!address && !type) return alert('Enter address or type');
-  const ref = await addDoc(incidentsCol(), { address, type, notes, alarm, createdBy: dispatchUser, createdAt:new Date().toISOString(), archived:false });
+  await addDoc(incidentsCol(), { address, type, notes, alarm, createdBy: dispatchUser, createdAt:new Date().toISOString(), archived:false });
   document.getElementById('inc_address').value=''; document.getElementById('inc_type').value=''; document.getElementById('inc_notes').value='';
   alert('Incident created');
 });
 
-/* Chat send */
+/* chat */
 document.getElementById('sendMsg').addEventListener('click', async ()=>{
   if(!OPEN_INCIDENT_ID) return alert('Open an incident');
   const txt = document.getElementById('chatIn').value.trim(); if(!txt) return;
@@ -348,7 +331,7 @@ document.getElementById('sendMsg').addEventListener('click', async ()=>{
   document.getElementById('chatIn').value=''; openIncident(OPEN_INCIDENT_ID);
 });
 
-/* Archive */
+/* archive */
 document.getElementById('btnClearArchive').addEventListener('click', async ()=>{
   if(!OPEN_INCIDENT_ID) return alert('Open an incident');
   if(!confirm('Archive incident?')) return;
@@ -356,57 +339,25 @@ document.getElementById('btnClearArchive').addEventListener('click', async ()=>{
   document.getElementById('openIncCard').classList.add('hidden'); OPEN_INCIDENT_ID=null;
 });
 
-/* Refresh list */
-document.getElementById('btnRefreshList').addEventListener('click', ()=> renderIncidentList());
-
-/* Admin tools view */
-document.getElementById('btnShowAdmin').addEventListener('click', ()=> {
-  if(dispatchRole!=='admin') return alert('Admin only');
-  document.getElementById('adminPanel').classList.toggle('hidden');
-});
+/* admin tools */
+document.getElementById('btnShowAdmin').addEventListener('click', ()=> { if(dispatchRole!=='admin') return alert('Admin only'); document.getElementById('adminPanel').classList.toggle('hidden'); });
 document.getElementById('btnCloseAdmin').addEventListener('click', ()=> document.getElementById('adminPanel').classList.add('hidden'));
 
-/* Admin add dept/unit */
-document.getElementById('btnAddDept').addEventListener('click', async ()=>{
-  const name = prompt('Department name'); if(!name) return;
-  await addDoc(departmentsCol(), { name, notes:'', alarms:[] });
-});
-document.getElementById('btnAddUnit').addEventListener('click', async ()=>{
-  const id = prompt('Unit ID (ENGINE511)').trim().toUpperCase(); if(!id) return;
-  const name = prompt('Display name', id) || id;
-  const dept = prompt('Department (optional)', '') || '';
-  await setDoc(doc(apparatusCol(), id), { apparatusName:name, department:dept, notes:'' });
-  // update local mapping for login
-  const store = loadAppUsers(); store[id] = { password: id, label: name, department: dept }; saveAppUsers(store);
-  alert('Added unit and set local login password to username (change later in Local Storage mapping)');
-});
+document.getElementById('btnAddDept').addEventListener('click', async ()=>{ const name = prompt('Department name'); if(!name) return; await addDoc(departmentsCol(), { name, notes:'', alarms:[] }); });
+document.getElementById('btnAddUnit').addEventListener('click', async ()=>{ const id = prompt('Unit ID (ENGINE511)').trim().toUpperCase(); if(!id) return; const name = prompt('Display name', id) || id; const dept = prompt('Department (optional)', '') || ''; await setDoc(doc(apparatusCol(), id), { apparatusName:name, department:dept, notes:'' }); const store = loadAppUsers(); store[id] = { password: id, label: name, department: dept }; saveAppUsers(store); alert('Added unit and set local login password to username'); });
 
-/* Admin list render */
-function renderAdminLists(){
-  const dl = document.getElementById('deptListAdmin'); dl.innerHTML=''; Object.entries(DEPARTMENTS||{}).forEach(([id,d])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><strong>${d.name||id}</strong><div class="meta">${d.notes||''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="edit-dept">Edit</button><button class="small btn" data-id="${id}" data-act="del-dept">Delete</button></div>`; dl.appendChild(div); div.querySelector('[data-act="edit-dept"]').addEventListener('click', async ()=>{ const nn = prompt('Name', d.name||''); if(!nn) return; await setDoc(doc(departmentsCol(), id), { name: nn }, { merge:true }); }); div.querySelector('[data-act="del-dept"]').addEventListener('click', async ()=>{ if(confirm('Delete?')) await deleteDoc(doc(departmentsCol(), id)); }); });
-  const ul = document.getElementById('unitListAdmin'); ul.innerHTML=''; Object.entries(APPARATUS||{}).forEach(([id,u])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><strong>${u.apparatusName||id}</strong><div class="meta">${u.department||''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="edit-unit">Edit</button><button class="small btn" data-id="${id}" data-act="del-unit">Delete</button></div>`; ul.appendChild(div); div.querySelector('[data-act="edit-unit"]').addEventListener('click', async ()=>{ const nn = prompt('Display name', u.apparatusName||id); const dep = prompt('Department', u.department||''); if(!nn) return; await setDoc(doc(apparatusCol(), id), { apparatusName: nn, department: dep }, { merge:true }); }); div.querySelector('[data-act="del-unit"]').addEventListener('click', async ()=>{ if(confirm('Delete unit?')) await deleteDoc(doc(apparatusCol(), id)); }); });
-}
+function renderAdminLists(){ const dl = document.getElementById('deptListAdmin'); dl.innerHTML=''; Object.entries(DEPARTMENTS||{}).forEach(([id,d])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><strong>${d.name||id}</strong><div class="meta">${d.notes||''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="edit-dept">Edit</button><button class="small btn" data-id="${id}" data-act="del-dept">Delete</button></div>`; dl.appendChild(div); div.querySelector('[data-act="edit-dept"]').addEventListener('click', async ()=>{ const nn = prompt('Name', d.name||''); if(!nn) return; await setDoc(doc(departmentsCol(), id), { name: nn }, { merge:true }); }); div.querySelector('[data-act="del-dept"]').addEventListener('click', async ()=>{ if(confirm('Delete?')) await deleteDoc(doc(departmentsCol(), id)); }); }); const ul = document.getElementById('unitListAdmin'); ul.innerHTML=''; Object.entries(APPARATUS||{}).forEach(([id,u])=>{ const div=document.createElement('div'); div.className='listItem'; div.innerHTML = `<div><strong>${u.apparatusName||id}</strong><div class="meta">${u.department||''}</div></div><div style="display:flex;gap:6px"><button class="small btn" data-id="${id}" data-act="edit-unit">Edit</button><button class="small btn" data-id="${id}" data-act="del-unit">Delete</button></div>`; ul.appendChild(div); div.querySelector('[data-act="edit-unit"]').addEventListener('click', async ()=>{ const nn = prompt('Display name', u.apparatusName||id); const dep = prompt('Department', u.department||''); if(!nn) return; await setDoc(doc(apparatusCol(), id), { apparatusName: nn, department: dep }, { merge:true }); }); div.querySelector('[data-act="del-unit"]').addEventListener('click', async ()=>{ if(confirm('Delete unit?')) await deleteDoc(doc(apparatusCol(), id)); }); }); }
 
-/* show apparatus details modal */
 function showAppDetails(id){ const a = APPARATUS[id] || { apparatusName:id }; alert(`${a.apparatusName||id}\nDept: ${a.department||'Unassigned'}\nNotes: ${a.notes||''}`); }
 
-/* helper local storage mapping */
+/* helpers for local mapping */
 function loadAppUsers(){ try{ return JSON.parse(localStorage.getItem(APP_USERS_KEY)||'{}'); }catch(e){return{};} }
 function saveAppUsers(o){ localStorage.setItem(APP_USERS_KEY, JSON.stringify(o)); }
 
-/* show modal helper */
-const modal = document.getElementById('modal'), modalTitle = document.getElementById('modalTitle'), modalBody = document.getElementById('modalBody'), modalOk = document.getElementById('modalOk'), modalCancel = document.getElementById('modalCancel');
-function showModal(title, buildFn, onSave){
-  modalTitle.textContent = title; modalBody.innerHTML=''; buildFn(modalBody); modal.style.display='flex';
-  return new Promise((res,rej)=>{ modalOk.onclick = async ()=>{ try{ await onSave(); modal.style.display='none'; res(true); }catch(e){ rej(e); } }; modalCancel.onclick = ()=>{ modal.style.display='none'; res(false); }; });
-}
+/* modal helper */
+const modal = document.getElementById('modal'), modalTitle=document.getElementById('modalTitle'), modalBody=document.getElementById('modalBody'), modalOk=document.getElementById('modalOk'), modalCancel=document.getElementById('modalCancel');
+function showModal(title, buildFn, onSave){ modalTitle.textContent = title; modalBody.innerHTML=''; buildFn(modalBody); modal.style.display='flex'; return new Promise((res,rej)=>{ modalOk.onclick = async ()=>{ try{ await onSave(); modal.style.display='none'; res(true); }catch(e){ rej(e); } }; modalCancel.onclick = ()=>{ modal.style.display='none'; res(false); }; }); }
 
-/* Utility: getDoc/getDocs functions imported earlier - need to import them through module top; using addDoc/setDoc/getDoc/getDocs above */
-
-/* END */
 </script>
 </body>
 </html>
-
-
-
