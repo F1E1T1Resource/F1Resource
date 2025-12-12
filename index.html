@@ -3,296 +3,293 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>F1 Resource — Mobile</title>
+<title>F1 Resource — Mobile SPA</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#071723; --card:#071921; --muted:#9fb0c8; --accent:#0b5fff; --accent2:#7b5cff;
-    --glass: rgba(255,255,255,0.03);
-  }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#021023,#041428);color:#eaf3ff}
-  .app{max-width:980px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
-  header.app-header{display:flex;align-items:center;padding:12px 14px;gap:10px}
-  header img.logo{height:44px;border-radius:8px}
-  header h1{font-size:18px;margin:0}
-  main{flex:1;padding:12px}
-  .centerCard{max-width:520px;margin:30px auto;padding:16px;background:linear-gradient(180deg,#0b1624,#08121a);border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-  .input, textarea, select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;margin-top:10px;font-size:15px}
-  .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
-  .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021022}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-  .muted{color:var(--muted);font-size:13px}
-  .hidden{display:none}
-  .row{display:flex;gap:8px}
-  .list{display:flex;flex-direction:column;gap:10px}
-  .card{background:linear-gradient(180deg,#0b1624,#08121a);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
-  .item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02)}
-  .bottomBar{position:fixed;left:0;right:0;bottom:0;padding:12px;background:linear-gradient(180deg,rgba(2,6,23,0.6),rgba(2,6,23,0.8));display:flex;gap:10px;justify-content:center}
-  nav.app-nav{display:flex;gap:8px;overflow:auto;padding:8px 0}
-  .navBtn{flex:1;min-width:110px;padding:10px;border-radius:10px;text-align:center;font-weight:700}
-  .pageTitle{font-size:16px;margin-bottom:6px}
-  /* responsive */
-  @media (min-width:900px){
-    main{max-width:900px;margin:0 auto}
-    .centerCard{margin:36px 0}
-    .bottomBar{position:sticky;bottom:12px}
-  }
+:root{
+  --bg:#021023; --card:#07121a; --muted:#9fb0c8; --accent:#0b5fff; --accent2:#7b5cff; --glass: rgba(255,255,255,0.03);
+  --gap:10px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#021023,#041428);color:#eaf3ff}
+.app{max-width:980px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.header{display:flex;align-items:center;gap:12px;padding:12px}
+.logo{height:44px;border-radius:8px}
+.title{font-weight:700;font-size:16px}
+.muted{color:var(--muted);font-size:13px}
+main{flex:1;padding:12px}
+.centerCard{max-width:720px;margin:18px auto;padding:14px;background:linear-gradient(180deg,#0b1624,#08121a);border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;margin-top:10px;font-size:15px}
+.btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021022}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+.row{display:flex;gap:8px}
+.hidden{display:none}
+.item{padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center}
+.list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.navbar{position:fixed;left:12px;top:12px;z-index:60}
+.hambtn{background:var(--primary);border-radius:8px;padding:8px;border:none;color:white}
+.sideMenu{position:fixed;left:8px;top:72px;bottom:72px;width:88%;max-width:360px;background:linear-gradient(180deg,#071723,#06121a);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);z-index:70;overflow:auto;transform:translateX(-120%);transition:0.28s}
+.sideMenu.open{transform:translateX(0)}
+.sideMenu h3{margin:0 0 6px}
+.sideMenu .menuItem{padding:10px;border-radius:8px;margin-bottom:6px}
+.bottomBar{position:fixed;left:0;right:0;bottom:0;padding:12px;background:linear-gradient(180deg,rgba(2,6,23,0.6),rgba(2,6,23,0.86));display:flex;gap:8px;justify-content:center;z-index:50}
+.page{display:none}
+.page.active{display:block}
+.small{padding:6px 8px;font-size:13px}
+.kv{font-size:13px;color:var(--muted)}
+@media (min-width:900px){main{max-width:980px;margin:0 auto} .sideMenu{left:24px}}
 </style>
 </head>
 <body>
-<div class="app" id="appRoot">
 
-  <header class="app-header" id="header" style="display:none">
-    <img class="logo" id="logo" src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="F1">
-    <div>
-      <h1 id="headerTitle">F1 Resource</h1>
-      <div class="muted" id="headerSub">Oswego County — Mobile</div>
+<div class="app" id="app">
+
+  <!-- Header -->
+  <div class="header" id="header" style="display:none">
+    <button id="menuToggle" class="btn ghost small">☰ Menu</button>
+    <img id="logo" class="logo" src="https://c6ee69d755.cbaul-cdnwnd.com/af0c9920a8129f9bf9a0921ecfe9d264/200000017-17b1717b1a/700/F1Resource-removebg-preview.webp?ph=c6ee69d755" alt="logo">
+    <div style="flex:1">
+      <div class="title" id="hdrTitle">F1 Resource</div>
+      <div class="muted" id="hdrSub">Oswego County</div>
     </div>
-    <div style="margin-left:auto;text-align:right">
-      <div class="muted" id="userBadge"></div>
-      <div style="margin-top:6px"><button class="btn ghost" id="logoutBtn">Logout</button></div>
+    <div style="text-align:right">
+      <div class="muted" id="userInfo"></div>
+      <div style="margin-top:6px"><button id="btnLogout" class="btn ghost small">Logout</button></div>
     </div>
-  </header>
+  </div>
 
   <main id="main">
-    <!-- Access Code screen -->
-    <section id="screenAccess" class="centerCard app-screen">
-      <div style="text-align:center">
-        <img src="" id="bigLogo" style="height:84px;border-radius:10px;display:block;margin:0 auto 6px" alt="logo">
-        <h2 style="margin:6px 0 0">Welcome to F1 Resource</h2>
-        <div class="muted">Enter your department Access Code to continue</div>
-      </div>
-      <input id="inputAccess" class="input" placeholder="Access Code (provided by your admin)" />
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button class="btn primary" id="btnVerifyAccess">Verify</button>
-        <button class="btn ghost" id="btnOpenDispatch">Mobile CAD Login</button>
-      </div>
-      <div class="muted" style="margin-top:10px">If you don't have a code, contact your County Admin.</div>
-      <div id="accessMsg" class="muted" style="margin-top:10px;color:#ff9b9b"></div>
-    </section>
 
-    <!-- Login screen -->
-    <section id="screenLogin" class="centerCard app-screen hidden">
-      <h3 class="pageTitle" id="loginAgencyName">Agency</h3>
-      <div class="muted">Sign in to access your agency</div>
-      <input id="loginUser" class="input" placeholder="Username" />
-      <input id="loginPass" class="input" type="password" placeholder="Password" />
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button class="btn primary" id="btnLogin">Login</button>
-        <button class="btn ghost" id="btnBackToAccess">Back</button>
-      </div>
-      <div style="margin-top:10px;display:flex;gap:8px">
-        <button class="btn ghost" id="btnCreateLocal">Create local account</button>
-        <button class="btn ghost" id="btnResetLocal">Reset device users</button>
-      </div>
-      <div id="loginMsg" class="muted" style="margin-top:10px;color:#ff9b9b"></div>
-    </section>
-
-    <!-- Agency Select -->
-    <section id="screenAgencySelect" class="app-screen hidden">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <h3 class="pageTitle">Select Agency</h3>
-            <div class="muted">Choose the agency you will operate under</div>
-          </div>
-          <div><button class="btn ghost" id="btnChangeAccess">Change Code</button></div>
+    <!-- ACCESS CODE SCREEN -->
+    <section id="view-access" class="page active">
+      <div class="centerCard">
+        <div style="text-align:center">
+          <img src="" id="bigLogo" style="height:84px;border-radius:10px;display:block;margin:0 auto 8px">
+          <h2 style="margin:4px 0">F1 Resource</h2>
+          <div class="muted">Enter your department access code to continue</div>
         </div>
+        <input id="accessInput" class="input" placeholder="Access Code">
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="accessBtn" class="btn primary">Verify</button>
+          <button id="cadBtn" class="btn ghost">Mobile CAD Login</button>
+        </div>
+        <div id="accessMsg" class="muted" style="margin-top:10px;color:#ff9b9b"></div>
+      </div>
+    </section>
+
+    <!-- LOGIN SCREEN -->
+    <section id="view-login" class="page">
+      <div class="centerCard">
+        <h3 id="loginAgency" style="margin:0 0 6px">Agency Login</h3>
+        <div class="muted">Sign in with your department username</div>
+        <input id="loginUser" class="input" placeholder="Username">
+        <input id="loginPass" class="input" type="password" placeholder="Password">
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="loginBtn" class="btn primary">Login</button>
+          <button id="backAccess" class="btn ghost">Back</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="createLocal" class="btn ghost small">Create Local Account</button>
+          <button id="resetLocal" class="btn ghost small">Reset Local Users</button>
+        </div>
+        <div id="loginMsg" class="muted" style="margin-top:10px;color:#ff9b9b"></div>
+      </div>
+    </section>
+
+    <!-- AGENCY SELECT -->
+    <section id="view-agency-select" class="page">
+      <div class="centerCard">
+        <h3 style="margin:0 0 6px">Choose Agency</h3>
+        <div class="muted">Select the agency you will operate under</div>
         <div id="agencyList" class="list" style="margin-top:12px"></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="changeCode" class="btn ghost">Change Access Code</button>
+        </div>
       </div>
     </section>
 
-    <!-- Agency Home (hub for selected agency) -->
-    <section id="screenAgencyHome" class="app-screen hidden">
-      <div class="card">
+    <!-- AGENCY SHELL -->
+    <section id="view-agency-shell" class="page">
+      <div class="centerCard">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
-            <h3 class="pageTitle" id="agencyTitle">Agency Home</h3>
-            <div class="muted" id="agencySub">Tap a function</div>
+            <h3 id="agencyNameDisplay" style="margin:0">Agency</h3>
+            <div class="muted" id="agencyMeta">Agency home</div>
           </div>
-          <div><button class="btn ghost" id="btnOpenMenu">Menu</button></div>
+          <div><button id="openMenuBtn" class="btn ghost small">Open Menu</button></div>
         </div>
 
-        <nav class="app-nav" id="agencyNav" style="margin-top:12px">
-          <!-- buttons injected -->
-        </nav>
-
-        <div id="agencyQuick" style="margin-top:12px">
-          <div class="muted">Quick Actions</div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="navBtn btn primary" data-screen="screenDashboard">Dashboard</button>
-            <button class="navBtn btn ghost" data-screen="screenIncidents">Incidents</button>
-            <button class="navBtn btn ghost" data-screen="screenApparatus">Apparatus</button>
-          </div>
-        </div>
+        <!-- inner module container -->
+        <div id="moduleContainer" style="margin-top:12px"></div>
       </div>
     </section>
 
-    <!-- Dashboard -->
-    <section id="screenDashboard" class="app-screen hidden">
+    <!-- Module: Dashboard -->
+    <div id="mod-dashboard" class="page-module hidden">
       <div class="card">
-        <h3 class="pageTitle">Dashboard</h3>
-        <div class="muted">Current responding members</div>
-        <div id="respondingList" class="list" style="margin-top:12px"></div>
+        <h4 style="margin:0">Dashboard</h4>
+        <div class="muted">Responding members</div>
+        <div id="dashboardResponding" class="list" style="margin-top:12px"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Incidents -->
-    <section id="screenIncidents" class="app-screen hidden">
+    <!-- Module: Incidents -->
+    <div id="mod-incidents" class="page-module hidden">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <h3 class="pageTitle">Incidents</h3>
-          <div><button class="btn ghost small" id="btnNewIncident">New</button></div>
+          <div><h4 style="margin:0">Incidents</h4><div class="muted">Tap to open</div></div>
+          <div><button id="newIncidentBtn" class="btn primary small">New</button></div>
         </div>
-        <input id="incSearch" class="input" placeholder="Search by address or incident number" />
-        <div id="incList" class="list" style="margin-top:12px"></div>
+        <input id="incSearch" class="input" placeholder="Search address or ID">
+        <div id="incidentList" class="list" style="margin-top:12px"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Incident detail modal (simple) -->
-    <div id="incidentModal" class="card hidden" style="position:fixed;left:8px;right:8px;top:80px;z-index:9999">
+    <!-- Modal: incident detail -->
+    <div id="incidentModal" class="centerCard hidden" style="position:fixed;left:8px;right:8px;top:80px;z-index:200">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><strong id="im_title">Incident</strong><div class="muted" id="im_sub"></div></div>
-        <div><button class="btn ghost" id="im_close">Close</button></div>
+        <div><button id="im_close" class="btn ghost small">Close</button></div>
       </div>
       <div id="im_body" style="margin-top:10px"></div>
     </div>
 
-    <!-- Apparatus -->
-    <section id="screenApparatus" class="app-screen hidden">
+    <!-- Module: Apparatus -->
+    <div id="mod-apparatus" class="page-module hidden">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <h3 class="pageTitle">Apparatus</h3>
-          <div><button class="btn ghost" id="btnAddApparatus">Add</button></div>
+          <div><h4 style="margin:0">Apparatus</h4><div class="muted">Status & mutual aid</div></div>
+          <div><button id="addAppBtn" class="btn primary small">Add</button></div>
         </div>
         <div id="apparatusList" class="list" style="margin-top:12px"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Members -->
-    <section id="screenMembers" class="app-screen hidden">
+    <!-- Module: Members -->
+    <div id="mod-members" class="page-module hidden">
       <div class="card">
-        <h3 class="pageTitle">Members</h3>
+        <h4 style="margin:0">Members</h4>
         <div id="membersList" class="list" style="margin-top:12px"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Documents -->
-    <section id="screenDocuments" class="app-screen hidden">
+    <!-- Module: Documents -->
+    <div id="mod-documents" class="page-module hidden">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <h3 class="pageTitle">Documents</h3>
-          <div><button class="btn ghost" id="btnUploadDoc">Upload</button></div>
+          <div><h4 style="margin:0">Documents</h4><div class="muted">Upload & view documents</div></div>
+          <div><button id="docUploadBtn" class="btn primary small">Upload</button></div>
         </div>
-        <input type="file" id="docFile" class="hidden" />
+        <input id="docFile" type="file" class="hidden" />
         <div id="docsList" class="list" style="margin-top:12px"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Events -->
-    <section id="screenEvents" class="app-screen hidden">
+    <!-- Module: Alarm List -->
+    <div id="mod-alarms" class="page-module hidden">
       <div class="card">
-        <h3 class="pageTitle">Events</h3>
-        <div id="eventsList" class="list" style="margin-top:12px"></div>
-      </div>
-    </section>
-
-    <!-- Alarm List -->
-    <section id="screenAlarms" class="app-screen hidden">
-      <div class="card">
-        <h3 class="pageTitle">Alarm List</h3>
+        <h4 style="margin:0">Alarm List</h4>
         <div id="alarmsList" class="list" style="margin-top:12px"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Command Desk -->
-    <section id="screenCommand" class="app-screen hidden">
+    <!-- Module: Command Desk -->
+    <div id="mod-command" class="page-module hidden">
       <div class="card">
-        <h3 class="pageTitle">Command Desk</h3>
-        <div class="muted">Active incident command assignments</div>
+        <h4 style="margin:0">Command Desk</h4>
         <div id="commandList" style="margin-top:12px"></div>
         <div style="margin-top:10px;display:flex;gap:8px">
-          <input id="cmdUnit" class="input" placeholder="Unit Callsign (e.g., ENGINE511)" />
-          <input id="cmdAssign" class="input" placeholder="Assignment (e.g., Alpha Sector)" />
-          <button class="btn primary" id="btnAddCmd">Add</button>
+          <input id="cmdUnit" class="input" placeholder="Unit Callsign">
+          <input id="cmdAssign" class="input" placeholder="Assignment">
         </div>
+        <div style="margin-top:8px"><button id="btnAddCmd" class="btn primary">Add</button></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Next Closest -->
-    <section id="screenNextClosest" class="app-screen hidden">
+    <!-- Module: Events -->
+    <div id="mod-events" class="page-module hidden">
       <div class="card">
-        <h3 class="pageTitle">Next Closest Departments</h3>
+        <h4 style="margin:0">Events</h4>
+        <div id="eventsList" class="list" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- Module: Next Closest (placeholder) -->
+    <div id="mod-nextclosest" class="page-module hidden">
+      <div class="card">
+        <h4 style="margin:0">Next Closest Departments</h4>
         <div id="nextClosestList" class="list" style="margin-top:12px"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Nearby Resources -->
-    <section id="screenResources" class="app-screen hidden">
+    <!-- Module: Resources -->
+    <div id="mod-resources" class="page-module hidden">
       <div class="card">
-        <h3 class="pageTitle">Nearby Resources</h3>
+        <h4 style="margin:0">Nearby Resources</h4>
         <div id="resourcesList" class="list" style="margin-top:12px"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Response Dashboard -->
-    <section id="screenResponse" class="app-screen hidden">
+    <!-- Module: Response Dashboard -->
+    <div id="mod-response" class="page-module hidden">
       <div class="card">
-        <h3 class="pageTitle">Response Dashboard</h3>
+        <h4 style="margin:0">Response Dashboard</h4>
         <div id="responseBoard" class="list" style="margin-top:12px"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Truck Check (Rig Check) -->
-    <section id="screenRigCheck" class="app-screen hidden">
+    <!-- Module: Rig Check -->
+    <div id="mod-rigcheck" class="page-module hidden">
       <div class="card">
-        <h3 class="pageTitle">Truck / Rig Check</h3>
-        <div class="muted">Upload rig check form or photo</div>
-        <div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" id="btnTruckUpload">Upload</button></div>
+        <h4 style="margin:0">Truck / Rig Check</h4>
         <div id="rigList" class="list" style="margin-top:12px"></div>
+        <div style="margin-top:8px"><button id="rigUploadBtn" class="btn primary">Upload Rig Check</button></div>
       </div>
-    </section>
+    </div>
 
-    <!-- Weather -->
-    <section id="screenWeather" class="app-screen hidden">
+    <!-- Module: Weather -->
+    <div id="mod-weather" class="page-module hidden">
       <div class="card">
-        <h3 class="pageTitle">Weather</h3>
-        <div id="weatherAlerts" style="margin-top:8px"></div>
+        <h4 style="margin:0">Weather & Alerts</h4>
+        <div id="weatherAlerts" style="margin-top:12px"></div>
       </div>
-    </section>
-
-    <!-- Menu Drawer -->
-    <div id="menuDrawer" class="card hidden" style="position:fixed;left:8px;top:80px;bottom:80px;z-index:9999;overflow:auto;width:92%;max-width:420px">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><strong id="menuAgencyName">Agency Menu</strong><div class="muted" id="menuAgencySub"></div></div>
-        <div><button class="btn ghost" id="btnCloseMenu">Close</button></div>
-      </div>
-      <div style="margin-top:12px" id="menuList"></div>
     </div>
 
   </main>
 
-  <!-- bottom bar -->
+  <!-- Side menu -->
+  <div id="sideMenu" class="sideMenu">
+    <h3 id="menuAgency">Agency Menu</h3>
+    <div class="muted" id="menuSub"></div>
+    <div style="margin-top:12px">
+      <!-- menu items injected -->
+    </div>
+    <div style="margin-top:12px">
+      <button id="menuLogout" class="btn ghost small">Logout</button>
+    </div>
+  </div>
+
+  <!-- Bottom action bar -->
   <div class="bottomBar" id="bottomBar" style="display:none">
-    <button class="btn primary" id="btnChangeStatus">Change Response Status</button>
-    <button class="btn ghost" id="btnGotoDashboard">See Dashboard</button>
+    <button id="statusBtn" class="btn primary">Change Response Status</button>
+    <button id="dashBtn" class="btn ghost">See Dashboard</button>
   </div>
 
 </div>
 
 <!-- Firebase & app logic -->
 <script type="module">
-/* =========================
-   Firebase init (modular v9)
-   Replace config if you want to update
-   ========================= */
+/* ---------------------------
+   Firebase modular imports
+   --------------------------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
-  getFirestore, collection, doc, getDoc, setDoc, addDoc, query, where, getDocs,
-  onSnapshot, serverTimestamp, orderBy
+  getFirestore, collection, doc, getDoc, setDoc, addDoc, getDocs, query, where, onSnapshot, orderBy
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+/* ---------- config (your config) ---------- */
 const firebaseConfig = {
   apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
   authDomain: "f1resource-8fedc.firebaseapp.com",
@@ -301,226 +298,385 @@ const firebaseConfig = {
   messagingSenderId: "182745701982",
   appId: "1:182745701982:web:9f4f3836b41b450987decf"
 };
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-/* =========================
-   Local session + user store (localStorage)
-   - localUsers stored per device
-   - session holds logged in user and agency
-   ========================= */
+/* ---------------------------
+   Local storage keys & helpers
+   --------------------------- */
 const LOCAL_USERS_KEY = 'f1_local_users_v1';
 const SESSION_KEY = 'f1_session_v1';
 
-function loadLocalUsers(){
-  try { return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}'); }
-  catch(e){ return {}; }
-}
+function loadLocalUsers(){ try { return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY)||'{}'); } catch(e){ return {}; } }
 function saveLocalUsers(u){ localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(u)); }
+function saveSession(s){ localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+function loadSession(){ try { return JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); } catch(e){ return null; } }
 
+/* seed default local users if empty */
 let localUsers = loadLocalUsers();
-// seed defaults if empty
-if(Object.keys(localUsers).length === 0){
+if(!Object.keys(localUsers).length){
   localUsers = {
-    "ADMIN": { password: "ADMIN", role: "ADMIN", displayName:"Admin", dept:"" },
-    "FDADMIN": { password: "FDADMIN", role: "DEPT_ADMIN", displayName:"Dept Admin", dept:"" },
-    "FDUSER": { password: "FDUSER", role: "MEMBER", displayName:"Member", dept:"" }
+    "ADMIN":{ password:"ADMIN", role:"ADMIN", displayName:"Administrator", dept:"" },
+    "FDADMIN":{ password:"FDADMIN", role:"DEPT_ADMIN", displayName:"Dept Admin", dept:"" },
+    "FDUSER":{ password:"FDUSER", role:"MEMBER", displayName:"Member", dept:"" }
   };
   saveLocalUsers(localUsers);
 }
 
-function saveSession(session){ localStorage.setItem(SESSION_KEY, JSON.stringify(session)); }
-function loadSession(){ try { return JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); } catch(e){ return null; } }
-
-/* =========================
+/* ---------------------------
    App state
-   ========================= */
-let ACCESS_MATCH = null; // {id, accessCode, agencyId, name, internal}
-let SESSION = loadSession(); // { username, role, agencyId, agencyName }
+   --------------------------- */
+let ACCESS = null; // access doc data
+let SESSION = loadSession(); // { username, role, agencyId, agencyName, accessCode }
 let CURRENT_AGENCY_ID = SESSION?.agencyId || null;
 let CURRENT_AGENCY_META = null;
 
-/* =========================
+/* listeners holders */
+let unsubApp=null, unsubInc=null, unsubMembers=null, unsubDocs=null;
+
+/* ---------------------------
    DOM refs
-   ========================= */
-const appRoot = document.getElementById('appRoot');
+   --------------------------- */
 const header = document.getElementById('header');
-const userBadge = document.getElementById('userBadge');
-const logoutBtn = document.getElementById('logoutBtn');
+const bigLogo = document.getElementById('bigLogo');
+bigLogo.src = document.getElementById('logo').src;
 
-const screenAccess = document.getElementById('screenAccess');
-const screenLogin = document.getElementById('screenLogin');
-const screenAgencySelect = document.getElementById('screenAgencySelect');
-const screenAgencyHome = document.getElementById('screenAgencyHome');
+const viewAccess = document.getElementById('view-access');
+const viewLogin = document.getElementById('view-login');
+const viewAgencySelect = document.getElementById('view-agency-select');
+const viewAgencyShell = document.getElementById('view-agency-shell');
 
-const inputAccess = document.getElementById('inputAccess');
-const btnVerifyAccess = document.getElementById('btnVerifyAccess');
+const accessInput = document.getElementById('accessInput');
+const accessBtn = document.getElementById('accessBtn');
 const accessMsg = document.getElementById('accessMsg');
-const btnOpenDispatch = document.getElementById('btnOpenDispatch');
+const cadBtn = document.getElementById('cadBtn');
 
 const loginUser = document.getElementById('loginUser');
 const loginPass = document.getElementById('loginPass');
-const btnLogin = document.getElementById('btnLogin');
-const btnBackToAccess = document.getElementById('btnBackToAccess');
-const btnCreateLocal = document.getElementById('btnCreateLocal');
-const btnResetLocal = document.getElementById('btnResetLocal');
+const loginBtn = document.getElementById('loginBtn');
+const backAccess = document.getElementById('backAccess');
 const loginMsg = document.getElementById('loginMsg');
-const loginAgencyName = document.getElementById('loginAgencyName');
+const loginAgency = document.getElementById('loginAgency');
 
-const agencyList = document.getElementById('agencyList');
-const agencyTitle = document.getElementById('agencyTitle');
-const agencyNav = document.getElementById('agencyNav');
+const agencyListEl = document.getElementById('agencyList');
+const agencyNameDisplay = document.getElementById('agencyNameDisplay');
+const agencyMetaEl = document.getElementById('agencyMeta');
+const moduleContainer = document.getElementById('moduleContainer');
+
+const sideMenu = document.getElementById('sideMenu');
+const menuAgency = document.getElementById('menuAgency');
+const menuSub = document.getElementById('menuSub');
 
 const bottomBar = document.getElementById('bottomBar');
-const btnChangeStatus = document.getElementById('btnChangeStatus');
-const btnGotoDashboard = document.getElementById('btnGotoDashboard');
+const statusBtn = document.getElementById('statusBtn');
+const dashBtn = document.getElementById('dashBtn');
 
-const menuDrawer = document.getElementById('menuDrawer');
-const btnOpenMenu = document.getElementById('btnOpenMenu');
-const btnCloseMenu = document.getElementById('btnCloseMenu');
-const menuList = document.getElementById('menuList');
-const menuAgencyName = document.getElementById('menuAgencyName');
-const menuAgencySub = document.getElementById('menuAgencySub');
+const menuToggle = document.getElementById('menuToggle');
+const menuLogout = document.getElementById('menuLogout');
+const openMenuBtn = document.getElementById('openMenuBtn');
 
-/* pages */
-const screenIds = Array.from(document.querySelectorAll('.app-screen')).map(s=>s.id);
-function showScreen(id){
-  document.querySelectorAll('.app-screen').forEach(s=>s.classList.add('hidden'));
-  const el = document.getElementById(id);
-  if(el) el.classList.remove('hidden');
-  // header + bottom bar visible after login
-  if(id !== 'screenAccess' && id !== 'screenLogin' && SESSION){
+/* module containers */
+const pages = {
+  dashboard: document.getElementById('mod-dashboard'),
+  incidents: document.getElementById('mod-incidents'),
+  apparatus: document.getElementById('mod-apparatus'),
+  members: document.getElementById('mod-members'),
+  documents: document.getElementById('mod-documents'),
+  alarms: document.getElementById('mod-alarms'),
+  command: document.getElementById('mod-command'),
+  events: document.getElementById('mod-events'),
+  nextclosest: document.getElementById('mod-nextclosest'),
+  resources: document.getElementById('mod-resources'),
+  response: document.getElementById('mod-response'),
+  rigcheck: document.getElementById('mod-rigcheck'),
+  weather: document.getElementById('mod-weather'),
+  incidentsView: document.getElementById('incidentModal')
+};
+
+/* helper to show SPA "page" (top-level view) */
+function showView(viewId){
+  // hide pages
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  if(viewId === 'access') viewAccess.classList.add('active');
+  if(viewId === 'login') viewLogin.classList.add('active');
+  if(viewId === 'agency-select') viewAgencySelect.classList.add('active');
+  if(viewId === 'agency-shell') viewAgencyShell.classList.add('active');
+
+  // header / bottom visibility
+  if(viewId === 'agency-shell'){
     header.style.display='flex';
     bottomBar.style.display='flex';
   } else {
     header.style.display='none';
     bottomBar.style.display='none';
   }
+  // hide all modules
+  document.querySelectorAll('.page-module').forEach(m=>m.classList.add('hidden'));
 }
 
-/* =========================
-   Utilities & Firestore helpers
-   ========================= */
-function setHeaderUser(){
-  userBadge.textContent = SESSION ? `${SESSION.username} • ${SESSION.role}` : '';
-  document.getElementById('headerTitle').textContent = CURRENT_AGENCY_META?.name ? (CURRENT_AGENCY_META.name) : 'F1 Resource';
-  document.getElementById('agencySub')?.textContent = CURRENT_AGENCY_META?.metaDescription || '';
+/* helper to show module inside agency shell */
+function showModule(name){
+  // hide all page modules
+  document.querySelectorAll('.page-module').forEach(m=>m.classList.add('hidden'));
+  const mod = pages[name];
+  if(mod) mod.classList.remove('hidden');
+  // also set moduleContainer to contain the module's node (move or clone)
+  moduleContainer.innerHTML = '';
+  if(mod) moduleContainer.appendChild(mod);
+  // highlight menu
+  document.querySelectorAll('.menuItem').forEach(i=>i.style.background='transparent');
+  const mi = document.querySelector(`.menuItem[data-mod="${name}"]`);
+  if(mi) mi.style.background='rgba(255,255,255,0.02)';
 }
-function uid(){ return 'id_'+Math.random().toString(36).slice(2,9); }
 
-/* Access code check: query access_codes collection */
-async function findAccessCode(code){
+/* ---------------------------
+   Access code flow
+   --------------------------- */
+accessBtn.addEventListener('click', async ()=>{
+  const code = (accessInput.value||'').trim();
+  accessMsg.textContent='';
+  if(!code){ accessMsg.textContent='Enter access code'; return; }
   try{
     const q = query(collection(db,'access_codes'), where('accessCode','==', code));
     const snap = await getDocs(q);
-    if(snap.empty) return null;
-    const d = snap.docs[0];
-    return { id:d.id, ...d.data() };
-  } catch(e){ console.error(e); return null; }
-}
+    if(snap.empty){ accessMsg.textContent='Invalid code'; return; }
+    ACCESS = snap.docs[0].data();
+    ACCESS._id = snap.docs[0].id;
+    // list agencies for this access — mapping is one-to-one in your dataset
+    const agencies = await listAgenciesForAccess(ACCESS);
+    // save access in session
+    SESSION = SESSION || {};
+    SESSION.accessCode = code;
+    saveSession(SESSION);
+    // show agency select
+    renderAgencyList(agencies);
+    showView('agency-select');
+  } catch(e){ console.error(e); accessMsg.textContent='Error verifying code'; }
+});
 
-/* load agency meta doc (agencies/{agencyId}/meta ) or create if missing */
-async function loadAgencyMeta(agencyId, nameFallback){
-  const ref = doc(db,'agencies', agencyId, 'meta','config'); // meta stored as subdoc 'meta/config'
-  const snap = await getDoc(ref);
-  if(snap.exists()){
-    return snap.data();
-  } else {
-    // create basic meta doc
-    const meta = { name: nameFallback || agencyId, createdAt: serverTimestamp(), metaDescription: '' };
-    await setDoc(ref, meta);
-    return meta;
-  }
-}
-
-/* load agencies belonging to this access code (for now mapping is single agency per code) */
+/* helper list agencies for access doc */
 async function listAgenciesForAccess(accessDoc){
-  // We will return the agency indicated by accessDoc.agencyId (exists)
-  const out = [];
-  if(accessDoc){
-    const aid = accessDoc.agencyId;
-    const meta = await loadAgencyMeta(aid, accessDoc.name || aid);
-    out.push({ agencyId: aid, name: meta.name || accessDoc.name || aid, meta });
-  }
+  // simple: return agencyId mapped
+  const out=[];
+  if(!accessDoc) return out;
+  const aid = accessDoc.agencyId;
+  // ensure meta exists
+  const meta = await ensureAgencyMeta(aid, accessDoc.name || aid);
+  out.push({ agencyId: aid, name: meta.name || accessDoc.name || aid, meta });
   return out;
 }
 
-/* Firestore listeners for the current agency */
-let unsubApparatus=null, unsubIncidents=null, unsubMembers=null, unsubDocs=null;
-function attachAgencyListeners(agencyId){
-  // detach old
-  if(unsubApparatus) unsubApparatus(); if(unsubIncidents) unsubIncidents(); if(unsubMembers) unsubMembers(); if(unsubDocs) unsubDocs();
-  // apparatus
+/* render agency list */
+function renderAgencyList(list){
+  agencyListEl.innerHTML = '';
+  list.forEach(a=>{
+    const div = document.createElement('div'); div.className='item';
+    div.innerHTML = `<div><strong>${a.name}</strong><div class="muted">${a.agencyId}</div></div><div><button class="btn primary small">Open</button></div>`;
+    agencyListEl.appendChild(div);
+    div.querySelector('button').addEventListener('click', async ()=>{
+      // set session
+      SESSION = { accessCode: ACCESS.accessCode, username: SESSION?.username || null, role: SESSION?.role || null, agencyId: a.agencyId, agencyName: a.name };
+      saveSession(SESSION);
+      CURRENT_AGENCY_ID = a.agencyId;
+      CURRENT_AGENCY_META = a.meta;
+      // show login screen
+      loginAgency.textContent = a.name + ' — Login';
+      showView('login');
+    });
+  });
+}
+
+/* ensure agency meta doc exists (agencies/{id}/meta/config) */
+async function ensureAgencyMeta(agencyId, nameFallback){
+  try{
+    const ref = doc(db,'agencies',agencyId,'meta','config');
+    const snap = await getDoc(ref);
+    if(snap.exists()) return snap.data();
+    const base = { name: nameFallback || agencyId, createdAt: new Date().toISOString(), metaDescription:'', order:0 };
+    await setDoc(ref, base);
+    return base;
+  } catch(e){ console.error(e); return { name: nameFallback || agencyId }; }
+}
+
+/* ---------------------------
+   Login (local users)
+   --------------------------- */
+loginBtn.addEventListener('click', ()=>{
+  const u = (loginUser.value||'').trim().toUpperCase();
+  const p = (loginPass.value||'').trim();
+  if(!u||!p){ loginMsg.textContent='Enter username & password'; return; }
+  localUsers = loadLocalUsers();
+  const user = localUsers[u];
+  if(!user || user.password !== p){ loginMsg.textContent='Invalid credentials'; return; }
+  // successful login
+  SESSION = SESSION || {};
+  SESSION.username = u; SESSION.role = user.role; SESSION.agencyId = CURRENT_AGENCY_ID; SESSION.agencyName = CURRENT_AGENCY_META?.name || CURRENT_AGENCY_ID;
+  saveSession(SESSION);
+  // ensure member meta exists in Firestore (no password stored)
+  const memberId = u.toLowerCase();
+  setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'members',memberId), {
+    username:u, displayName:user.displayName||u, role:user.role, rank:user.rank||'', createdAt: new Date().toISOString()
+  }).catch(e=>console.warn(e));
+  // start agency shell
+  startAgencyShell();
+});
+
+/* back to access */
+backAccess.addEventListener('click', ()=> showView('access'));
+
+/* create local user */
+document.getElementById('createLocal').addEventListener('click', ()=>{
+  const uname = prompt('New username (no spaces)').trim().toUpperCase();
+  if(!uname) return;
+  const pass = prompt('Password for '+uname);
+  if(!pass) return;
+  const display = prompt('Display name', uname) || uname;
+  const role = prompt('Role (ADMIN / DEPT_ADMIN / MEMBER)', 'MEMBER') || 'MEMBER';
+  localUsers = loadLocalUsers();
+  localUsers[uname] = { password: pass, role, displayName: display, dept: ACCESS?.agencyId || '' };
+  saveLocalUsers(localUsers);
+  // add member meta
+  setDoc(doc(db,'agencies',ACCESS.agencyId,'members', uname.toLowerCase()), { username:uname, displayName:display, role, createdAt: new Date().toISOString() });
+  alert('Local user created');
+});
+
+/* reset local store */
+document.getElementById('resetLocal').addEventListener('click', ()=>{
+  if(!confirm('Reset local users on this device?')) return;
+  localStorage.removeItem(LOCAL_USERS_KEY);
+  alert('Local users cleared. Reload the page.');
+});
+
+/* ---------------------------
+   Start agency shell
+   --------------------------- */
+async function startAgencyShell(){
+  // load meta
+  CURRENT_AGENCY_META = await ensureAgencyMeta(CURRENT_AGENCY_ID, SESSION.agencyName || CURRENT_AGENCY_ID);
+  // set header info
+  document.getElementById('hdrTitle').textContent = CURRENT_AGENCY_META.name || CURRENT_AGENCY_ID;
+  document.getElementById('hdrSub').textContent = CURRENT_AGENCY_META.metaDescription || '';
+  document.getElementById('userInfo').textContent = SESSION.username + ' • ' + SESSION.role;
+  // build menu
+  buildMenu();
+  // attach realtime listeners
+  attachListeners(CURRENT_AGENCY_ID);
+  // show shell & default module
+  showView('agency-shell');
+  showModule('dashboard');
+}
+
+/* build slide menu */
+function buildMenu(){
+  const menuHolder = sideMenu;
+  menuHolder.querySelector('div')?.remove();
+  menuAgency.textContent = CURRENT_AGENCY_META.name || CURRENT_AGENCY_ID;
+  menuSub.textContent = CURRENT_AGENCY_META.metaDescription || '';
+  const menuArea = document.createElement('div');
+  const pagesList = [
+    {mod:'dashboard', label:'Dashboard'},
+    {mod:'incidents', label:'Incidents'},
+    {mod:'apparatus', label:'Apparatus'},
+    {mod:'members', label:'Members'},
+    {mod:'documents', label:'Documents'},
+    {mod:'alarms', label:'Alarm List'},
+    {mod:'command', label:'Command Desk'},
+    {mod:'events', label:'Events'},
+    {mod:'nextclosest', label:'Next Closest'},
+    {mod:'resources', label:'Nearby Resources'},
+    {mod:'response', label:'Response Dashboard'},
+    {mod:'rigcheck', label:'Truck Check'},
+    {mod:'weather', label:'Weather'}
+  ];
+  pagesList.forEach(p=>{
+    const el = document.createElement('div'); el.className='menuItem'; el.dataset.mod = p.mod;
+    el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${p.label}</strong><div class="muted">${p.mod}</div></div><div></div></div>`;
+    el.addEventListener('click', ()=>{ showModule(p.mod); sideMenu.classList.remove('open'); });
+    menuArea.appendChild(el);
+  });
+  sideMenu.appendChild(menuArea);
+}
+
+/* menu toggle */
+menuToggle.addEventListener('click', ()=> sideMenu.classList.toggle('open'));
+openMenuBtn.addEventListener('click', ()=> sideMenu.classList.add('open'));
+menuLogout.addEventListener('click', ()=> doLogout());
+document.getElementById('btnLogout').addEventListener('click', ()=> doLogout());
+
+function doLogout(){
+  if(!confirm('Logout from this device?')) return;
+  localStorage.removeItem(SESSION_KEY);
+  SESSION = null; CURRENT_AGENCY_ID = null;
+  // detach listeners
+  if(unsubApp) unsubApp(); if(unsubInc) unsubInc(); if(unsubMembers) unsubMembers(); if(unsubDocs) unsubDocs();
+  showView('access');
+}
+
+/* ---------------------------
+   Attach Firestore listeners for agency-level collections
+   --------------------------- */
+function attachListeners(agencyId){
+  // detach previous
+  if(unsubApp) unsubApp(); if(unsubInc) unsubInc(); if(unsubMembers) unsubMembers(); if(unsubDocs) unsubDocs();
+
+  // apparatus (realtime)
   try {
-    const colA = collection(db,'agencies',agencyId,'apparatus');
-    unsubApparatus = onSnapshot(colA, snap=> {
-      const arr=[];
-      snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
+    const col = collection(db,'agencies',agencyId,'apparatus');
+    unsubApp = onSnapshot(col, snap=>{
+      const arr=[]; snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
       renderApparatus(arr);
     });
   } catch(e){ console.warn(e); }
+
   // incidents
   try {
-    const colI = collection(db,'agencies',agencyId,'incidents');
-    unsubIncidents = onSnapshot(colI, snap=>{
+    const col = collection(db,'agencies',agencyId,'incidents');
+    unsubInc = onSnapshot(col, snap=>{
       const arr=[]; snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
       renderIncidents(arr);
     });
-  } catch(e){}
+  } catch(e){ console.warn(e); }
+
   // members
   try {
-    const colM = collection(db,'agencies',agencyId,'members');
-    unsubMembers = onSnapshot(colM, snap=>{
+    const col = collection(db,'agencies',agencyId,'members');
+    unsubMembers = onSnapshot(col, snap=>{
       const arr=[]; snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
       renderMembers(arr);
     });
-  } catch(e){}
-  // documents
+  } catch(e){ console.warn(e); }
+
+  // documents (metadata)
   try {
-    const colD = collection(db,'agencies',agencyId,'documents');
-    unsubDocs = onSnapshot(colD, snap=>{
+    const col = collection(db,'agencies',agencyId,'documents');
+    unsubDocs = onSnapshot(col, snap=>{
       const arr=[]; snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
       renderDocuments(arr);
     });
-  } catch(e){}
+  } catch(e){ console.warn(e); }
 }
 
-/* =========================
-   Rendering functions
-   ========================= */
-function renderAgencyList(agencies){
-  agencyList.innerHTML=''; agencies.forEach(a=>{
-    const div = document.createElement('div'); div.className='item';
-    div.innerHTML = `<div><strong>${a.name}</strong><div class="muted">${a.agencyId}</div></div><div><button class="btn primary small" data-id="${a.agencyId}">Open</button></div>`;
-    agencyList.appendChild(div);
-    div.querySelector('button').addEventListener('click', ()=>{
-      // set session agency and go to agency home
-      CURRENT_AGENCY_ID = a.agencyId;
-      SESSION.agencyId = a.agencyId; SESSION.agencyName = a.name;
-      saveSession(SESSION); startAgency();
-    });
-  });
-}
-
+/* ---------------------------
+   Renderers for lists
+   --------------------------- */
 function renderApparatus(arr){
   const el = document.getElementById('apparatusList'); el.innerHTML='';
-  if(!arr.length) el.innerHTML = '<div class="muted">No apparatus defined</div>';
+  if(!arr.length) el.innerHTML='<div class="muted">No apparatus defined</div>';
   arr.forEach(a=>{
-    const div = document.createElement('div'); div.className='item';
-    div.innerHTML = `<div><strong>${a.callsign || a.apparatusName || a.id}</strong><div class="muted">${a.type||''} • ${a.department||''}</div></div><div><div class="muted">${a.status||'IN SERVICE'}</div></div>`;
-    el.appendChild(div);
+    const row = document.createElement('div'); row.className='item';
+    row.innerHTML = `<div><strong>${a.callsign||a.apparatusName||a.id}</strong><div class="muted">${a.type||''} • ${a.department||''}</div></div><div><div class="muted">${a.status||'IN SERVICE'}</div></div>`;
+    el.appendChild(row);
   });
 }
 function renderIncidents(arr){
-  const el = document.getElementById('incList'); el.innerHTML='';
-  if(!arr.length) el.innerHTML = '<div class="muted">No incidents</div>';
+  const el = document.getElementById('incidentList'); el.innerHTML='';
+  if(!arr.length) el.innerHTML='<div class="muted">No incidents</div>';
   arr.sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
   arr.forEach(i=>{
-    const div = document.createElement('div'); div.className='item';
-    div.innerHTML = `<div><strong>${i.type||'Incident'}</strong><div class="muted">${i.address||''} • ${i.createdAt||''}</div></div><div><button class="btn ghost small" data-id="${i.id}">View</button></div>`;
-    el.appendChild(div);
-    div.querySelector('button').addEventListener('click', ()=> openIncidentModal(i));
+    const row = document.createElement('div'); row.className='item';
+    row.innerHTML = `<div><strong>${i.type||'Incident'}</strong><div class="muted">${i.address||''} • ${i.createdAt||''}</div></div><div><button class="btn ghost small">Open</button></div>`;
+    el.appendChild(row);
+    row.querySelector('button').addEventListener('click', ()=> openIncident(i));
   });
 }
 function renderMembers(arr){
@@ -528,355 +684,166 @@ function renderMembers(arr){
   if(!arr.length) el.innerHTML='<div class="muted">No members</div>';
   arr.sort((a,b)=> (a.displayName||a.username||'').localeCompare(b.displayName||b.username||''));
   arr.forEach(m=>{
-    const div=document.createElement('div'); div.className='item';
-    div.innerHTML = `<div><strong>${m.displayName||m.username||m.id}</strong><div class="muted">${m.rank||m.role||''}</div></div><div><button class="btn ghost small" data-id="${m.id}">View</button></div>`;
-    el.appendChild(div);
+    const row = document.createElement('div'); row.className='item';
+    row.innerHTML = `<div><strong>${m.displayName||m.username||m.id}</strong><div class="muted">${m.rank||m.role||''}</div></div><div><button class="btn ghost small">View</button></div>`;
+    el.appendChild(row);
   });
 }
 function renderDocuments(arr){
   const el = document.getElementById('docsList'); el.innerHTML='';
-  if(!arr.length) el.innerHTML = '<div class="muted">No documents</div>';
+  if(!arr.length) el.innerHTML='<div class="muted">No documents</div>';
   arr.forEach(d=>{
-    const div = document.createElement('div'); div.className='item';
+    const row = document.createElement('div'); row.className='item';
     const exp = d.expiresAt ? ` • Expires ${d.expiresAt}` : '';
-    div.innerHTML = `<div><strong>${d.title || d.filename || d.name || d.id}</strong><div class="muted">${d.ownerId||''}${exp}</div></div><div><button class="btn ghost small" data-id="${d.id}">Download</button></div>`;
-    el.appendChild(div);
-    div.querySelector('button').addEventListener('click', ()=> downloadDocument(CURRENT_AGENCY_ID, d.id));
+    row.innerHTML = `<div><strong>${d.title||d.filename||d.id}</strong><div class="muted">${d.ownerId||''}${exp}</div></div><div><button class="btn ghost small">Download</button></div>`;
+    el.appendChild(row);
+    row.querySelector('button').addEventListener('click', ()=> downloadDocument(CURRENT_AGENCY_ID, d.id));
   });
 }
 
-/* =========================
-   Modal / Incident view
-   ========================= */
-const incidentModal = document.getElementById('incidentModal');
-document.getElementById('im_close').addEventListener('click', ()=> incidentModal.classList.add('hidden'));
-function openIncidentModal(item){
-  document.getElementById('im_title').textContent = item.type || 'Incident';
-  document.getElementById('im_sub').textContent = item.address || '';
-  document.getElementById('im_body').innerHTML = `<div class="muted">Created: ${item.createdAt||''} • By: ${item.createdBy||''}</div><div style="margin-top:8px">${item.notes||''}</div>`;
-  incidentModal.classList.remove('hidden');
+/* ---------------------------
+   Incident open modal
+   --------------------------- */
+function openIncident(inc){
+  document.getElementById('im_title').textContent = inc.type || 'Incident';
+  document.getElementById('im_sub').textContent = inc.address || '';
+  document.getElementById('im_body').innerHTML = `<div class="muted">Created: ${inc.createdAt||''} • By: ${inc.createdBy||''}</div><div style="margin-top:8px">${inc.notes||''}</div>`;
+  pages.incidentsView.classList.remove('hidden');
 }
+document.getElementById('im_close').addEventListener('click', ()=> pages.incidentsView.classList.add('hidden'));
 
-/* =========================
-   Access code flow
-   ========================= */
-btnVerifyAccess.addEventListener('click', async ()=>{
-  const code = (inputAccess.value||'').trim();
-  if(!code){ accessMsg.textContent = 'Enter a code'; return; }
-  accessMsg.textContent = 'Verifying...';
-  const found = await findAccessCode(code);
-  if(!found){ accessMsg.textContent = 'No matching access code'; return; }
-  ACCESS_MATCH = found;
-  accessMsg.textContent = '';
-  // list agencies for this access (usually single)
-  const agencies = await listAgenciesForAccess(found);
-  // go to login but prefill agency name
-  loginAgencyName.textContent = agencies[0]?.name || found.name || found.agencyId;
-  // store access in session for quick open
-  SESSION = { accessCode: code };
-  saveSession(SESSION);
-  // show login
-  showScreen('screenLogin');
-});
-
-/* Mobile CAD button — goes to dispatch.html (separate file) */
-btnOpenDispatch.addEventListener('click', ()=> {
-  // open in new tab — assumes you have dispatch.html in repo
-  window.open('dispatch.html','_blank');
-});
-
-/* Back to access */
-btnBackToAccess.addEventListener('click', ()=>{
-  showScreen('screenAccess');
-});
-
-/* Create local account (quick) */
-btnCreateLocal.addEventListener('click', ()=>{
-  const uname = prompt('New username (no spaces)').trim().toUpperCase();
-  if(!uname) return alert('Cancelled');
-  const pass = prompt('Password for '+uname);
-  if(!pass) return alert('Cancelled');
-  const display = prompt('Display name (optional)', uname) || uname;
-  const role = prompt('Role (ADMIN / DEPT_ADMIN / MEMBER)', 'MEMBER') || 'MEMBER';
-  localUsers = loadLocalUsers();
-  localUsers[uname] = { password: pass, role, displayName: display, dept: ACCESS_MATCH?.agencyId || '' };
-  saveLocalUsers(localUsers);
-  // add member metadata to Firestore so other devices can see this user (no password stored)
-  const memberDocId = uname.toLowerCase();
-  setDoc(doc(db, 'agencies', ACCESS_MATCH.agencyId, 'members', memberDocId), {
-    username: uname, displayName: display, role, rank:'', createdAt: serverTimestamp()
-  }).then(()=> alert('Local user created and member meta saved'));
-});
-
-/* Reset local users (careful) */
-btnResetLocal.addEventListener('click', ()=>{
-  if(!confirm('Reset local user store on this device? This will remove local passwords.')) return;
-  localUsers = {};
-  saveLocalUsers(localUsers);
-  alert('Local users cleared. Reload to re-seed defaults.');
-});
-
-/* Login */
-btnLogin.addEventListener('click', async ()=>{
-  const u = (loginUser.value||'').trim().toUpperCase();
-  const p = (loginPass.value||'').trim();
-  if(!u || !p) { loginMsg.textContent = 'Enter username & password'; return; }
-  localUsers = loadLocalUsers();
-  const user = localUsers[u];
-  if(!user || user.password !== p){ loginMsg.textContent = 'Invalid credentials'; return; }
-  // login success
-  SESSION = { username: u, role: user.role, agencyId: ACCESS_MATCH.agencyId, agencyName: ACCESS_MATCH.name };
-  saveSession(SESSION);
-  CURRENT_AGENCY_ID = ACCESS_MATCH.agencyId;
-  // load agency meta and start app
-  startAgency();
-});
-
-/* Logout */
-logoutBtn.addEventListener('click', ()=>{
-  if(!confirm('Logout from this device?')) return;
-  localStorage.removeItem(SESSION_KEY);
-  SESSION = null;
-  CURRENT_AGENCY_ID = null;
-  ACCESS_MATCH = null;
-  // detach listeners
-  if(unsubApparatus) unsubApparatus(); if(unsubIncidents) unsubIncidents(); if(unsubMembers) unsubMembers(); if(unsubDocs) unsubDocs();
-  showScreen('screenAccess');
-});
-
-/* On load: if a session exists, try to resume */
-(async function initOnLoad(){
-  document.getElementById('bigLogo').src = document.getElementById('logo').src;
-  if(SESSION && SESSION.agencyId && SESSION.username){
-    // resume; set access match to agency admin if possible (we don't store the access doc)
-    CURRENT_AGENCY_ID = SESSION.agencyId;
-    // fetch agency meta
-    CURRENT_AGENCY_META = await loadAgencyMeta(CURRENT_AGENCY_ID, SESSION.agencyName || CURRENT_AGENCY_ID);
-    // set header, attach listeners, show agency home
-    setHeaderUser();
-    attachAgencyListeners(CURRENT_AGENCY_ID);
-    showScreen('screenAgencyHome');
-    buildAgencyNav();
-    header.style.display='flex';
-    bottomBar.style.display='flex';
-  } else {
-    showScreen('screenAccess');
-  }
-})();
-
-/* =========================
-   Agency start helper
-   ========================= */
-async function startAgency(){
-  // load meta
-  CURRENT_AGENCY_META = await loadAgencyMeta(CURRENT_AGENCY_ID, ACCESS_MATCH?.name || SESSION?.agencyName || CURRENT_AGENCY_ID);
-  setHeaderUser();
-  attachAgencyListeners(CURRENT_AGENCY_ID);
-  buildAgencyNav();
-  showScreen('screenAgencyHome');
-}
-
-/* build nav buttons based on your requested pages (order preserved) */
-const AGENCY_PAGES = [
-  { id:'screenDashboard', label:'Dashboard' },
-  { id:'screenIncidents', label:'Incidents' },
-  { id:'screenApparatus', label:'Apparatus' },
-  { id:'screenMembers', label:'Members' },
-  { id:'screenDocuments', label:'Documents' },
-  { id:'screenAlarms', label:'Alarm List' },
-  { id:'screenCommand', label:'Command Desk' },
-  { id:'screenEvents', label:'Events' },
-  { id:'screenNextClosest', label:'Next Closest' },
-  { id:'screenResources', label:'Nearby Resources' },
-  { id:'screenResponse', label:'Response Dashboard' },
-  { id:'screenRigCheck', label:'Truck Check' },
-  { id:'screenWeather', label:'Weather' }
-];
-
-function buildAgencyNav(){
-  agencyNav.innerHTML='';
-  menuList.innerHTML='';
-  agencyNav.appendChild(document.createDocumentFragment());
-  AGENCY_PAGES.forEach(p=>{
-    const btn = document.createElement('button'); btn.className='navBtn btn ghost'; btn.textContent = p.label;
-    btn.dataset.screen = p.id;
-    btn.addEventListener('click', ()=> { showScreen(p.id); });
-    agencyNav.appendChild(btn);
-    // also menu
-    const m = document.createElement('div'); m.style.marginTop='8px'; m.innerHTML = `<button class="btn ghost" data-screen="${p.id}">${p.label}</button>`;
-    menuList.appendChild(m);
-    m.querySelector('button').addEventListener('click', ()=> { showScreen(p.id); menuDrawer.classList.add('hidden'); });
-  });
-  menuAgencyName.textContent = CURRENT_AGENCY_META?.name || CURRENT_AGENCY_ID;
-  menuAgencySub.textContent = CURRENT_AGENCY_META?.metaDescription || '';
-}
-
-/* menu open/close */
-btnOpenMenu.addEventListener('click', ()=> menuDrawer.classList.remove('hidden'));
-btnCloseMenu.addEventListener('click', ()=> menuDrawer.classList.add('hidden'));
-
-/* bottom actions */
-btnGotoDashboard.addEventListener('click', ()=> showScreen('screenDashboard'));
-btnChangeStatus.addEventListener('click', ()=> {
-  // quick demo: change your user's status
-  const s = prompt('Set your response status (Available / Responding / Staged / Arrived / Clear)', 'Responding');
-  if(!s) return;
-  // write to a response status doc under agency
-  setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'response_status', SESSION.username), { user: SESSION.username, status: s, ts: new Date().toISOString() }).then(()=> alert('Status updated'));
-});
-
-/* =========================
-   Create incident
-   ========================= */
-document.getElementById('btnNewIncident').addEventListener('click', async ()=>{
-  if(!CURRENT_AGENCY_ID) return alert('Select agency');
-  const addr = prompt('Address / Location');
-  const type = prompt('Type / Nature (structure, mva, etc.)');
-  const notes = prompt('Notes (optional)');
-  const createdBy = SESSION.username;
-  if(!addr && !type) return;
-  await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents'), {
-    address: addr, type, notes, createdBy, createdAt: new Date().toISOString(), archived:false
-  });
-  alert('Incident created');
-});
-
-/* =========================
-   Add apparatus (admin)
-   ========================= */
-document.getElementById('btnAddApparatus').addEventListener('click', async ()=>{
+/* ---------------------------
+   Buttons - add apparatus, create incident, add command
+   --------------------------- */
+document.getElementById('addAppBtn').addEventListener('click', async ()=>{
   const id = prompt('Apparatus ID (ENGINE511)').trim().toUpperCase();
   if(!id) return;
   const name = prompt('Display name', id) || id;
   const type = prompt('Type (Engine/Ladder/Rescue)', 'Engine') || 'Engine';
-  await setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'apparatus', id), { apparatusName: name, callsign: id, type, status:'IN SERVICE' });
-  alert('Added apparatus');
+  await setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'apparatus',id), { apparatusName:name, callsign:id, type, status:'IN SERVICE' });
+  alert('Apparatus added');
 });
 
-/* =========================
-   Add command entry (Command Desk)
-   ========================= */
+document.getElementById('newIncidentBtn').addEventListener('click', async ()=>{
+  const addr = prompt('Address / Location'); if(!addr) return;
+  const type = prompt('Type / Nature', 'Structure') || 'Structure';
+  const notes = prompt('Notes','') || '';
+  await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents'), { address:addr, type, notes, createdBy:SESSION.username, createdAt: new Date().toISOString(), archived:false });
+  alert('Incident created');
+});
+
 document.getElementById('btnAddCmd').addEventListener('click', async ()=>{
   const unit = document.getElementById('cmdUnit').value.trim().toUpperCase();
   const assign = document.getElementById('cmdAssign').value.trim();
-  if(!unit || !assign) return alert('Enter unit and assignment');
-  // write into command_logs collection for current agency; link to latest open incident if exists
-  const logsCol = collection(db,'agencies',CURRENT_AGENCY_ID,'command_logs');
-  await addDoc(logsCol, { unit, assignment: assign, by: SESSION.username, ts: new Date().toISOString() });
-  // also append timeline to the most recent incident if one exists
-  const incCol = collection(db,'agencies',CURRENT_AGENCY_ID,'incidents');
-  const incSnap = await getDocs(query(incCol, orderBy('createdAt','desc')));
-  if(!incSnap.empty){
-    const incId = incSnap.docs[0].id;
-    await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents',incId,'timeline'), { title:'Command', text:`${unit} -> ${assign}`, sender: SESSION.username, ts: new Date().toISOString() });
+  if(!unit||!assign) return alert('Enter unit and assignment');
+  await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'command_logs'), { unit, assignment:assign, by:SESSION.username, ts:new Date().toISOString() });
+  // attach to latest incident timeline if present
+  const incs = await getDocs(query(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents'), orderBy('createdAt','desc')));
+  if(!incs.empty){
+    const incId = incs.docs[0].id;
+    await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents',incId,'timeline'), { title:'Command', text:`${unit} -> ${assign}`, sender:SESSION.username, ts:new Date().toISOString() });
   }
   alert('Command added');
 });
 
-/* =========================
-   Documents: chunked upload & download
-   ========================= */
-
-/* chunk helpers */
+/* ---------------------------
+   Documents: chunked upload/download stored in Firestore (no Storage)
+   --------------------------- */
 const CHUNK_SIZE = 800000;
-function chunkString(str, size=CHUNK_SIZE){
-  const out=[]; for(let i=0;i<str.length;i+=size) out.push(str.slice(i,i+size)); return out;
-}
-function fileToBase64(file){ return new Promise((res,rej)=>{ const reader = new FileReader(); reader.onerror=()=>rej('readerr'); reader.onload=()=>{ const raw = reader.result; const data = raw.split(',')[1]; res(data); }; reader.readAsDataURL(file); }); }
+function chunkString(str,size=CHUNK_SIZE){ const out=[]; for(let i=0;i<str.length;i+=size) out.push(str.slice(i,i+size)); return out; }
+function fileToBase64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onerror=()=>rej('readerr'); r.onload=()=>{ const data = r.result.split(',')[1]; res(data); }; r.readAsDataURL(file); }); }
 
-/* upload */
-async function uploadFileAsChunks(file, agencyId, ownerId){
-  if(!file || !agencyId) throw new Error('Missing');
-  // optional image compression skipped for brevity
-  const base64 = await fileToBase64(file);
-  const chunks = chunkString(base64, CHUNK_SIZE);
-  const metaRef = await addDoc(collection(db,'agencies',agencyId,'documents'), {
-    title: file.name, filename:file.name, mimeType:file.type, sizeBytes:file.size, ownerId, uploadedAt: new Date().toISOString(), chunkCount: chunks.length
-  });
-  // upload chunks
-  for(let i=0;i<chunks.length;i++){
-    await addDoc(collection(db,'agencies',agencyId,'documents',metaRef.id,'chunks'), { index:i, data:chunks[i] });
-  }
-  return metaRef.id;
-}
-
-/* download & reassemble */
-import { query as fsQuery, orderBy as fsOrderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-async function downloadDocChunks(agencyId, docId){
-  const metaSnap = await getDoc(doc(db,'agencies',agencyId,'documents',docId));
-  if(!metaSnap.exists()) throw new Error('Not found');
-  const meta = metaSnap.data();
-  const chunksSnap = await getDocs(fsQuery(collection(db,'agencies',agencyId,'documents',docId,'chunks'), fsOrderBy('index','asc')));
-  let base64 = '';
-  chunksSnap.forEach(c=> base64 += c.data().data);
-  const binary = atob(base64);
-  const len = binary.length; const u8 = new Uint8Array(len);
-  for(let i=0;i<len;i++) u8[i] = binary.charCodeAt(i);
-  const blob = new Blob([u8], { type: meta.mimeType || 'application/octet-stream' });
-  return { blob, filename: meta.filename || meta.title };
-}
-
-/* UI wiring for upload/download */
-document.getElementById('btnUploadDoc').addEventListener('click', ()=> document.getElementById('docFile').click());
+document.getElementById('docUploadBtn').addEventListener('click', ()=> document.getElementById('docFile').click());
 document.getElementById('docFile').addEventListener('change', async (ev)=>{
   const f = ev.target.files[0]; if(!f) return;
-  try {
-    const id = await uploadFileAsChunks(f, CURRENT_AGENCY_ID, SESSION.username);
-    alert('Uploaded doc id: '+id);
-    ev.target.value = '';
-  } catch(err){ console.error(err); alert('Upload failed: '+err.message); }
+  try{
+    const base64 = await fileToBase64(f);
+    const chunks = chunkString(base64);
+    const metaRef = await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'documents'), {
+      title:f.name, filename:f.name, mimeType:f.type, sizeBytes:f.size, ownerId:SESSION.username, uploadedAt:new Date().toISOString(), chunkCount:chunks.length
+    });
+    for(let i=0;i<chunks.length;i++){
+      await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'documents',metaRef.id,'chunks'), { index:i, data:chunks[i] });
+    }
+    alert('Upload complete');
+    ev.target.value='';
+  } catch(e){ console.error(e); alert('Upload failed'); }
 });
 
+import { query as fsQuery, orderBy as fsOrderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 async function downloadDocument(agencyId, docId){
   try{
-    const res = await downloadDocChunks(agencyId, docId);
-    // trigger download
-    const url = URL.createObjectURL(res.blob);
-    const a = document.createElement('a'); a.href = url; a.download = res.filename; document.body.appendChild(a); a.click();
-    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1500);
-  } catch(e){ alert('Download failed: '+e.message); }
+    const metaSnap = await getDoc(doc(db,'agencies',agencyId,'documents',docId));
+    if(!metaSnap.exists()) throw new Error('Missing');
+    const meta = metaSnap.data();
+    const chunksSnap = await getDocs(fsQuery(collection(db,'agencies',agencyId,'documents',docId,'chunks'), fsOrderBy('index','asc')));
+    let base64=''; chunksSnap.forEach(c=> base64 += c.data().data);
+    const binary = atob(base64);
+    const len = binary.length; const u8 = new Uint8Array(len);
+    for(let i=0;i<len;i++) u8[i]=binary.charCodeAt(i);
+    const blob = new Blob([u8], { type: meta.mimeType || 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = meta.filename || meta.title || 'file'; document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },1500);
+  } catch(e){ alert('Download failed: '+e.message); console.error(e); }
 }
 
-/* =========================
-   Renderers for response board, commands, events (basic)
-   ========================= */
+/* ---------------------------
+   Renderers for response board & quick actions
+   --------------------------- */
 async function renderResponseBoard(){
-  try {
-    const rs = await getDocs(collection(db,'agencies',CURRENT_AGENCY_ID,'response_status'));
-    const arr=[]; rs.forEach(d=> arr.push(d.data()));
+  try{
+    const snap = await getDocs(collection(db,'agencies',CURRENT_AGENCY_ID,'response_status'));
+    const arr=[]; snap.forEach(d=> arr.push(d.data()));
     const el = document.getElementById('responseBoard'); el.innerHTML='';
-    if(!arr.length) el.innerHTML='<div class="muted">No status updates</div>';
+    if(!arr.length) el.innerHTML = '<div class="muted">No responses</div>';
     arr.forEach(r=>{
-      const div = document.createElement('div'); div.className='item'; div.innerHTML = `<div><strong>${r.user}</strong><div class="muted">${r.status} • ${r.ts}</div></div>`; el.appendChild(div);
+      const row=document.createElement('div'); row.className='item';
+      row.innerHTML = `<div><strong>${r.user}</strong><div class="muted">${r.status} • ${r.ts}</div></div>`;
+      el.appendChild(row);
     });
-  } catch(e){}
+  } catch(e){ console.warn(e); }
 }
 
-/* Keep some buttons live (refresh) */
-document.getElementById('btnRefreshList')?.addEventListener('click', ()=> renderIncidents([]));
-
-/* simple listeners for some lists to update UI immediately */
-onSnapshot(collection(db,'agencies'), ()=> { /* placeholder to keep connection alive */ });
-
-/* Periodic refreshes for some screens */
-setInterval(()=> {
-  if(CURRENT_AGENCY_ID){
-    renderResponseBoard();
-  }
-}, 15000);
-
-/* =========================
-   Convenience: quick goto functions for nav buttons
-   ========================= */
-document.addEventListener('click', (e)=>{
-  if(e.target && e.target.dataset && e.target.dataset.screen){
-    const screen = e.target.dataset.screen;
-    showScreen(screen);
-  }
+/* change response status */
+statusBtn.addEventListener('click', async ()=>{
+  const s = prompt('Status (Available / Responding / Staged / Arrived / Clear)', 'Responding');
+  if(!s) return;
+  await setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'response_status', SESSION.username), { user:SESSION.username, status:s, ts:new Date().toISOString() });
+  alert('Status updated');
 });
 
-/* Expose showScreen to console for debugging */
-window.showScreen = showScreen;
+/* dashboard quick refresh */
+dashBtn.addEventListener('click', ()=> showModule('dashboard'));
+
+/* ---------------------------
+   Utility functions & init
+   --------------------------- */
+function uid(){ return 'id_'+Math.random().toString(36).slice(2,9); }
+async function getAgencyMeta(agencyId){ const snap = await getDoc(doc(db,'agencies',agencyId,'meta','config')); return snap.exists() ? snap.data() : null; }
+
+/* on load if session exists try to resume */
+(async function init(){
+  // prefill logo
+  document.getElementById('bigLogo').src = document.getElementById('logo').src;
+
+  if(SESSION && SESSION.agencyId && SESSION.username){
+    CURRENT_AGENCY_ID = SESSION.agencyId;
+    CURRENT_AGENCY_META = await ensureAgencyMeta(CURRENT_AGENCY_ID, SESSION.agencyName || CURRENT_AGENCY_ID);
+    document.getElementById('hdrTitle').textContent = CURRENT_AGENCY_META.name || CURRENT_AGENCY_ID;
+    document.getElementById('userInfo').textContent = SESSION.username + ' • ' + SESSION.role;
+    buildMenu();
+    attachListeners(CURRENT_AGENCY_ID);
+    showView('agency-shell');
+    showModule('dashboard');
+  } else {
+    // show access screen
+    showView('access');
+  }
+})();
+
+/* open CAD page */
+cadBtn.addEventListener('click', ()=> window.open('dispatch.html','_blank'));
 
 </script>
 </body>
