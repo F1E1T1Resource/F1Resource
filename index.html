@@ -735,6 +735,7 @@ adminTriggerBtn.addEventListener('click', ()=> {
 adminCancelBtn.addEventListener('click', ()=> adminCodeModal.classList.add('hidden'));
 
 /* Unlock admin by comparing entered code to master code (plain compare) */
+/* This unlocks admin mode and immediately opens the Admin Manager modal */
 adminUnlockBtn.addEventListener('click', async ()=>{
   const val = (adminCodeInput.value||'').trim();
   if(!val){ adminCodeMsg.textContent='Enter admin code'; return; }
@@ -742,15 +743,16 @@ adminUnlockBtn.addEventListener('click', async ()=>{
     adminUnlocked = true;
     adminCodeModal.classList.add('hidden');
     document.getElementById('adminIndicator').textContent = 'ADMIN MODE';
-    buildMenu(); // adds admin manager button
+    buildMenu();
+    // automatically open manager and load codes
     await loadAccessCodesIntoAdminList();
-    alert('Admin unlocked — Manage Access Codes via the menu');
+    adminManagerModal.classList.remove('hidden');
   } else {
     adminCodeMsg.textContent='Incorrect admin code';
   }
 });
 
-/* open admin manager modal */
+/* open admin manager modal (menu) */
 function openAdminManager(){
   adminManagerModal.classList.remove('hidden');
   accessCodesList.innerHTML = '<div class="muted">Loading...</div>';
