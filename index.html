@@ -3,13 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>F1 Resource — Mobile SPA</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>F1 Resource — Mobile SPA (Admin Manager)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#021023; --card:#07121a; --muted:#9fb0c8; --accent:#0b5fff; --accent2:#7b5cff; --glass: rgba(255,255,255,0.03);
-  --gap:10px;
+  --bg:#021023; --card:#07121a; --muted:#9fb0c8; --accent:#0b5fff; --accent2:#7b5cff;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#021023,#041428);color:#eaf3ff}
@@ -28,16 +26,16 @@ main{flex:1;padding:12px}
 .hidden{display:none}
 .item{padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center}
 .list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-.navbar{position:fixed;left:12px;top:12px;z-index:60}
-.hambtn{background:var(--primary);border-radius:8px;padding:8px;border:none;color:white}
 .sideMenu{position:fixed;left:8px;top:72px;bottom:72px;width:88%;max-width:360px;background:linear-gradient(180deg,#071723,#06121a);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);z-index:70;overflow:auto;transform:translateX(-120%);transition:0.28s}
 .sideMenu.open{transform:translateX(0)}
-.sideMenu h3{margin:0 0 6px}
-.sideMenu .menuItem{padding:10px;border-radius:8px;margin-bottom:6px}
+.menuItem{padding:10px;border-radius:8px;margin-bottom:6px;cursor:pointer}
+.menuItem.active{background:rgba(255,255,255,0.03)}
+.adminBadge{background:#2b8a3e;padding:6px 8px;border-radius:8px;font-weight:700}
 .bottomBar{position:fixed;left:0;right:0;bottom:0;padding:12px;background:linear-gradient(180deg,rgba(2,6,23,0.6),rgba(2,6,23,0.86));display:flex;gap:8px;justify-content:center;z-index:50}
 .page{display:none}
 .page.active{display:block}
-.small{padding:6px 8px;font-size:13px}
+.page-module{display:none}
+.page-module.visible{display:block}
 .kv{font-size:13px;color:var(--muted)}
 @media (min-width:900px){main{max-width:980px;margin:0 auto} .sideMenu{left:24px}}
 </style>
@@ -55,6 +53,7 @@ main{flex:1;padding:12px}
       <div class="muted" id="hdrSub">Oswego County</div>
     </div>
     <div style="text-align:right">
+      <div id="adminIndicator" class="kv" style="display:inline-block;margin-bottom:6px"></div>
       <div class="muted" id="userInfo"></div>
       <div style="margin-top:6px"><button id="btnLogout" class="btn ghost small">Logout</button></div>
     </div>
@@ -75,9 +74,24 @@ main{flex:1;padding:12px}
           <button id="accessBtn" class="btn primary">Verify</button>
           <button id="cadBtn" class="btn ghost">Mobile CAD Login</button>
         </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="adminTriggerBtn" class="btn ghost small">Admin</button>
+        </div>
         <div id="accessMsg" class="muted" style="margin-top:10px;color:#ff9b9b"></div>
       </div>
     </section>
+
+    <!-- ADMIN CODE ENTRY (modal-like) -->
+    <div id="adminCodeModal" class="centerCard hidden" style="position:fixed;left:8px;right:8px;top:100px;z-index:200">
+      <h3 style="margin:0 0 8px">Admin Unlock</h3>
+      <div class="muted">Enter master admin code to manage access codes</div>
+      <input id="adminCodeInput" class="input" placeholder="Admin Master Code">
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button id="adminUnlockBtn" class="btn primary">Unlock Admin</button>
+        <button id="adminCancelBtn" class="btn ghost">Cancel</button>
+      </div>
+      <div id="adminCodeMsg" class="muted" style="margin-top:8px;color:#ff9b9b"></div>
+    </div>
 
     <!-- LOGIN SCREEN -->
     <section id="view-login" class="page">
@@ -118,16 +132,16 @@ main{flex:1;padding:12px}
             <h3 id="agencyNameDisplay" style="margin:0">Agency</h3>
             <div class="muted" id="agencyMeta">Agency home</div>
           </div>
-          <div><button id="openMenuBtn" class="btn ghost small">Open Menu</button></div>
+          <div>
+            <button id="openMenuBtn" class="btn ghost small">Open Menu</button>
+          </div>
         </div>
-
-        <!-- inner module container -->
         <div id="moduleContainer" style="margin-top:12px"></div>
       </div>
     </section>
 
     <!-- Module: Dashboard -->
-    <div id="mod-dashboard" class="page-module hidden">
+    <div id="mod-dashboard" class="page-module">
       <div class="card">
         <h4 style="margin:0">Dashboard</h4>
         <div class="muted">Responding members</div>
@@ -136,7 +150,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Incidents -->
-    <div id="mod-incidents" class="page-module hidden">
+    <div id="mod-incidents" class="page-module">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div><h4 style="margin:0">Incidents</h4><div class="muted">Tap to open</div></div>
@@ -147,7 +161,7 @@ main{flex:1;padding:12px}
       </div>
     </div>
 
-    <!-- Modal: incident detail -->
+    <!-- Incident modal -->
     <div id="incidentModal" class="centerCard hidden" style="position:fixed;left:8px;right:8px;top:80px;z-index:200">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><strong id="im_title">Incident</strong><div class="muted" id="im_sub"></div></div>
@@ -157,7 +171,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Apparatus -->
-    <div id="mod-apparatus" class="page-module hidden">
+    <div id="mod-apparatus" class="page-module">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div><h4 style="margin:0">Apparatus</h4><div class="muted">Status & mutual aid</div></div>
@@ -168,7 +182,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Members -->
-    <div id="mod-members" class="page-module hidden">
+    <div id="mod-members" class="page-module">
       <div class="card">
         <h4 style="margin:0">Members</h4>
         <div id="membersList" class="list" style="margin-top:12px"></div>
@@ -176,7 +190,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Documents -->
-    <div id="mod-documents" class="page-module hidden">
+    <div id="mod-documents" class="page-module">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div><h4 style="margin:0">Documents</h4><div class="muted">Upload & view documents</div></div>
@@ -188,7 +202,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Alarm List -->
-    <div id="mod-alarms" class="page-module hidden">
+    <div id="mod-alarms" class="page-module">
       <div class="card">
         <h4 style="margin:0">Alarm List</h4>
         <div id="alarmsList" class="list" style="margin-top:12px"></div>
@@ -196,7 +210,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Command Desk -->
-    <div id="mod-command" class="page-module hidden">
+    <div id="mod-command" class="page-module">
       <div class="card">
         <h4 style="margin:0">Command Desk</h4>
         <div id="commandList" style="margin-top:12px"></div>
@@ -209,15 +223,15 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Events -->
-    <div id="mod-events" class="page-module hidden">
+    <div id="mod-events" class="page-module">
       <div class="card">
         <h4 style="margin:0">Events</h4>
         <div id="eventsList" class="list" style="margin-top:12px"></div>
       </div>
     </div>
 
-    <!-- Module: Next Closest (placeholder) -->
-    <div id="mod-nextclosest" class="page-module hidden">
+    <!-- Module: Next Closest -->
+    <div id="mod-nextclosest" class="page-module">
       <div class="card">
         <h4 style="margin:0">Next Closest Departments</h4>
         <div id="nextClosestList" class="list" style="margin-top:12px"></div>
@@ -225,7 +239,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Resources -->
-    <div id="mod-resources" class="page-module hidden">
+    <div id="mod-resources" class="page-module">
       <div class="card">
         <h4 style="margin:0">Nearby Resources</h4>
         <div id="resourcesList" class="list" style="margin-top:12px"></div>
@@ -233,7 +247,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Response Dashboard -->
-    <div id="mod-response" class="page-module hidden">
+    <div id="mod-response" class="page-module">
       <div class="card">
         <h4 style="margin:0">Response Dashboard</h4>
         <div id="responseBoard" class="list" style="margin-top:12px"></div>
@@ -241,7 +255,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Rig Check -->
-    <div id="mod-rigcheck" class="page-module hidden">
+    <div id="mod-rigcheck" class="page-module">
       <div class="card">
         <h4 style="margin:0">Truck / Rig Check</h4>
         <div id="rigList" class="list" style="margin-top:12px"></div>
@@ -250,7 +264,7 @@ main{flex:1;padding:12px}
     </div>
 
     <!-- Module: Weather -->
-    <div id="mod-weather" class="page-module hidden">
+    <div id="mod-weather" class="page-module">
       <div class="card">
         <h4 style="margin:0">Weather & Alerts</h4>
         <div id="weatherAlerts" style="margin-top:12px"></div>
@@ -263,15 +277,37 @@ main{flex:1;padding:12px}
   <div id="sideMenu" class="sideMenu">
     <h3 id="menuAgency">Agency Menu</h3>
     <div class="muted" id="menuSub"></div>
-    <div style="margin-top:12px">
-      <!-- menu items injected -->
-    </div>
+    <div id="menuItems" style="margin-top:12px"></div>
+    <hr>
+    <div id="adminPanelButtonArea" style="margin-top:10px"></div>
     <div style="margin-top:12px">
       <button id="menuLogout" class="btn ghost small">Logout</button>
     </div>
   </div>
 
-  <!-- Bottom action bar -->
+  <!-- Admin Manager Modal -->
+  <div id="adminManager" class="centerCard hidden" style="position:fixed;left:8px;right:8px;top:80px;z-index:300">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><h3 style="margin:0">Access Codes Manager</h3><div class="muted">Add / Edit / Delete access codes</div></div>
+      <div><button id="adminClose" class="btn ghost small">Close</button></div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div style="display:flex;gap:8px">
+        <input id="newAccessCode" class="input" placeholder="Access Code (e.g. 12345)">
+        <input id="newAgencyId" class="input" placeholder="Agency ID (e.g. oswego_fd)">
+      </div>
+      <input id="newAgencyName" class="input" placeholder="Agency Display Name">
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="addAccessBtn" class="btn primary">Add</button>
+      </div>
+    </div>
+
+    <hr style="margin-top:12px" />
+    <div id="accessCodesList" class="list" style="margin-top:12px"></div>
+  </div>
+
+  <!-- bottom action bar -->
   <div class="bottomBar" id="bottomBar" style="display:none">
     <button id="statusBtn" class="btn primary">Change Response Status</button>
     <button id="dashBtn" class="btn ghost">See Dashboard</button>
@@ -286,10 +322,11 @@ main{flex:1;padding:12px}
    --------------------------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
-  getFirestore, collection, doc, getDoc, setDoc, addDoc, getDocs, query, where, onSnapshot, orderBy
+  getFirestore, collection, doc, getDoc, setDoc, addDoc, getDocs, query, where,
+  onSnapshot, deleteDoc, orderBy
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/* ---------- config (your config) ---------- */
+/* ---------- config ---------- */
 const firebaseConfig = {
   apiKey: "AIzaSyBi0Xyljx7zzXTmyyRMAru11hZ2s5S3tsw",
   authDomain: "f1resource-8fedc.firebaseapp.com",
@@ -312,7 +349,7 @@ function saveLocalUsers(u){ localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify
 function saveSession(s){ localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
 function loadSession(){ try { return JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); } catch(e){ return null; } }
 
-/* seed default local users if empty */
+/* seed local users if empty */
 let localUsers = loadLocalUsers();
 if(!Object.keys(localUsers).length){
   localUsers = {
@@ -331,13 +368,16 @@ let SESSION = loadSession(); // { username, role, agencyId, agencyName, accessCo
 let CURRENT_AGENCY_ID = SESSION?.agencyId || null;
 let CURRENT_AGENCY_META = null;
 
+/* admin unlocked flag + master code */
+let adminUnlocked = false;
+const ADMIN_MASTER_CODE = "FELTOPERATIONSADMINS"; // master code you provided
+
 /* listeners holders */
 let unsubApp=null, unsubInc=null, unsubMembers=null, unsubDocs=null;
 
 /* ---------------------------
    DOM refs
    --------------------------- */
-const header = document.getElementById('header');
 const bigLogo = document.getElementById('bigLogo');
 bigLogo.src = document.getElementById('logo').src;
 
@@ -350,6 +390,13 @@ const accessInput = document.getElementById('accessInput');
 const accessBtn = document.getElementById('accessBtn');
 const accessMsg = document.getElementById('accessMsg');
 const cadBtn = document.getElementById('cadBtn');
+
+const adminTriggerBtn = document.getElementById('adminTriggerBtn');
+const adminCodeModal = document.getElementById('adminCodeModal');
+const adminCodeInput = document.getElementById('adminCodeInput');
+const adminUnlockBtn = document.getElementById('adminUnlockBtn');
+const adminCancelBtn = document.getElementById('adminCancelBtn');
+const adminCodeMsg = document.getElementById('adminCodeMsg');
 
 const loginUser = document.getElementById('loginUser');
 const loginPass = document.getElementById('loginPass');
@@ -364,8 +411,16 @@ const agencyMetaEl = document.getElementById('agencyMeta');
 const moduleContainer = document.getElementById('moduleContainer');
 
 const sideMenu = document.getElementById('sideMenu');
-const menuAgency = document.getElementById('menuAgency');
-const menuSub = document.getElementById('menuSub');
+const menuItems = document.getElementById('menuItems');
+const adminPanelButtonArea = document.getElementById('adminPanelButtonArea');
+const adminManagerModal = document.getElementById('adminManager');
+
+const accessCodesList = document.getElementById('accessCodesList');
+const newAccessCode = document.getElementById('newAccessCode');
+const newAgencyId = document.getElementById('newAgencyId');
+const newAgencyName = document.getElementById('newAgencyName');
+const addAccessBtn = document.getElementById('addAccessBtn');
+const adminClose = document.getElementById('adminClose');
 
 const bottomBar = document.getElementById('bottomBar');
 const statusBtn = document.getElementById('statusBtn');
@@ -375,7 +430,7 @@ const menuToggle = document.getElementById('menuToggle');
 const menuLogout = document.getElementById('menuLogout');
 const openMenuBtn = document.getElementById('openMenuBtn');
 
-/* module containers */
+/* module pages map */
 const pages = {
   dashboard: document.getElementById('mod-dashboard'),
   incidents: document.getElementById('mod-incidents'),
@@ -393,40 +448,33 @@ const pages = {
   incidentsView: document.getElementById('incidentModal')
 };
 
-/* helper to show SPA "page" (top-level view) */
-function showView(viewId){
-  // hide pages
+/* ---------------------------
+   Page & module helpers
+   --------------------------- */
+function showView(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  if(viewId === 'access') viewAccess.classList.add('active');
-  if(viewId === 'login') viewLogin.classList.add('active');
-  if(viewId === 'agency-select') viewAgencySelect.classList.add('active');
-  if(viewId === 'agency-shell') viewAgencyShell.classList.add('active');
+  if(name==='access') viewAccess.classList.add('active');
+  if(name==='login') viewLogin.classList.add('active');
+  if(name==='agency-select') viewAgencySelect.classList.add('active');
+  if(name==='agency-shell') viewAgencyShell.classList.add('active');
 
-  // header / bottom visibility
-  if(viewId === 'agency-shell'){
-    header.style.display='flex';
-    bottomBar.style.display='flex';
-  } else {
-    header.style.display='none';
-    bottomBar.style.display='none';
-  }
+  // header/bottom visibility
+  if(name==='agency-shell'){ document.getElementById('header').style.display='flex'; bottomBar.style.display='flex'; }
+  else { document.getElementById('header').style.display='none'; bottomBar.style.display='none'; }
   // hide all modules
-  document.querySelectorAll('.page-module').forEach(m=>m.classList.add('hidden'));
+  document.querySelectorAll('.page-module').forEach(m=>m.classList.remove('visible'));
 }
 
-/* helper to show module inside agency shell */
-function showModule(name){
-  // hide all page modules
-  document.querySelectorAll('.page-module').forEach(m=>m.classList.add('hidden'));
-  const mod = pages[name];
-  if(mod) mod.classList.remove('hidden');
-  // also set moduleContainer to contain the module's node (move or clone)
+function showModule(mod){
+  document.querySelectorAll('.page-module').forEach(m=>m.classList.remove('visible'));
+  const mm = pages[mod];
+  if(mm) mm.classList.add('visible');
   moduleContainer.innerHTML = '';
-  if(mod) moduleContainer.appendChild(mod);
+  if(mm) moduleContainer.appendChild(mm);
   // highlight menu
-  document.querySelectorAll('.menuItem').forEach(i=>i.style.background='transparent');
-  const mi = document.querySelector(`.menuItem[data-mod="${name}"]`);
-  if(mi) mi.style.background='rgba(255,255,255,0.02)';
+  document.querySelectorAll('.menuItem').forEach(mi=>mi.classList.remove('active'));
+  const mi = document.querySelector(`.menuItem[data-mod="${mod}"]`);
+  if(mi) mi.classList.add('active');
 }
 
 /* ---------------------------
@@ -440,27 +488,19 @@ accessBtn.addEventListener('click', async ()=>{
     const q = query(collection(db,'access_codes'), where('accessCode','==', code));
     const snap = await getDocs(q);
     if(snap.empty){ accessMsg.textContent='Invalid code'; return; }
-    ACCESS = snap.docs[0].data();
-    ACCESS._id = snap.docs[0].id;
-    // list agencies for this access — mapping is one-to-one in your dataset
+    ACCESS = snap.docs[0].data(); ACCESS._id = snap.docs[0].id;
+    // list agency (one-to-one)
     const agencies = await listAgenciesForAccess(ACCESS);
-    // save access in session
-    SESSION = SESSION || {};
-    SESSION.accessCode = code;
-    saveSession(SESSION);
-    // show agency select
     renderAgencyList(agencies);
     showView('agency-select');
   } catch(e){ console.error(e); accessMsg.textContent='Error verifying code'; }
 });
 
-/* helper list agencies for access doc */
+/* helper: list agencies for access (returns array) */
 async function listAgenciesForAccess(accessDoc){
-  // simple: return agencyId mapped
   const out=[];
   if(!accessDoc) return out;
   const aid = accessDoc.agencyId;
-  // ensure meta exists
   const meta = await ensureAgencyMeta(aid, accessDoc.name || aid);
   out.push({ agencyId: aid, name: meta.name || accessDoc.name || aid, meta });
   return out;
@@ -468,26 +508,23 @@ async function listAgenciesForAccess(accessDoc){
 
 /* render agency list */
 function renderAgencyList(list){
-  agencyListEl.innerHTML = '';
+  agencyListEl.innerHTML='';
   list.forEach(a=>{
-    const div = document.createElement('div'); div.className='item';
-    div.innerHTML = `<div><strong>${a.name}</strong><div class="muted">${a.agencyId}</div></div><div><button class="btn primary small">Open</button></div>`;
-    agencyListEl.appendChild(div);
-    div.querySelector('button').addEventListener('click', async ()=>{
-      // set session
-      SESSION = { accessCode: ACCESS.accessCode, username: SESSION?.username || null, role: SESSION?.role || null, agencyId: a.agencyId, agencyName: a.name };
+    const row = document.createElement('div'); row.className='item';
+    row.innerHTML = `<div><strong>${a.name}</strong><div class="muted">${a.agencyId}</div></div><div><button class="btn primary small">Open</button></div>`;
+    agencyListEl.appendChild(row);
+    row.querySelector('button').addEventListener('click', async ()=>{
+      SESSION = { accessCode: ACCESS.accessCode, username:SESSION?.username||null, role:SESSION?.role||null, agencyId: a.agencyId, agencyName: a.name };
       saveSession(SESSION);
-      CURRENT_AGENCY_ID = a.agencyId;
-      CURRENT_AGENCY_META = a.meta;
-      // show login screen
+      CURRENT_AGENCY_ID = a.agencyId; CURRENT_AGENCY_META = a.meta;
       loginAgency.textContent = a.name + ' — Login';
       showView('login');
     });
   });
 }
 
-/* ensure agency meta doc exists (agencies/{id}/meta/config) */
-async function ensureAgencyMeta(agencyId, nameFallback){
+/* ensure agency meta doc exists */
+async function ensureAgencyMeta(agencyId,nameFallback){
   try{
     const ref = doc(db,'agencies',agencyId,'meta','config');
     const snap = await getDoc(ref);
@@ -499,7 +536,7 @@ async function ensureAgencyMeta(agencyId, nameFallback){
 }
 
 /* ---------------------------
-   Login (local users)
+   Local login handling
    --------------------------- */
 loginBtn.addEventListener('click', ()=>{
   const u = (loginUser.value||'').trim().toUpperCase();
@@ -508,71 +545,49 @@ loginBtn.addEventListener('click', ()=>{
   localUsers = loadLocalUsers();
   const user = localUsers[u];
   if(!user || user.password !== p){ loginMsg.textContent='Invalid credentials'; return; }
-  // successful login
   SESSION = SESSION || {};
   SESSION.username = u; SESSION.role = user.role; SESSION.agencyId = CURRENT_AGENCY_ID; SESSION.agencyName = CURRENT_AGENCY_META?.name || CURRENT_AGENCY_ID;
   saveSession(SESSION);
-  // ensure member meta exists in Firestore (no password stored)
-  const memberId = u.toLowerCase();
-  setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'members',memberId), {
-    username:u, displayName:user.displayName||u, role:user.role, rank:user.rank||'', createdAt: new Date().toISOString()
-  }).catch(e=>console.warn(e));
-  // start agency shell
+  // write member metadata (no password)
+  setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'members',u.toLowerCase()), { username:u, displayName:user.displayName||u, role:user.role, createdAt:new Date().toISOString() }).catch(()=>{});
   startAgencyShell();
 });
 
-/* back to access */
 backAccess.addEventListener('click', ()=> showView('access'));
-
-/* create local user */
 document.getElementById('createLocal').addEventListener('click', ()=>{
-  const uname = prompt('New username (no spaces)').trim().toUpperCase();
-  if(!uname) return;
-  const pass = prompt('Password for '+uname);
-  if(!pass) return;
+  const uname = prompt('New username (no spaces)').trim().toUpperCase(); if(!uname) return;
+  const pass = prompt('Password for '+uname); if(!pass) return;
   const display = prompt('Display name', uname) || uname;
   const role = prompt('Role (ADMIN / DEPT_ADMIN / MEMBER)', 'MEMBER') || 'MEMBER';
   localUsers = loadLocalUsers();
   localUsers[uname] = { password: pass, role, displayName: display, dept: ACCESS?.agencyId || '' };
   saveLocalUsers(localUsers);
-  // add member meta
-  setDoc(doc(db,'agencies',ACCESS.agencyId,'members', uname.toLowerCase()), { username:uname, displayName:display, role, createdAt: new Date().toISOString() });
+  setDoc(doc(db,'agencies',ACCESS.agencyId,'members',uname.toLowerCase()), { username:uname, displayName:display, role, createdAt:new Date().toISOString() });
   alert('Local user created');
 });
-
-/* reset local store */
 document.getElementById('resetLocal').addEventListener('click', ()=>{
   if(!confirm('Reset local users on this device?')) return;
-  localStorage.removeItem(LOCAL_USERS_KEY);
-  alert('Local users cleared. Reload the page.');
+  localStorage.removeItem(LOCAL_USERS_KEY); alert('Local users cleared. Reload the page.'); location.reload();
 });
 
 /* ---------------------------
-   Start agency shell
+   Start Agency Shell
    --------------------------- */
 async function startAgencyShell(){
-  // load meta
   CURRENT_AGENCY_META = await ensureAgencyMeta(CURRENT_AGENCY_ID, SESSION.agencyName || CURRENT_AGENCY_ID);
-  // set header info
   document.getElementById('hdrTitle').textContent = CURRENT_AGENCY_META.name || CURRENT_AGENCY_ID;
   document.getElementById('hdrSub').textContent = CURRENT_AGENCY_META.metaDescription || '';
   document.getElementById('userInfo').textContent = SESSION.username + ' • ' + SESSION.role;
-  // build menu
+  document.getElementById('adminIndicator').textContent = adminUnlocked ? 'ADMIN MODE' : '';
   buildMenu();
-  // attach realtime listeners
   attachListeners(CURRENT_AGENCY_ID);
-  // show shell & default module
   showView('agency-shell');
   showModule('dashboard');
 }
 
-/* build slide menu */
+/* build side menu with modules; show admin buttons if adminUnlocked */
 function buildMenu(){
-  const menuHolder = sideMenu;
-  menuHolder.querySelector('div')?.remove();
-  menuAgency.textContent = CURRENT_AGENCY_META.name || CURRENT_AGENCY_ID;
-  menuSub.textContent = CURRENT_AGENCY_META.metaDescription || '';
-  const menuArea = document.createElement('div');
+  menuItems.innerHTML = '';
   const pagesList = [
     {mod:'dashboard', label:'Dashboard'},
     {mod:'incidents', label:'Incidents'},
@@ -590,14 +605,20 @@ function buildMenu(){
   ];
   pagesList.forEach(p=>{
     const el = document.createElement('div'); el.className='menuItem'; el.dataset.mod = p.mod;
-    el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${p.label}</strong><div class="muted">${p.mod}</div></div><div></div></div>`;
+    el.innerHTML = `<strong>${p.label}</strong><div class="muted">${p.mod}</div>`;
     el.addEventListener('click', ()=>{ showModule(p.mod); sideMenu.classList.remove('open'); });
-    menuArea.appendChild(el);
+    menuItems.appendChild(el);
   });
-  sideMenu.appendChild(menuArea);
+
+  adminPanelButtonArea.innerHTML = '';
+  if(adminUnlocked){
+    const manageBtn = document.createElement('button'); manageBtn.className='btn ghost small'; manageBtn.textContent = 'Manage Access Codes';
+    manageBtn.addEventListener('click', ()=> openAdminManager());
+    adminPanelButtonArea.appendChild(manageBtn);
+  }
 }
 
-/* menu toggle */
+/* menu open/close */
 menuToggle.addEventListener('click', ()=> sideMenu.classList.toggle('open'));
 openMenuBtn.addEventListener('click', ()=> sideMenu.classList.add('open'));
 menuLogout.addEventListener('click', ()=> doLogout());
@@ -607,147 +628,63 @@ function doLogout(){
   if(!confirm('Logout from this device?')) return;
   localStorage.removeItem(SESSION_KEY);
   SESSION = null; CURRENT_AGENCY_ID = null;
-  // detach listeners
   if(unsubApp) unsubApp(); if(unsubInc) unsubInc(); if(unsubMembers) unsubMembers(); if(unsubDocs) unsubDocs();
+  adminUnlocked = false;
   showView('access');
 }
 
 /* ---------------------------
-   Attach Firestore listeners for agency-level collections
+   Firestore listeners for agency
    --------------------------- */
 function attachListeners(agencyId){
-  // detach previous
   if(unsubApp) unsubApp(); if(unsubInc) unsubInc(); if(unsubMembers) unsubMembers(); if(unsubDocs) unsubDocs();
 
-  // apparatus (realtime)
   try {
     const col = collection(db,'agencies',agencyId,'apparatus');
-    unsubApp = onSnapshot(col, snap=>{
-      const arr=[]; snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
-      renderApparatus(arr);
-    });
+    unsubApp = onSnapshot(col, snap=>{ const arr=[]; snap.forEach(d=>arr.push({id:d.id,...d.data()})); renderApparatus(arr); });
   } catch(e){ console.warn(e); }
 
-  // incidents
   try {
     const col = collection(db,'agencies',agencyId,'incidents');
-    unsubInc = onSnapshot(col, snap=>{
-      const arr=[]; snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
-      renderIncidents(arr);
-    });
+    unsubInc = onSnapshot(col, snap=>{ const arr=[]; snap.forEach(d=>arr.push({id:d.id,...d.data()})); renderIncidents(arr); });
   } catch(e){ console.warn(e); }
 
-  // members
   try {
     const col = collection(db,'agencies',agencyId,'members');
-    unsubMembers = onSnapshot(col, snap=>{
-      const arr=[]; snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
-      renderMembers(arr);
-    });
+    unsubMembers = onSnapshot(col, snap=>{ const arr=[]; snap.forEach(d=>arr.push({id:d.id,...d.data()})); renderMembers(arr); });
   } catch(e){ console.warn(e); }
 
-  // documents (metadata)
   try {
     const col = collection(db,'agencies',agencyId,'documents');
-    unsubDocs = onSnapshot(col, snap=>{
-      const arr=[]; snap.forEach(d=> arr.push({ id:d.id, ...d.data() }));
-      renderDocuments(arr);
-    });
+    unsubDocs = onSnapshot(col, snap=>{ const arr=[]; snap.forEach(d=>arr.push({id:d.id,...d.data()})); renderDocuments(arr); });
   } catch(e){ console.warn(e); }
 }
 
 /* ---------------------------
-   Renderers for lists
+   Render functions
    --------------------------- */
-function renderApparatus(arr){
-  const el = document.getElementById('apparatusList'); el.innerHTML='';
-  if(!arr.length) el.innerHTML='<div class="muted">No apparatus defined</div>';
-  arr.forEach(a=>{
-    const row = document.createElement('div'); row.className='item';
-    row.innerHTML = `<div><strong>${a.callsign||a.apparatusName||a.id}</strong><div class="muted">${a.type||''} • ${a.department||''}</div></div><div><div class="muted">${a.status||'IN SERVICE'}</div></div>`;
-    el.appendChild(row);
-  });
-}
-function renderIncidents(arr){
-  const el = document.getElementById('incidentList'); el.innerHTML='';
-  if(!arr.length) el.innerHTML='<div class="muted">No incidents</div>';
-  arr.sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
-  arr.forEach(i=>{
-    const row = document.createElement('div'); row.className='item';
-    row.innerHTML = `<div><strong>${i.type||'Incident'}</strong><div class="muted">${i.address||''} • ${i.createdAt||''}</div></div><div><button class="btn ghost small">Open</button></div>`;
-    el.appendChild(row);
-    row.querySelector('button').addEventListener('click', ()=> openIncident(i));
-  });
-}
-function renderMembers(arr){
-  const el = document.getElementById('membersList'); el.innerHTML='';
-  if(!arr.length) el.innerHTML='<div class="muted">No members</div>';
-  arr.sort((a,b)=> (a.displayName||a.username||'').localeCompare(b.displayName||b.username||''));
-  arr.forEach(m=>{
-    const row = document.createElement('div'); row.className='item';
-    row.innerHTML = `<div><strong>${m.displayName||m.username||m.id}</strong><div class="muted">${m.rank||m.role||''}</div></div><div><button class="btn ghost small">View</button></div>`;
-    el.appendChild(row);
-  });
-}
-function renderDocuments(arr){
-  const el = document.getElementById('docsList'); el.innerHTML='';
-  if(!arr.length) el.innerHTML='<div class="muted">No documents</div>';
-  arr.forEach(d=>{
-    const row = document.createElement('div'); row.className='item';
-    const exp = d.expiresAt ? ` • Expires ${d.expiresAt}` : '';
-    row.innerHTML = `<div><strong>${d.title||d.filename||d.id}</strong><div class="muted">${d.ownerId||''}${exp}</div></div><div><button class="btn ghost small">Download</button></div>`;
-    el.appendChild(row);
-    row.querySelector('button').addEventListener('click', ()=> downloadDocument(CURRENT_AGENCY_ID, d.id));
-  });
-}
+function renderApparatus(arr){ const el=document.getElementById('apparatusList'); el.innerHTML=''; if(!arr.length) el.innerHTML='<div class="muted">No apparatus</div>'; arr.forEach(a=>{ const r=document.createElement('div'); r.className='item'; r.innerHTML=`<div><strong>${a.callsign||a.apparatusName||a.id}</strong><div class="muted">${a.type||''} • ${a.department||''}</div></div><div class="muted">${a.status||'IN SERVICE'}</div>`; el.appendChild(r); }); }
+function renderIncidents(arr){ const el=document.getElementById('incidentList'); el.innerHTML=''; if(!arr.length) el.innerHTML='<div class="muted">No incidents</div>'; arr.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')); arr.forEach(i=>{ const r=document.createElement('div'); r.className='item'; r.innerHTML=`<div><strong>${i.type||'Incident'}</strong><div class="muted">${i.address||''} • ${i.createdAt||''}</div></div><div><button class="btn ghost small">Open</button></div>`; el.appendChild(r); r.querySelector('button').addEventListener('click', ()=> openIncident(i)); }); }
+function renderMembers(arr){ const el=document.getElementById('membersList'); el.innerHTML=''; if(!arr.length) el.innerHTML='<div class="muted">No members</div>'; arr.sort((a,b)=>(a.displayName||a.username||'').localeCompare(b.displayName||b.username||'')); arr.forEach(m=>{ const r=document.createElement('div'); r.className='item'; r.innerHTML=`<div><strong>${m.displayName||m.username||m.id}</strong><div class="muted">${m.rank||m.role||''}</div></div><div><button class="btn ghost small">View</button></div>`; el.appendChild(r); }); }
+function renderDocuments(arr){ const el=document.getElementById('docsList'); el.innerHTML=''; if(!arr.length) el.innerHTML='<div class="muted">No documents</div>'; arr.forEach(d=>{ const r=document.createElement('div'); r.className='item'; const exp=d.expiresAt?` • Expires ${d.expiresAt}`:''; r.innerHTML=`<div><strong>${d.title||d.filename||d.id}</strong><div class="muted">${d.ownerId||''}${exp}</div></div><div><button class="btn ghost small">Download</button></div>`; el.appendChild(r); r.querySelector('button').addEventListener('click', ()=> downloadDocument(CURRENT_AGENCY_ID, d.id)); }); }
 
 /* ---------------------------
-   Incident open modal
+   Incident modal
    --------------------------- */
-function openIncident(inc){
-  document.getElementById('im_title').textContent = inc.type || 'Incident';
-  document.getElementById('im_sub').textContent = inc.address || '';
-  document.getElementById('im_body').innerHTML = `<div class="muted">Created: ${inc.createdAt||''} • By: ${inc.createdBy||''}</div><div style="margin-top:8px">${inc.notes||''}</div>`;
-  pages.incidentsView.classList.remove('hidden');
-}
-document.getElementById('im_close').addEventListener('click', ()=> pages.incidentsView.classList.add('hidden'));
+function openIncident(inc){ document.getElementById('im_title').textContent = inc.type||'Incident'; document.getElementById('im_sub').textContent = inc.address||''; document.getElementById('im_body').innerHTML = `<div class="muted">Created: ${inc.createdAt||''} • By: ${inc.createdBy||''}</div><div style="margin-top:8px">${inc.notes||''}</div>`; document.getElementById('incidentModal').classList.remove('hidden'); }
+document.getElementById('im_close').addEventListener('click', ()=> document.getElementById('incidentModal').classList.add('hidden'));
 
 /* ---------------------------
-   Buttons - add apparatus, create incident, add command
+   Create / Add actions
    --------------------------- */
-document.getElementById('addAppBtn').addEventListener('click', async ()=>{
-  const id = prompt('Apparatus ID (ENGINE511)').trim().toUpperCase();
-  if(!id) return;
-  const name = prompt('Display name', id) || id;
-  const type = prompt('Type (Engine/Ladder/Rescue)', 'Engine') || 'Engine';
-  await setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'apparatus',id), { apparatusName:name, callsign:id, type, status:'IN SERVICE' });
-  alert('Apparatus added');
-});
+document.getElementById('addAppBtn').addEventListener('click', async ()=>{ const id = prompt('Apparatus ID (ENGINE511)'); if(!id) return; const name = prompt('Display name', id)||id; const type = prompt('Type (Engine/Ladder/Rescue)','Engine')||'Engine'; await setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'apparatus',id.trim().toUpperCase()),{apparatusName:name,callsign:id.trim().toUpperCase(),type,status:'IN SERVICE'}); alert('Added'); });
 
-document.getElementById('newIncidentBtn').addEventListener('click', async ()=>{
-  const addr = prompt('Address / Location'); if(!addr) return;
-  const type = prompt('Type / Nature', 'Structure') || 'Structure';
-  const notes = prompt('Notes','') || '';
-  await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents'), { address:addr, type, notes, createdBy:SESSION.username, createdAt: new Date().toISOString(), archived:false });
-  alert('Incident created');
-});
+document.getElementById('newIncidentBtn').addEventListener('click', async ()=>{ const addr = prompt('Address / Location'); if(!addr) return; const type = prompt('Type / Nature','Structure')||'Structure'; const notes = prompt('Notes','')||''; await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents'),{address:addr,type,notes,createdBy:SESSION.username,createdAt:new Date().toISOString(),archived:false}); alert('Created'); });
 
-document.getElementById('btnAddCmd').addEventListener('click', async ()=>{
-  const unit = document.getElementById('cmdUnit').value.trim().toUpperCase();
-  const assign = document.getElementById('cmdAssign').value.trim();
-  if(!unit||!assign) return alert('Enter unit and assignment');
-  await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'command_logs'), { unit, assignment:assign, by:SESSION.username, ts:new Date().toISOString() });
-  // attach to latest incident timeline if present
-  const incs = await getDocs(query(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents'), orderBy('createdAt','desc')));
-  if(!incs.empty){
-    const incId = incs.docs[0].id;
-    await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents',incId,'timeline'), { title:'Command', text:`${unit} -> ${assign}`, sender:SESSION.username, ts:new Date().toISOString() });
-  }
-  alert('Command added');
-});
+document.getElementById('btnAddCmd').addEventListener('click', async ()=>{ const unit = document.getElementById('cmdUnit').value.trim().toUpperCase(); const assign = document.getElementById('cmdAssign').value.trim(); if(!unit||!assign) return alert('Enter unit and assignment'); await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'command_logs'),{unit,assignment:assign,by:SESSION.username,ts:new Date().toISOString()}); const incs = await getDocs(query(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents'), orderBy('createdAt','desc'))); if(!incs.empty){ const incId = incs.docs[0].id; await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'incidents',incId,'timeline'),{title:'Command',text:`${unit} -> ${assign}`,sender:SESSION.username,ts:new Date().toISOString()}); } alert('Command added'); });
 
 /* ---------------------------
-   Documents: chunked upload/download stored in Firestore (no Storage)
+   Documents chunk upload/download
    --------------------------- */
 const CHUNK_SIZE = 800000;
 function chunkString(str,size=CHUNK_SIZE){ const out=[]; for(let i=0;i<str.length;i+=size) out.push(str.slice(i,i+size)); return out; }
@@ -759,17 +696,16 @@ document.getElementById('docFile').addEventListener('change', async (ev)=>{
   try{
     const base64 = await fileToBase64(f);
     const chunks = chunkString(base64);
-    const metaRef = await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'documents'), {
-      title:f.name, filename:f.name, mimeType:f.type, sizeBytes:f.size, ownerId:SESSION.username, uploadedAt:new Date().toISOString(), chunkCount:chunks.length
-    });
-    for(let i=0;i<chunks.length;i++){
-      await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'documents',metaRef.id,'chunks'), { index:i, data:chunks[i] });
-    }
+    const metaRef = await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'documents'),{title:f.name,filename:f.name,mimeType:f.type,sizeBytes:f.size,ownerId:SESSION.username,uploadedAt:new Date().toISOString(),chunkCount:chunks.length});
+    for(let i=0;i<chunks.length;i++){ await addDoc(collection(db,'agencies',CURRENT_AGENCY_ID,'documents',metaRef.id,'chunks'),{index:i,data:chunks[i]}); }
     alert('Upload complete');
     ev.target.value='';
   } catch(e){ console.error(e); alert('Upload failed'); }
 });
 
+/* ---------------------------
+   Download document
+   --------------------------- */
 import { query as fsQuery, orderBy as fsOrderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 async function downloadDocument(agencyId, docId){
   try{
@@ -789,44 +725,109 @@ async function downloadDocument(agencyId, docId){
 }
 
 /* ---------------------------
-   Renderers for response board & quick actions
+   Admin manager: open/close and Firestore ops
    --------------------------- */
-async function renderResponseBoard(){
-  try{
-    const snap = await getDocs(collection(db,'agencies',CURRENT_AGENCY_ID,'response_status'));
-    const arr=[]; snap.forEach(d=> arr.push(d.data()));
-    const el = document.getElementById('responseBoard'); el.innerHTML='';
-    if(!arr.length) el.innerHTML = '<div class="muted">No responses</div>';
-    arr.forEach(r=>{
-      const row=document.createElement('div'); row.className='item';
-      row.innerHTML = `<div><strong>${r.user}</strong><div class="muted">${r.status} • ${r.ts}</div></div>`;
-      el.appendChild(row);
-    });
-  } catch(e){ console.warn(e); }
-}
+adminTriggerBtn.addEventListener('click', ()=> {
+  adminCodeModal.classList.remove('hidden');
+  adminCodeMsg.textContent = '';
+  adminCodeInput.value = '';
+});
+adminCancelBtn.addEventListener('click', ()=> adminCodeModal.classList.add('hidden'));
 
-/* change response status */
-statusBtn.addEventListener('click', async ()=>{
-  const s = prompt('Status (Available / Responding / Staged / Arrived / Clear)', 'Responding');
-  if(!s) return;
-  await setDoc(doc(db,'agencies',CURRENT_AGENCY_ID,'response_status', SESSION.username), { user:SESSION.username, status:s, ts:new Date().toISOString() });
-  alert('Status updated');
+/* Unlock admin by comparing entered code to master code (plain compare) */
+adminUnlockBtn.addEventListener('click', async ()=>{
+  const val = (adminCodeInput.value||'').trim();
+  if(!val){ adminCodeMsg.textContent='Enter admin code'; return; }
+  if(val === ADMIN_MASTER_CODE){
+    adminUnlocked = true;
+    adminCodeModal.classList.add('hidden');
+    document.getElementById('adminIndicator').textContent = 'ADMIN MODE';
+    buildMenu(); // adds admin manager button
+    await loadAccessCodesIntoAdminList();
+    alert('Admin unlocked — Manage Access Codes via the menu');
+  } else {
+    adminCodeMsg.textContent='Incorrect admin code';
+  }
 });
 
-/* dashboard quick refresh */
-dashBtn.addEventListener('click', ()=> showModule('dashboard'));
+/* open admin manager modal */
+function openAdminManager(){
+  adminManagerModal.classList.remove('hidden');
+  accessCodesList.innerHTML = '<div class="muted">Loading...</div>';
+  loadAccessCodesIntoAdminList();
+}
+
+/* close admin manager */
+adminClose.addEventListener('click', ()=> adminManagerModal.classList.add('hidden'));
+
+/* load access_codes collection and render list */
+async function loadAccessCodesIntoAdminList(){
+  try{
+    accessCodesList.innerHTML = '<div class="muted">Loading...</div>';
+    const snap = await getDocs(collection(db,'access_codes'));
+    accessCodesList.innerHTML = '';
+    if(snap.empty) accessCodesList.innerHTML = '<div class="muted">No access codes found</div>';
+    snap.forEach(docSnap=>{
+      const d = docSnap.data(); const id = docSnap.id;
+      const div = document.createElement('div'); div.className='item';
+      div.innerHTML = `<div><strong>${d.name || d.agencyId || id}</strong><div class="muted">Code: ${d.accessCode} • Agency: ${d.agencyId}</div></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn ghost small" data-act="edit" data-id="${id}">Edit</button>
+          <button class="btn ghost small" data-act="del" data-id="${id}">Delete</button>
+        </div>`;
+      accessCodesList.appendChild(div);
+      div.querySelector('[data-act="edit"]').addEventListener('click', ()=> editAccessCode(id,d));
+      div.querySelector('[data-act="del"]').addEventListener('click', ()=> deleteAccessCode(id, d));
+    });
+  } catch(e){ console.error(e); accessCodesList.innerHTML = '<div class="muted">Error loading</div>'; }
+}
+
+/* add new access code */
+addAccessBtn.addEventListener('click', async ()=>{
+  const code = (newAccessCode.value||'').trim();
+  const aid = (newAgencyId.value||'').trim();
+  const name = (newAgencyName.value||'').trim();
+  if(!code||!aid||!name){ alert('Fill code, agency ID and name'); return; }
+  try{
+    await addDoc(collection(db,'access_codes'), { accessCode: code, agencyId: aid, name });
+    newAccessCode.value=''; newAgencyId.value=''; newAgencyName.value='';
+    await loadAccessCodesIntoAdminList();
+    alert('Access code added');
+  } catch(e){ console.error(e); alert('Failed to add'); }
+});
+
+/* edit access code */
+async function editAccessCode(docId, data){
+  const code = prompt('Access code', data.accessCode || '');
+  if(code === null) return;
+  const aid = prompt('Agency ID', data.agencyId || '') || '';
+  const name = prompt('Display name', data.name || '') || '';
+  try{
+    await setDoc(doc(db,'access_codes',docId), { accessCode: code, agencyId: aid, name });
+    await loadAccessCodesIntoAdminList();
+    alert('Saved');
+  } catch(e){ console.error(e); alert('Save failed'); }
+}
+
+/* delete access code */
+async function deleteAccessCode(docId, data){
+  if(!confirm(`Delete access code for ${data.name || data.agencyId || docId}?`)) return;
+  try{
+    await deleteDoc(doc(db,'access_codes',docId));
+    await loadAccessCodesIntoAdminList();
+    alert('Deleted');
+  } catch(e){ console.error(e); alert('Delete failed'); }
+}
 
 /* ---------------------------
-   Utility functions & init
+   Utilities & init
    --------------------------- */
 function uid(){ return 'id_'+Math.random().toString(36).slice(2,9); }
-async function getAgencyMeta(agencyId){ const snap = await getDoc(doc(db,'agencies',agencyId,'meta','config')); return snap.exists() ? snap.data() : null; }
+async function getAgencyMeta(agencyId){ const snap = await getDoc(doc(db,'agencies',agencyId,'meta','config')); return snap.exists()?snap.data():null; }
 
-/* on load if session exists try to resume */
+/* resume session if present */
 (async function init(){
-  // prefill logo
-  document.getElementById('bigLogo').src = document.getElementById('logo').src;
-
+  bigLogo.src = document.getElementById('logo').src;
   if(SESSION && SESSION.agencyId && SESSION.username){
     CURRENT_AGENCY_ID = SESSION.agencyId;
     CURRENT_AGENCY_META = await ensureAgencyMeta(CURRENT_AGENCY_ID, SESSION.agencyName || CURRENT_AGENCY_ID);
@@ -837,12 +838,11 @@ async function getAgencyMeta(agencyId){ const snap = await getDoc(doc(db,'agenci
     showView('agency-shell');
     showModule('dashboard');
   } else {
-    // show access screen
     showView('access');
   }
 })();
 
-/* open CAD page */
+/* CAD button */
 cadBtn.addEventListener('click', ()=> window.open('dispatch.html','_blank'));
 
 </script>
